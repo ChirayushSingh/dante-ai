@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   Activity, 
-  LayoutDashboard, 
-  ClipboardList, 
+  Stethoscope, 
+  MessageCircle, 
   History, 
-  Settings, 
+  BarChart3, 
   CreditCard, 
   Key, 
   ChevronLeft,
@@ -15,14 +15,16 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-  { icon: ClipboardList, label: "Symptom Check", href: "/dashboard/check" },
+  { icon: Stethoscope, label: "Symptom Check", href: "/dashboard" },
+  { icon: MessageCircle, label: "Health Chat", href: "/dashboard/chat" },
   { icon: History, label: "History", href: "/dashboard/history" },
+  { icon: BarChart3, label: "Analytics", href: "/dashboard/analytics" },
+  { icon: User, label: "Profile", href: "/dashboard/profile" },
   { icon: CreditCard, label: "Billing", href: "/dashboard/billing" },
   { icon: Key, label: "API Keys", href: "/dashboard/api-keys" },
-  { icon: Settings, label: "Settings", href: "/dashboard/settings" },
 ];
 
 interface DashboardLayoutProps {
@@ -33,6 +35,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const { user, signOut } = useAuth();
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -122,17 +125,15 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             </div>
             {!collapsed && (
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm truncate">Guest User</p>
+                <p className="font-medium text-sm truncate">{user?.email?.split('@')[0] || 'User'}</p>
                 <p className="text-xs text-muted-foreground truncate">Free Plan</p>
               </div>
             )}
           </div>
-          <Link to="/" className="block">
-            <Button variant="ghost" size={collapsed ? "icon" : "default"} className={cn("w-full", collapsed && "w-10")}>
-              <LogOut className="h-4 w-4" />
-              {!collapsed && <span className="ml-2">Sign Out</span>}
-            </Button>
-          </Link>
+          <Button variant="ghost" size={collapsed ? "icon" : "default"} className={cn("w-full", collapsed && "w-10")} onClick={signOut}>
+            <LogOut className="h-4 w-4" />
+            {!collapsed && <span className="ml-2">Sign Out</span>}
+          </Button>
         </div>
       </aside>
 
