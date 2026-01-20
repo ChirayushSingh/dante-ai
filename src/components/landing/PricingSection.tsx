@@ -1,19 +1,21 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Check, Sparkles } from "lucide-react";
+import { Check, Sparkles, Zap, Building2 } from "lucide-react";
 
 const plans = [
   {
     name: "Free",
-    description: "Perfect for trying out the platform",
+    description: "Perfect for trying out",
     price: "$0",
     period: "forever",
+    icon: Zap,
     features: [
       "5 symptom checks per month",
-      "Basic AI analysis",
+      "Conversational AI interview",
+      "Basic urgency triage",
+      "Health profile storage",
       "Email support",
-      "Standard response time",
     ],
     cta: "Get Started Free",
     variant: "heroOutline" as const,
@@ -21,16 +23,18 @@ const plans = [
   },
   {
     name: "Pro",
-    description: "For individuals serious about health",
+    description: "For health-conscious individuals",
     price: "$19",
     period: "/month",
+    icon: Sparkles,
     features: [
       "Unlimited symptom checks",
       "Advanced AI analysis",
-      "Full prediction history",
+      "Full conversation history",
       "Downloadable PDF reports",
-      "Priority support",
       "Health trend analytics",
+      "Priority support",
+      "Family profiles (up to 5)",
     ],
     cta: "Start Pro Trial",
     variant: "hero" as const,
@@ -38,17 +42,19 @@ const plans = [
   },
   {
     name: "Enterprise",
-    description: "For organizations and developers",
+    description: "For organizations & developers",
     price: "$99",
     period: "/month",
+    icon: Building2,
     features: [
       "Everything in Pro",
-      "API access",
+      "API access & documentation",
       "Custom rate limits",
-      "Dedicated support",
+      "Webhook integrations",
       "SSO authentication",
-      "Custom integrations",
+      "Dedicated account manager",
       "SLA guarantee",
+      "Custom branding",
     ],
     cta: "Contact Sales",
     variant: "heroOutline" as const,
@@ -73,8 +79,8 @@ export const PricingSection = () => {
             <span className="gradient-text">Health Plan</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            Start free and upgrade as you need. All plans include our core AI features 
-            and medical disclaimer protections.
+            Start free and upgrade as your needs grow. All plans include our core AI features 
+            and medical safety protections.
           </p>
         </motion.div>
 
@@ -87,12 +93,12 @@ export const PricingSection = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className={`relative bg-card rounded-2xl p-8 border ${
-                plan.popular ? "border-primary shadow-glow" : "border-border"
+                plan.popular ? "border-primary shadow-lg scale-105" : "border-border"
               }`}
             >
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <div className="bg-primary text-primary-foreground text-xs font-semibold px-4 py-1.5 rounded-full flex items-center gap-1.5">
+                  <div className="bg-gradient-to-r from-primary to-accent text-white text-xs font-semibold px-4 py-1.5 rounded-full flex items-center gap-1.5">
                     <Sparkles className="h-3 w-3" />
                     Most Popular
                   </div>
@@ -100,6 +106,11 @@ export const PricingSection = () => {
               )}
 
               <div className="text-center mb-8">
+                <div className={`w-12 h-12 rounded-xl mx-auto mb-4 flex items-center justify-center ${
+                  plan.popular ? "bg-gradient-to-br from-primary to-accent" : "bg-muted"
+                }`}>
+                  <plan.icon className={`h-6 w-6 ${plan.popular ? "text-white" : "text-muted-foreground"}`} />
+                </div>
                 <h3 className="font-display font-bold text-xl mb-2">{plan.name}</h3>
                 <p className="text-sm text-muted-foreground mb-4">{plan.description}</p>
                 <div className="flex items-baseline justify-center gap-1">
@@ -111,7 +122,7 @@ export const PricingSection = () => {
               <ul className="space-y-4 mb-8">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-3 text-sm">
-                    <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                    <Check className={`h-5 w-5 flex-shrink-0 ${plan.popular ? "text-primary" : "text-muted-foreground"}`} />
                     <span>{feature}</span>
                   </li>
                 ))}

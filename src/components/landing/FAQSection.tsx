@@ -8,28 +8,28 @@ import {
 
 const faqs = [
   {
-    question: "How accurate is the AI disease detection?",
-    answer: "Our AI provides preliminary assessments based on the symptoms you enter. While trained on extensive medical data, it's designed to assist—not replace—professional medical diagnosis. Accuracy varies by condition and symptom clarity. Always consult a healthcare provider for definitive diagnosis.",
+    question: "How does the conversational symptom interview work?",
+    answer: "Unlike simple symptom forms, Aura Aid AI has an actual conversation with you. When you describe your symptoms, our AI asks intelligent follow-up questions based on your answers—just like a real healthcare professional would. This dynamic approach helps gather more accurate information for better assessments.",
+  },
+  {
+    question: "What do the urgency levels mean?",
+    answer: "We provide three levels of risk triage: 'Self-care' means you can likely manage at home with rest and over-the-counter remedies. 'Consult Soon' suggests you should see a healthcare provider within a few days. 'Emergency/Urgent' means you should seek immediate medical attention. These are guidance only—when in doubt, always err on the side of caution.",
+  },
+  {
+    question: "How does my health profile improve results?",
+    answer: "Your health profile (age, gender, chronic conditions, medications, allergies) allows our AI to provide personalized insights. For example, certain symptoms have different implications based on age or existing conditions. The more complete your profile, the more tailored and relevant your assessments become.",
+  },
+  {
+    question: "Can the AI health chatbot give medical advice?",
+    answer: "Our AI health assistant can answer general health questions, explain medical terms, provide educational content, and help you understand your assessment results. However, it will never prescribe treatments or replace professional medical advice. It's designed to inform and educate, not diagnose or treat.",
   },
   {
     question: "Is my health data secure and private?",
-    answer: "Absolutely. We use end-to-end encryption, follow HIPAA compliance guidelines, and never share your personal health information with third parties. Your data is stored securely and you can delete it at any time from your account settings.",
+    answer: "Absolutely. We use end-to-end encryption, follow HIPAA compliance guidelines, and never share your personal health information with third parties. Your data is stored securely, and you can export or delete it at any time from your account settings.",
   },
   {
-    question: "Can this replace a doctor's visit?",
-    answer: "No. Disease Detector is an educational tool designed to help you understand potential conditions based on symptoms. It should never replace professional medical advice, diagnosis, or treatment. Always consult qualified healthcare providers for medical decisions.",
-  },
-  {
-    question: "What symptoms can I check?",
-    answer: "You can enter any physical symptoms you're experiencing—from headaches and fever to more specific conditions. Our AI analyzes combinations of symptoms to provide the most relevant potential conditions. The more detailed your input, the better the analysis.",
-  },
-  {
-    question: "How does the API access work for Enterprise plans?",
-    answer: "Enterprise users get secure API keys to integrate our disease detection capabilities into their own applications. You'll have access to our REST API with customizable rate limits, detailed documentation, and dedicated support for implementation.",
-  },
-  {
-    question: "Can I cancel my subscription anytime?",
-    answer: "Yes, you can cancel your subscription at any time from your billing settings. If you cancel, you'll continue to have access until the end of your current billing period. Your health history data remains available even after cancellation.",
+    question: "Can I share my results with my doctor?",
+    answer: "Yes! You can download detailed PDF reports of any symptom check to share with healthcare providers. These reports include the conversation summary, identified symptoms, possible conditions, and urgency assessment—giving your doctor valuable context.",
   },
 ];
 
@@ -50,7 +50,7 @@ export const FAQSection = () => {
             <span className="gradient-text">Questions</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            Everything you need to know about Disease Detector and how it works.
+            Everything you need to know about Aura Aid AI and how it works.
           </p>
         </motion.div>
 
@@ -65,7 +65,7 @@ export const FAQSection = () => {
               <AccordionItem
                 key={index}
                 value={`item-${index}`}
-                className="bg-card border border-border rounded-xl px-6 data-[state=open]:shadow-medium transition-shadow"
+                className="bg-card border border-border rounded-xl px-6 data-[state=open]:shadow-md transition-shadow"
               >
                 <AccordionTrigger className="text-left font-medium py-5 hover:no-underline">
                   {faq.question}

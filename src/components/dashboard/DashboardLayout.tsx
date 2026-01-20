@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
-  Activity, 
+  Heart, 
   Stethoscope, 
   MessageCircle, 
   History, 
@@ -11,7 +11,8 @@ import {
   ChevronLeft,
   User,
   LogOut,
-  Menu
+  Menu,
+  BookOpen
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -20,6 +21,7 @@ import { useAuth } from "@/hooks/useAuth";
 const navItems = [
   { icon: Stethoscope, label: "Symptom Check", href: "/dashboard" },
   { icon: MessageCircle, label: "Health Chat", href: "/dashboard/chat" },
+  { icon: BookOpen, label: "Health Hub", href: "/dashboard/knowledge" },
   { icon: History, label: "History", href: "/dashboard/history" },
   { icon: BarChart3, label: "Analytics", href: "/dashboard/analytics" },
   { icon: User, label: "Profile", href: "/dashboard/profile" },
@@ -42,11 +44,11 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       {/* Mobile header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-background border-b border-border z-50 flex items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
-            <Activity className="h-5 w-5 text-primary-foreground" />
+          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+            <Heart className="h-5 w-5 text-white" />
           </div>
           <span className="font-display font-bold text-lg">
-            Disease<span className="gradient-text">Detector</span>
+            Aura<span className="gradient-text">Aid</span>
           </span>
         </Link>
         <Button variant="ghost" size="icon" onClick={() => setMobileOpen(!mobileOpen)}>
@@ -73,13 +75,16 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         {/* Logo */}
         <div className="h-20 flex items-center justify-between px-4 border-b border-border">
           <Link to="/" className={cn("flex items-center gap-3", collapsed && "justify-center w-full")}>
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-medium">
-              <Activity className="h-5 w-5 text-primary-foreground" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-md">
+              <Heart className="h-5 w-5 text-white" />
             </div>
             {!collapsed && (
-              <span className="font-display font-bold text-lg">
-                Disease<span className="gradient-text">Detector</span>
-              </span>
+              <div className="flex flex-col">
+                <span className="font-display font-bold text-lg leading-tight">
+                  Aura<span className="gradient-text">Aid</span>
+                </span>
+                <span className="text-[9px] text-muted-foreground -mt-0.5 tracking-wider">HEALTH AI</span>
+              </div>
             )}
           </Link>
           <button
@@ -94,7 +99,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         </div>
 
         {/* Navigation */}
-        <nav className="p-4 space-y-2">
+        <nav className="p-4 space-y-1.5">
           {navItems.map((item) => {
             const isActive = location.pathname === item.href;
             return (
@@ -105,7 +110,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
                   isActive
-                    ? "bg-primary text-primary-foreground shadow-medium"
+                    ? "bg-gradient-to-r from-primary to-accent text-white shadow-md"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground",
                   collapsed && "justify-center px-3"
                 )}
@@ -120,7 +125,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         {/* User section */}
         <div className={cn("absolute bottom-0 left-0 right-0 p-4 border-t border-border", collapsed && "p-2")}>
           <div className={cn("flex items-center gap-3 mb-3", collapsed && "flex-col")}>
-            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
               <User className="h-5 w-5 text-primary" />
             </div>
             {!collapsed && (

@@ -1,30 +1,34 @@
 import { motion } from "framer-motion";
-import { ClipboardList, Brain, FileCheck, Stethoscope } from "lucide-react";
+import { MessageSquare, Brain, AlertTriangle, Stethoscope } from "lucide-react";
 
 const steps = [
   {
-    icon: ClipboardList,
+    icon: MessageSquare,
     step: "01",
-    title: "Enter Your Symptoms",
-    description: "Describe your symptoms in detail using our intuitive symptom input form. Add as many symptoms as needed for accurate analysis.",
+    title: "Start the Conversation",
+    description: "Tell us what's bothering you. Our AI will guide you through a natural conversation about your symptoms.",
+    color: "bg-primary",
   },
   {
     icon: Brain,
     step: "02",
-    title: "AI Analysis",
-    description: "Our advanced AI processes your symptoms using machine learning algorithms trained on vast medical datasets.",
+    title: "AI Asks Follow-ups",
+    description: "Our intelligent system asks targeted questions about duration, severity, location, and related symptoms.",
+    color: "bg-accent",
   },
   {
-    icon: FileCheck,
+    icon: AlertTriangle,
     step: "03",
-    title: "Get Results",
-    description: "Receive detailed predictions with confidence scores, explanations, and helpful information about potential conditions.",
+    title: "Get Risk Assessment",
+    description: "Receive clear urgency guidance: Self-care at home, consult a doctor soon, or seek emergency care.",
+    color: "bg-warning",
   },
   {
     icon: Stethoscope,
     step: "04",
-    title: "Consult a Doctor",
-    description: "Use our insights as a starting point for discussions with healthcare professionals. Always seek professional medical advice.",
+    title: "Take Informed Action",
+    description: "Review AI insights, possible conditions with explanations, and share the report with your healthcare provider.",
+    color: "bg-success",
   },
 ];
 
@@ -41,12 +45,12 @@ export const HowItWorksSection = () => {
         >
           <span className="text-sm font-medium text-primary mb-4 block">HOW IT WORKS</span>
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
-            Simple Steps to{" "}
-            <span className="gradient-text">Better Understanding</span>
+            A Smarter Way to{" "}
+            <span className="gradient-text">Understand Symptoms</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            Get health insights in minutes with our streamlined process. 
-            No complicated forms or lengthy questionnaires.
+            Unlike simple symptom checkers, Aura Aid AI has a real conversation with you. 
+            Get accurate insights through dynamic, personalized assessment.
           </p>
         </motion.div>
 
@@ -62,7 +66,7 @@ export const HowItWorksSection = () => {
             >
               {/* Connector line */}
               {index < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-16 left-[60%] w-full h-0.5 bg-gradient-to-r from-primary/50 to-transparent" />
+                <div className="hidden lg:block absolute top-16 left-[60%] w-full h-0.5 bg-gradient-to-r from-border to-transparent" />
               )}
               
               <div className="relative text-center">
@@ -72,8 +76,8 @@ export const HowItWorksSection = () => {
                 </span>
                 
                 {/* Icon */}
-                <div className="relative z-10 w-16 h-16 mx-auto rounded-2xl bg-primary flex items-center justify-center shadow-glow mb-6">
-                  <item.icon className="h-7 w-7 text-primary-foreground" />
+                <div className={`relative z-10 w-16 h-16 mx-auto rounded-2xl ${item.color} flex items-center justify-center shadow-lg mb-6`}>
+                  <item.icon className="h-7 w-7 text-white" />
                 </div>
                 
                 <h3 className="font-display font-semibold text-xl mb-3">{item.title}</h3>
@@ -84,6 +88,37 @@ export const HowItWorksSection = () => {
             </motion.div>
           ))}
         </div>
+
+        {/* Demo conversation preview */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mt-16 max-w-2xl mx-auto"
+        >
+          <div className="bg-card rounded-2xl border border-border p-6 shadow-soft">
+            <h4 className="font-semibold text-center mb-4 text-sm text-muted-foreground">Example Conversation Flow</h4>
+            <div className="space-y-3 text-sm">
+              <div className="flex items-start gap-2">
+                <span className="text-primary font-medium">AI:</span>
+                <span className="text-muted-foreground">"Tell me where it hurts most."</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-primary font-medium">AI:</span>
+                <span className="text-muted-foreground">"When did this start?"</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-primary font-medium">AI:</span>
+                <span className="text-muted-foreground">"Any allergies or medications you're taking?"</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-primary font-medium">AI:</span>
+                <span className="text-muted-foreground">"On a scale of 1-10, how severe is the pain?"</span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

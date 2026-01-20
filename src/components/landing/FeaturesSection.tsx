@@ -1,55 +1,65 @@
 import { motion } from "framer-motion";
 import { 
-  Brain, 
+  MessageSquare, 
   Shield, 
   History, 
   Key, 
   FileText, 
   BarChart3,
-  Zap,
-  Lock
+  AlertTriangle,
+  User,
+  Brain,
+  Sparkles
 } from "lucide-react";
 
 const features = [
   {
+    icon: MessageSquare,
+    title: "Conversational Interview",
+    description: "Natural chat-style symptom assessment. Our AI asks intelligent follow-up questions to understand your condition better.",
+    gradient: "from-primary to-accent",
+  },
+  {
+    icon: AlertTriangle,
+    title: "Risk Triage System",
+    description: "Get actionable urgency levels: Self-care, Consult Soon, or Emergency. Know when to seek immediate help.",
+    gradient: "from-warning to-orange-500",
+  },
+  {
+    icon: User,
+    title: "Personal Health Profile",
+    description: "Store your medical history, allergies, and medications. Get personalized insights based on your unique health profile.",
+    gradient: "from-info to-blue-500",
+  },
+  {
     icon: Brain,
-    title: "AI-Powered Analysis",
-    description: "Advanced machine learning algorithms analyze your symptoms to provide accurate disease predictions with confidence scores.",
+    title: "Explainable AI Results",
+    description: "Understand why conditions are suggested with plain-language explanations. No medical jargon or alarmist tone.",
+    gradient: "from-primary to-accent",
   },
   {
-    icon: Zap,
-    title: "Instant Results",
-    description: "Get preliminary assessments in seconds, not hours. Our AI processes your symptoms and delivers insights immediately.",
-  },
-  {
-    icon: Shield,
-    title: "Privacy First",
-    description: "Your health data is encrypted and never shared. We follow strict HIPAA compliance guidelines to protect your information.",
+    icon: Sparkles,
+    title: "AI Health Chatbot",
+    description: "Ask general health questions anytime. Get educational content and guidance from your personal health assistant.",
+    gradient: "from-accent to-teal-500",
   },
   {
     icon: History,
-    title: "Health History",
-    description: "Track all your symptom checks over time. Identify patterns and share comprehensive reports with your healthcare provider.",
-  },
-  {
-    icon: Key,
-    title: "API Access",
-    description: "Enterprise users get secure API access for integration with existing healthcare systems and applications.",
-  },
-  {
-    icon: FileText,
-    title: "Detailed Reports",
-    description: "Download comprehensive PDF reports with explanations, recommendations, and data visualizations for each check.",
+    title: "Health History Tracking",
+    description: "Track all your symptom checks over time. Identify patterns and share comprehensive reports with your doctor.",
+    gradient: "from-success to-emerald-500",
   },
   {
     icon: BarChart3,
     title: "Analytics Dashboard",
-    description: "Visualize your health trends with interactive charts. Monitor symptoms and predictions over time.",
+    description: "Visualize your health trends with interactive charts. Monitor symptoms, predictions, and urgency levels over time.",
+    gradient: "from-purple-500 to-pink-500",
   },
   {
-    icon: Lock,
-    title: "Secure Platform",
-    description: "End-to-end encryption, secure authentication, and regular security audits keep your data safe.",
+    icon: Shield,
+    title: "Privacy & Security",
+    description: "HIPAA compliant with end-to-end encryption. Your health data is never shared and you control your data.",
+    gradient: "from-primary to-accent",
   },
 ];
 
@@ -67,11 +77,11 @@ export const FeaturesSection = () => {
           <span className="text-sm font-medium text-primary mb-4 block">FEATURES</span>
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
             Everything You Need for{" "}
-            <span className="gradient-text">Health Insights</span>
+            <span className="gradient-text">Smarter Health</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            A comprehensive platform designed to help you understand your symptoms 
-            and make informed decisions about your health.
+            A comprehensive AI health platform that goes beyond simple symptom checking. 
+            Get personalized insights, track your health journey, and make informed decisions.
           </p>
         </motion.div>
 
@@ -85,9 +95,12 @@ export const FeaturesSection = () => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="group"
             >
-              <div className="h-full bg-card rounded-2xl p-6 border border-border card-hover">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/20 transition-colors">
-                  <feature.icon className="h-6 w-6 text-primary" />
+              <div className="h-full bg-card rounded-2xl p-6 border border-border card-hover relative overflow-hidden">
+                {/* Gradient background on hover */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
+                
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-5 shadow-md`}>
+                  <feature.icon className="h-6 w-6 text-white" />
                 </div>
                 <h3 className="font-display font-semibold text-lg mb-3">{feature.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">

@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
-import { Activity, Github, Twitter, Linkedin, Mail } from "lucide-react";
+import { Heart, Github, Twitter, Linkedin, Mail } from "lucide-react";
 import { MedicalDisclaimer } from "@/components/MedicalDisclaimer";
 
 const footerLinks = {
   product: [
     { label: "Features", href: "#features" },
     { label: "Pricing", href: "#pricing" },
-    { label: "API", href: "/api" },
-    { label: "Changelog", href: "/changelog" },
+    { label: "API Access", href: "/api-keys" },
+    { label: "Health Hub", href: "/knowledge" },
   ],
   company: [
     { label: "About", href: "/about" },
@@ -37,16 +37,19 @@ export const Footer = () => {
         <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
           {/* Brand */}
           <div className="col-span-2">
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-                <Activity className="h-5 w-5 text-primary-foreground" />
+            <Link to="/" className="flex items-center gap-2.5 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                <Heart className="h-5 w-5 text-white" />
               </div>
-              <span className="font-display font-bold text-xl">
-                Disease<span className="gradient-text">Detector</span>
-              </span>
+              <div className="flex flex-col">
+                <span className="font-display font-bold text-xl">
+                  Aura<span className="gradient-text">Aid</span>
+                </span>
+                <span className="text-[10px] text-muted-foreground -mt-0.5 tracking-wider">HEALTH AI</span>
+              </div>
             </Link>
             <p className="text-sm text-muted-foreground mb-6 max-w-xs">
-              AI-powered health insights to help you understand your symptoms. 
+              Your intelligent healthcare support system—safer, smarter, and personalized. 
               Always consult a healthcare professional.
             </p>
             <div className="flex items-center gap-4">
@@ -59,7 +62,7 @@ export const Footer = () => {
               <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
                 <Linkedin className="h-5 w-5" />
               </a>
-              <a href="mailto:support@diseasedetector.ai" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a href="mailto:support@auraaid.ai" className="text-muted-foreground hover:text-foreground transition-colors">
                 <Mail className="h-5 w-5" />
               </a>
             </div>
@@ -131,8 +134,8 @@ export const Footer = () => {
       <div className="border-t border-border">
         <div className="container-wide py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} Disease Detector. All rights reserved.</p>
-            <p>Made with care for your health</p>
+            <p>© {new Date().getFullYear()} Aura Aid AI. All rights reserved.</p>
+            <p>Made with ❤️ for your health</p>
           </div>
         </div>
       </div>
