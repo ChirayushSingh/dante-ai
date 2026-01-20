@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Activity } from "lucide-react";
+import { Menu, X, Sparkles, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
@@ -19,13 +19,16 @@ export const Navbar = () => {
       <div className="container-wide">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-medium group-hover:shadow-glow transition-shadow duration-300">
-              <Activity className="h-5 w-5 text-primary-foreground" />
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-medium group-hover:shadow-glow transition-shadow duration-300">
+              <Heart className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="font-display font-bold text-xl text-foreground">
-              Disease<span className="gradient-text">Detector</span>
-            </span>
+            <div className="flex flex-col">
+              <span className="font-display font-bold text-xl text-foreground leading-tight">
+                Aura<span className="gradient-text">Aid</span>
+              </span>
+              <span className="text-[10px] text-muted-foreground -mt-0.5 tracking-wider">HEALTH AI</span>
+            </div>
           </Link>
 
           {/* Desktop Nav */}
@@ -49,7 +52,8 @@ export const Navbar = () => {
               </Button>
             </Link>
             <Link to="/auth?mode=signup">
-              <Button variant="hero" size="sm">
+              <Button variant="hero" size="sm" className="gap-2">
+                <Sparkles className="h-4 w-4" />
                 Get Started Free
               </Button>
             </Link>
@@ -92,7 +96,8 @@ export const Navbar = () => {
                   </Button>
                 </Link>
                 <Link to="/auth?mode=signup" className="block">
-                  <Button variant="hero" className="w-full">
+                  <Button variant="hero" className="w-full gap-2">
+                    <Sparkles className="h-4 w-4" />
                     Get Started Free
                   </Button>
                 </Link>
