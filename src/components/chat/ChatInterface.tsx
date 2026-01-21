@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { VoiceInput } from "@/components/dashboard/VoiceInput";
 
 interface Message {
   id: string;
@@ -54,13 +55,17 @@ export function ChatInterface({
     }
   };
 
+  const handleVoiceTranscript = (transcript: string) => {
+    setInput((prev) => prev + transcript);
+  };
+
   return (
     <div className={cn("flex flex-col h-full bg-background rounded-xl border border-border/50", className)}>
       {/* Messages Area */}
       <ScrollArea className="flex-1 p-4" ref={scrollRef}>
         <div className="space-y-4">
           <AnimatePresence mode="popLayout">
-            {messages.map((message, index) => (
+            {messages.map((message) => (
               <motion.div
                 key={message.id}
                 initial={{ opacity: 0, y: 10 }}
@@ -134,16 +139,21 @@ export function ChatInterface({
       {/* Input Area */}
       <div className="p-4 border-t border-border/50">
         <div className="flex gap-2 items-end">
-          <Textarea
-            ref={textareaRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={placeholder}
-            disabled={isLoading}
-            className="min-h-[44px] max-h-32 resize-none rounded-xl"
-            rows={1}
-          />
+          <div className="flex-1 relative">
+            <Textarea
+              ref={textareaRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={placeholder}
+              disabled={isLoading}
+              className="min-h-[44px] max-h-32 resize-none rounded-xl pr-12"
+              rows={1}
+            />
+            <div className="absolute right-2 bottom-2">
+              <VoiceInput onTranscript={handleVoiceTranscript} disabled={isLoading} />
+            </div>
+          </div>
           <Button
             onClick={handleSend}
             disabled={!input.trim() || isLoading}

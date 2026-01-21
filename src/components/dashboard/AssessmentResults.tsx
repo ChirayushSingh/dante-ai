@@ -1,10 +1,12 @@
 import { motion } from "framer-motion";
-import { Activity, AlertCircle, CheckCircle2, ListChecks, RefreshCw } from "lucide-react";
+import { Activity, AlertCircle, CheckCircle2, ListChecks, RefreshCw, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { UrgencyCard } from "./UrgencyBadge";
 import { MedicalDisclaimer } from "@/components/MedicalDisclaimer";
+import { PrivacyBadges } from "./PrivacyBadges";
+import { usePdfReport } from "@/hooks/usePdfReport";
 import { cn } from "@/lib/utils";
 
 interface Prediction {
@@ -40,6 +42,20 @@ const severityBg = {
 };
 
 export function AssessmentResults({ assessment, onNewCheck }: AssessmentResultsProps) {
+  const { generateReport, isGenerating } = usePdfReport();
+
+  const handleDownloadReport = () => {
+    generateReport({
+      date: new Date(),
+      symptoms: [],
+      predictions: assessment.predictions,
+      urgencyLevel: assessment.urgencyLevel,
+      urgencyExplanation: assessment.urgencyExplanation,
+      summary: assessment.summary,
+      recommendations: assessment.recommendations,
+    });
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -143,12 +159,21 @@ export function AssessmentResults({ assessment, onNewCheck }: AssessmentResultsP
       {/* Medical Disclaimer */}
       <MedicalDisclaimer />
 
-      {/* New Check Button */}
-      <div className="flex justify-center">
-        <Button onClick={onNewCheck} variant="outline" className="gap-2">
-          <RefreshCw className="w-4 h-4" />
-          Start New Symptom Check
+      {/* Actions */}
+      <div className="flex flex-col sm:flex-row justify-center gap-3">
+        <Button onClick={handleDownloadReport} variant="outline" className="gap-2" disabled={isGenerating}>
+          <Download className="w-4 h-4" />
+          {isGenerating ? "Generating..." : "Download Report"}
         </Button>
+        <Button onClick={onNewCheck} variant="default" className="gap-2">
+          <RefreshCw className="w-4 h-4" />
+          Start New Check
+        </Button>
+      </div>
+
+      {/* Privacy */}
+      <div className="flex justify-center">
+        <PrivacyBadges />
       </div>
     </motion.div>
   );
