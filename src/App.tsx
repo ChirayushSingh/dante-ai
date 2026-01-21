@@ -13,6 +13,7 @@ import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import HealthChat from "./pages/HealthChat";
 import Analytics from "./pages/Analytics";
+import KnowledgeHub from "./pages/KnowledgeHub";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/dashboard/chat" element={<RequireAuth><HealthChat /></RequireAuth>} />
             <Route path="/dashboard/history" element={<RequireAuth><History /></RequireAuth>} />
             <Route path="/dashboard/analytics" element={<RequireAuth><Analytics /></RequireAuth>} />
+            <Route path="/dashboard/knowledge" element={<RequireAuth><KnowledgeHub /></RequireAuth>} />
             <Route path="/dashboard/profile" element={<RequireAuth><Profile /></RequireAuth>} />
             <Route path="/dashboard/billing" element={<RequireAuth><Billing /></RequireAuth>} />
             <Route path="/dashboard/api-keys" element={<RequireAuth><ApiKeys /></RequireAuth>} />
