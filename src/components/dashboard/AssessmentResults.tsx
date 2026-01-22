@@ -2,8 +2,8 @@ import { motion } from "framer-motion";
 import { Activity, AlertCircle, CheckCircle2, ListChecks, RefreshCw, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { UrgencyCard } from "./UrgencyBadge";
+import { ExplainableResults } from "./ExplainableResults";
 import { MedicalDisclaimer } from "@/components/MedicalDisclaimer";
 import { PrivacyBadges } from "./PrivacyBadges";
 import { usePdfReport } from "@/hooks/usePdfReport";
@@ -83,7 +83,7 @@ export function AssessmentResults({ assessment, onNewCheck }: AssessmentResultsP
         </CardContent>
       </Card>
 
-      {/* Predictions */}
+      {/* Explainable Predictions */}
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-lg">
@@ -91,42 +91,8 @@ export function AssessmentResults({ assessment, onNewCheck }: AssessmentResultsP
             Possible Conditions
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {assessment.predictions.map((prediction, index) => (
-            <motion.div
-              key={prediction.condition}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="border rounded-lg p-4"
-            >
-              <div className="flex items-start justify-between gap-4 mb-3">
-                <div>
-                  <h4 className="font-medium">{prediction.condition}</h4>
-                  <span className={cn(
-                    "text-xs px-2 py-0.5 rounded-full inline-block mt-1",
-                    severityColors[prediction.severity],
-                    severityBg[prediction.severity]
-                  )}>
-                    {prediction.severity.charAt(0).toUpperCase() + prediction.severity.slice(1)} Severity
-                  </span>
-                </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-primary">
-                    {Math.round(prediction.confidence * 100)}%
-                  </div>
-                  <div className="text-xs text-muted-foreground">confidence</div>
-                </div>
-              </div>
-              <Progress
-                value={prediction.confidence * 100}
-                className="h-2 mb-3"
-              />
-              <p className="text-sm text-muted-foreground">
-                {prediction.explanation}
-              </p>
-            </motion.div>
-          ))}
+        <CardContent>
+          <ExplainableResults predictions={assessment.predictions} />
         </CardContent>
       </Card>
 
