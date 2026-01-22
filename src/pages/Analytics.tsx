@@ -15,6 +15,7 @@ import {
 } from "recharts";
 import { format, subDays, startOfDay } from "date-fns";
 import { UrgencyBadge } from "@/components/dashboard/UrgencyBadge";
+import { HealthTimeline } from "@/components/dashboard/HealthTimeline";
 
 const URGENCY_COLORS = {
   self_care: "#10b981",
@@ -335,6 +336,28 @@ export default function Analytics() {
                   No conditions identified yet. Start a symptom check to begin tracking.
                 </div>
               )}
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Health Timeline */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35 }}
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-primary" />
+                Health Timeline
+              </CardTitle>
+              <CardDescription>
+                Visual history of your health events and trends
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <HealthTimeline limit={15} showTrends={true} />
             </CardContent>
           </Card>
         </motion.div>
