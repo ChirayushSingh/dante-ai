@@ -23,19 +23,19 @@ export const CTASection = () => {
           <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-8 backdrop-blur-sm">
             <Heart className="h-8 w-8 text-white" />
           </div>
-          
+
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
             Your Intelligent Healthcare Support System
           </h2>
           <p className="text-lg text-white/80 mb-10 max-w-xl mx-auto">
-            Join thousands who trust Aura Aid AI for personalized health insights. 
+            Join thousands who trust Diagnova AI for personalized health insights.
             Safer, smarter, and designed around you.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to="/dashboard">
-              <Button 
-                size="xl" 
+              <Button
+                size="xl"
                 className="bg-white text-primary hover:bg-white/90 shadow-xl font-semibold group gap-2"
               >
                 <MessageSquare className="h-5 w-5" />
@@ -44,8 +44,8 @@ export const CTASection = () => {
               </Button>
             </Link>
             <Link to="/auth">
-              <Button 
-                size="xl" 
+              <Button
+                size="xl"
                 variant="outline"
                 className="border-white/30 text-white hover:bg-white/10 font-semibold"
               >

@@ -43,13 +43,13 @@ export const Footer = () => {
               </div>
               <div className="flex flex-col">
                 <span className="font-display font-bold text-xl">
-                  Aura<span className="gradient-text">Aid</span>
+                  Diagnova<span className="gradient-text">AI</span>
                 </span>
                 <span className="text-[10px] text-muted-foreground -mt-0.5 tracking-wider">HEALTH AI</span>
               </div>
             </Link>
             <p className="text-sm text-muted-foreground mb-6 max-w-xs">
-              Your intelligent healthcare support system—safer, smarter, and personalized. 
+              Your intelligent healthcare support system—safer, smarter, and personalized.
               Always consult a healthcare professional.
             </p>
             <div className="flex items-center gap-4">
@@ -62,7 +62,7 @@ export const Footer = () => {
               <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
                 <Linkedin className="h-5 w-5" />
               </a>
-              <a href="mailto:support@auraaid.ai" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a href="mailto:support@diagnova.ai" className="text-muted-foreground hover:text-foreground transition-colors">
                 <Mail className="h-5 w-5" />
               </a>
             </div>
@@ -134,7 +134,7 @@ export const Footer = () => {
       <div className="border-t border-border">
         <div className="container-wide py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} Aura Aid AI. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Diagnova AI. All rights reserved.</p>
             <p>Made with ❤️ for your health</p>
           </div>
         </div>

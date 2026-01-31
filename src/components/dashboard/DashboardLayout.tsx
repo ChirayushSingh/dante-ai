@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
+  Activity,
   Heart,
   Stethoscope,
   MessageCircle,
@@ -44,10 +45,10 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-background border-b border-border z-50 flex items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-            <Heart className="h-5 w-5 text-white" />
+            <Activity className="h-5 w-5 text-white" />
           </div>
           <span className="font-display font-bold text-lg">
-            Aura<span className="gradient-text">Aid</span>
+            Diagnova<span className="gradient-text">AI</span>
           </span>
         </Link>
         <Button variant="ghost" size="icon" onClick={() => setMobileOpen(!mobileOpen)}>
@@ -75,12 +76,12 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         <div className="h-20 flex items-center justify-between px-4 border-b border-border">
           <Link to="/" className={cn("flex items-center gap-3", collapsed && "justify-center w-full")}>
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-md">
-              <Heart className="h-5 w-5 text-white" />
+              <Activity className="h-5 w-5 text-white" />
             </div>
             {!collapsed && (
               <div className="flex flex-col">
                 <span className="font-display font-bold text-lg leading-tight">
-                  Aura<span className="gradient-text">Aid</span>
+                  Diagnova<span className="gradient-text">AI</span>
                 </span>
                 <span className="text-[9px] text-muted-foreground -mt-0.5 tracking-wider">HEALTH AI</span>
               </div>

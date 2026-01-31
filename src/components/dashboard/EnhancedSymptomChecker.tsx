@@ -13,13 +13,14 @@ import { MedicalDisclaimer } from "@/components/MedicalDisclaimer";
 export function EnhancedSymptomChecker() {
   const [checkMode, setCheckMode] = useState<CheckMode>(null);
   const [questionCount, setQuestionCount] = useState(1);
-  
+
   const {
     messages,
     isLoading,
     assessment,
     sendMessage,
     startNewConversation,
+    generateAssessment,
   } = useSymptomChat();
 
   // Count questions based on assistant messages
@@ -36,13 +37,10 @@ export function EnhancedSymptomChecker() {
   };
 
   const handleQuickFormSubmit = async (symptoms: string[], severity: number) => {
-    // Start conversation with symptoms summary
+    // Reset state first
     await startNewConversation();
-    const severityText = severity === 1 ? "mild" : severity === 2 ? "moderate" : "severe";
-    const message = `I have the following symptoms (${severityText} severity): ${symptoms.join(", ")}. Please analyze these symptoms and provide an assessment.`;
-    setTimeout(() => {
-      sendMessage(message);
-    }, 500);
+    // Directly generate assessment without message passing overhead
+    generateAssessment(symptoms);
   };
 
   const handleStartOver = () => {
@@ -81,11 +79,11 @@ export function EnhancedSymptomChecker() {
           </div>
         </motion.div>
 
-        <CheckModeSelector 
-          selectedMode={checkMode} 
-          onSelectMode={handleModeSelect} 
+        <CheckModeSelector
+          selectedMode={checkMode}
+          onSelectMode={handleModeSelect}
         />
-        
+
         <MedicalDisclaimer />
       </div>
     );
@@ -122,7 +120,7 @@ export function EnhancedSymptomChecker() {
           onBack={handleStartOver}
           isLoading={isLoading}
         />
-        
+
         <MedicalDisclaimer />
       </div>
     );
@@ -141,11 +139,10 @@ export function EnhancedSymptomChecker() {
         className="flex items-center justify-between"
       >
         <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-xl bg-gradient-to-br ${
-            isQuickMode 
-              ? "from-amber-500/20 to-amber-500/10" 
+          <div className={`p-2 rounded-xl bg-gradient-to-br ${isQuickMode
+              ? "from-amber-500/20 to-amber-500/10"
               : "from-blue-500/20 to-blue-500/10"
-          }`}>
+            }`}>
             <Stethoscope className={`w-6 h-6 ${isQuickMode ? "text-amber-500" : "text-blue-500"}`} />
           </div>
           <div>

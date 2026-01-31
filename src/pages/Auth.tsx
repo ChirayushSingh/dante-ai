@@ -130,17 +130,42 @@ const Auth = () => {
         </div>
       </div>
 
-      <div className="hidden lg:flex flex-1 bg-primary relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-foreground rounded-full blur-3xl" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary-foreground rounded-full blur-3xl" />
+      <div className="hidden lg:flex flex-1 bg-black relative overflow-hidden">
+        {/* Animated Background Mesh */}
+        <div className="absolute inset-0 opacity-40">
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary via-accent to-background opacity-50" />
+          <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary rounded-full blur-[100px] animate-pulse-slowmix" />
+          <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-accent rounded-full blur-[100px] animate-pulse-slowmix delay-1000" />
         </div>
-        <div className="relative z-10 flex flex-col items-center justify-center p-12 text-center">
-          <div className="w-20 h-20 rounded-2xl bg-primary-foreground/10 flex items-center justify-center mb-8">
-            <Activity className="h-10 w-10 text-primary-foreground" />
-          </div>
-          <h2 className="font-display text-3xl font-bold text-primary-foreground mb-4">AI-Powered Health Insights</h2>
-          <p className="text-primary-foreground/80 max-w-md text-lg">Get instant symptom analysis powered by advanced AI with personalized health tracking.</p>
+
+        {/* Glass Content */}
+        <div className="relative z-10 flex flex-col items-center justify-center p-12 text-center h-full bg-white/5 backdrop-blur-sm">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.2, type: "spring" }}
+            className="w-24 h-24 rounded-3xl bg-gradient-to-tr from-primary to-accent flex items-center justify-center mb-8 shadow-2xl shadow-primary/30"
+          >
+            <Activity className="h-12 w-12 text-white" />
+          </motion.div>
+
+          <motion.h2
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="font-display text-4xl font-bold text-white mb-6"
+          >
+            AI-Powered <br /> Health Insights
+          </motion.h2>
+
+          <motion.p
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="text-white/80 max-w-md text-xl leading-relaxed"
+          >
+            Join 50,000+ users trusting Diagnova for instant symptom analysis and personalized care.
+          </motion.p>
         </div>
       </div>
     </div>

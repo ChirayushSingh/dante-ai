@@ -54,35 +54,45 @@ const Index = () => {
         </section>
 
         {/* Features Grid */}
-        <section id="features" className="py-24 bg-muted/50 relative">
-          <div className="container px-4 mx-auto">
+        <section id="features" className="py-24 bg-muted/50 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
+          <div className="container px-4 mx-auto relative z-10">
             <div className="text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
-                Why Choose Diagnova AI?
+              <div className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary font-semibold mb-6 animate-fade-in">
+                ✨ Powerful Capabilities
+              </div>
+              <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-6">
+                Why Choose <span className="gradient-text">Diagnova AI?</span>
               </h2>
               <p className="text-muted-foreground text-lg">
-                Built by experts, powered by data, and designed for you.
+                We combine advanced medical knowledge with state-of-the-art artificial intelligence.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <FeatureCard
-                icon={<Brain className="w-8 h-8 text-primary" />}
+                icon={<Brain className="w-10 h-10 text-white" />}
                 title="Neural Diagnosis"
                 description="Our advanced neural networks analyze symptoms with 99.8% accuracy against global medical databases."
                 delay="0"
+                gradient="from-violet-500 to-purple-500"
+                image="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=2070"
               />
               <FeatureCard
-                icon={<Shield className="w-8 h-8 text-primary" />}
+                icon={<Shield className="w-10 h-10 text-white" />}
                 title="Secure & Private"
                 description="Your health data is encrypted with military-grade security. HIPAA and GDPR compliant protection."
                 delay="100"
+                gradient="from-emerald-500 to-teal-500"
+                image="https://images.unsplash.com/photo-1563206667-5f5ac2204a85?auto=format&fit=crop&q=80&w=2070"
               />
               <FeatureCard
-                icon={<Zap className="w-8 h-8 text-primary" />}
+                icon={<Zap className="w-10 h-10 text-white" />}
                 title="Instant Results"
                 description="Get comprehensive health reports in seconds, not days. Real-time analysis at your fingertips."
                 delay="200"
+                gradient="from-amber-500 to-orange-500"
+                image="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=2070"
               />
             </div>
           </div>
@@ -123,7 +133,10 @@ const Index = () => {
               </div>
 
               <div className="space-y-8 order-1 lg:order-2">
-                <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">
+                <div className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary font-semibold animate-fade-in">
+                  🚀 Simple Process
+                </div>
+                <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">
                   How Diagnova Works
                 </h2>
                 <div className="space-y-8">
@@ -151,19 +164,22 @@ const Index = () => {
         {/* Demo Video Section */}
         <section id="demo" className="py-24 bg-muted/30">
           <div className="container px-4 mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-6">
+            <div className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary font-semibold mb-6 animate-fade-in">
+              🔴 Live Demo
+            </div>
+            <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-6">
               See Diagnova in Action
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-12">
-              Watch how quickly you can get accurate health insights with our intuitive platform.
+              Watch how quickly you can get accurate health insights applied to real-world scenarios.
             </p>
 
-            <div className="relative max-w-4xl mx-auto aspect-video rounded-2xl overflow-hidden shadow-2xl border border-border group cursor-pointer bg-black">
+            <div className="relative max-w-5xl mx-auto aspect-video rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20 group cursor-pointer bg-black">
               <iframe
                 width="100%"
                 height="100%"
-                src="https://www.youtube.com/embed/LXb3EKWsInQ?si=J0yQoM2l2J5-x8a-" // Example healthcare AI video
-                title="Diagnova AI Demo"
+                src="https://www.youtube.com/embed/A8g84d008TE?si=oYqD4F4wQZ4YqQ8_" // Health AI specific video
+                title="Diagnova AI Health Demo"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
                 className="absolute inset-0"
@@ -173,30 +189,42 @@ const Index = () => {
         </section>
 
         {/* Testimonials */}
-        <section id="testimonials" className="py-24 relative overflow-hidden">
+        <section id="testimonials" className="py-24 relative overflow-hidden bg-primary/5">
           <div className="container px-4 mx-auto">
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground text-center mb-16">
-              Loved by Thousands
-            </h2>
+            <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+              <div className="text-left max-w-2xl">
+                <div className="inline-block px-4 py-1.5 rounded-full bg-accent/10 text-accent font-semibold mb-6 animate-fade-in">
+                  💖 Community Love
+                </div>
+                <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">
+                  Trusted by Families <br /> Across India
+                </h2>
+              </div>
+              <Link to="/testimonials">
+                <Button variant="outline" size="lg" className="rounded-full gap-2 hover:bg-primary hover:text-white transition-all">
+                  Read All Stories <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <TestimonialCard
-                quote="Diagnova helped me identify a condition I had been struggling with for months. Truly life-changing technology."
-                author="Sarah J."
-                role="User"
-                avatar="SJ"
+                quote="I was worried about my mother's symptoms. Diagnova helped us understand it might be dehydration, not something worse. Saved us a panic trip to the ER!"
+                author="Priya Sharma"
+                role="Mumbai, India"
+                avatar="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150"
               />
               <TestimonialCard
-                quote="The accuracy and speed are incredible. It feels like having a doctor in your pocket 24/7."
-                author="Michael Chen"
-                role="Medical Student"
-                avatar="MC"
+                quote="The Hindi support and easy to understand reports are a blessing. I use it for my whole family now."
+                author="Rahul Verma"
+                role="Delhi, India"
+                avatar="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150"
               />
               <TestimonialCard
-                quote="The interface is so beautiful and easy to use. I feel much more in control of my family's health."
-                author="Elena Rodriguez"
-                role="Parent"
-                avatar="ER"
+                quote="As a medical student, I'm impressed by the accuracy. It's great for quick reference and suggestions."
+                author="Dr. Ananya Patel"
+                role="Intern, Bangalore"
+                avatar="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=150"
               />
             </div>
           </div>
@@ -206,7 +234,10 @@ const Index = () => {
         <section id="about" className="py-24 bg-muted/50">
           <div className="container px-4 mx-auto">
             <div className="max-w-3xl mx-auto text-center space-y-8">
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">
+              <div className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary font-semibold animate-fade-in">
+                🏥 Our Mission
+              </div>
+              <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">
                 About Diagnova AI
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
@@ -262,18 +293,26 @@ const Index = () => {
   );
 };
 
-const FeatureCard = ({ icon, title, description, delay }: { icon: React.ReactNode, title: string, description: string, delay: string }) => (
+const FeatureCard = ({ icon, title, description, delay, gradient, image }: { icon: React.ReactNode, title: string, description: string, delay: string, gradient?: string, image?: string }) => (
   <div
-    className="glass-card p-8 rounded-2xl card-hover group"
+    className="group relative rounded-3xl overflow-hidden card-hover"
     style={{ animationDelay: `${delay}ms` }}
   >
-    <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-      {icon}
+    {/* Background Image with Overlay */}
+    <div className="absolute inset-0">
+      {image && <img src={image} alt={title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />}
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/20" />
     </div>
-    <h3 className="text-xl font-display font-bold text-foreground mb-3">{title}</h3>
-    <p className="text-muted-foreground leading-relaxed group-hover:text-foreground/80 transition-colors">
-      {description}
-    </p>
+
+    <div className="relative p-8 h-full flex flex-col justify-end">
+      <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${gradient || 'from-primary to-accent'} flex items-center justify-center mb-6 shadow-lg shadow-white/5`}>
+        {icon}
+      </div>
+      <h3 className="text-2xl font-display font-bold text-foreground mb-3">{title}</h3>
+      <p className="text-muted-foreground leading-relaxed text-lg">
+        {description}
+      </p>
+    </div>
   </div>
 );
 
@@ -290,18 +329,24 @@ const StepRow = ({ number, title, description }: { number: string, title: string
 );
 
 const TestimonialCard = ({ quote, author, role, avatar }: { quote: string, author: string, role: string, avatar: string }) => (
-  <div className="glass-card p-8 rounded-2xl">
-    <div className="flex gap-1 text-yellow-400 mb-6">
+  <div className="bg-background/50 backdrop-blur-md p-8 rounded-3xl border border-white/10 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 group relative">
+    <div className="absolute top-8 right-8 text-primary/10 group-hover:text-primary/20 transition-colors">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H15.017C14.4647 8 14.017 8.44772 14.017 9V11C14.017 11.5523 13.5693 12 13.017 12H12.017V5H22.017V15C22.017 18.3137 19.3307 21 16.017 21H14.017ZM5.0166 21L5.0166 18C5.0166 16.8954 5.91203 16 7.0166 16H10.0166C10.5689 16 11.0166 15.5523 11.0166 15V9C11.0166 8.44772 10.5689 8 10.0166 8H6.0166C5.46432 8 5.0166 8.44772 5.0166 9V11C5.0166 11.5523 4.56889 12 4.0166 12H3.0166V5H13.0166V15C13.0166 18.3137 10.3303 21 7.0166 21H5.0166Z" />
+      </svg>
+    </div>
+
+    <div className="flex gap-1 text-amber-400 mb-6">
       {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-5 h-5 fill-current" />)}
     </div>
-    <p className="text-foreground/80 text-lg mb-8 italic leading-relaxed">"{quote}"</p>
+    <p className="text-foreground/80 text-lg mb-8 italic leading-relaxed relative z-10">"{quote}"</p>
     <div className="flex items-center gap-4">
-      <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-white font-bold text-lg">
-        {avatar}
+      <div className="w-14 h-14 rounded-full border-2 border-primary/20 p-1">
+        <img src={avatar} alt={author} className="w-full h-full rounded-full object-cover" />
       </div>
       <div>
-        <div className="font-bold text-foreground">{author}</div>
-        <div className="text-sm text-primary">{role}</div>
+        <div className="font-bold text-foreground text-lg">{author}</div>
+        <div className="text-sm text-primary font-medium">{role}</div>
       </div>
     </div>
   </div>

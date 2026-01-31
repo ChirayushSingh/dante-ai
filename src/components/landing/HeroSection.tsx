@@ -10,7 +10,7 @@ export const HeroSection = () => {
       {/* Background */}
       <div className="absolute inset-0 bg-[var(--gradient-hero)]" />
       <div className="absolute inset-0" style={{ background: "var(--gradient-glow)" }} />
-      
+
       {/* Animated background elements */}
       <div className="absolute top-1/4 left-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl animate-float" />
       <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-float" style={{ animationDelay: "2s" }} />
@@ -47,7 +47,7 @@ export const HeroSection = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10"
           >
-            Have a natural conversation about your symptoms. Our AI asks intelligent follow-up questions, 
+            Have a natural conversation about your symptoms. Our AI asks intelligent follow-up questions,
             provides risk triage, and gives personalized health insights—all while keeping you informed.
           </motion.p>
 
@@ -121,7 +121,7 @@ export const HeroSection = () => {
                   <div className="w-3 h-3 rounded-full bg-success/50" />
                   <span className="ml-2 text-xs text-muted-foreground flex items-center gap-2">
                     <Heart className="h-3 w-3 text-primary" />
-                    Aura Aid AI - Symptom Interview
+                    Diagnova AI - Symptom Interview
                   </span>
                 </div>
                 <div className="p-6 bg-[var(--gradient-card)] space-y-4">
@@ -134,14 +134,14 @@ export const HeroSection = () => {
                       <p className="text-sm">Hello! I'm here to help you understand your symptoms. Can you tell me what's bothering you today?</p>
                     </div>
                   </div>
-                  
+
                   {/* User Message */}
                   <div className="flex gap-3 justify-end">
                     <div className="bg-primary text-primary-foreground rounded-2xl rounded-tr-sm px-4 py-3 max-w-md">
                       <p className="text-sm">I've had a persistent headache for 2 days and feeling tired</p>
                     </div>
                   </div>
-                  
+
                   {/* AI Follow-up */}
                   <div className="flex gap-3">
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center flex-shrink-0">

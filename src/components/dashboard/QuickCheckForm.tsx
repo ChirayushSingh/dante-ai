@@ -1,21 +1,23 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { 
-  Search, 
-  X, 
-  ArrowRight, 
+import {
+  Search,
+  X,
+  ArrowRight,
   Loader2,
   ThermometerSun,
   Brain,
   Heart,
   Bone,
   Eye,
-  Ear
+  Ear,
+  Box
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { InteractiveBodyMap } from "./InteractiveBodyMap";
 
 interface QuickCheckFormProps {
   onSubmit: (symptoms: string[], severity: number) => void;
@@ -68,6 +70,7 @@ export function QuickCheckForm({ onSubmit, onBack, isLoading }: QuickCheckFormPr
   const [severity, setSeverity] = useState<number>(2);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState(symptomCategories[0].id);
+  const [viewMode, setViewMode] = useState<"list" | "3d">("list");
 
   const toggleSymptom = (symptom: string) => {
     setSelectedSymptoms(prev =>
@@ -115,12 +118,36 @@ export function QuickCheckForm({ onSubmit, onBack, isLoading }: QuickCheckFormPr
           animate={{ opacity: 1, x: 0 }}
           className="space-y-6"
         >
-          {/* Header */}
-          <div>
-            <h3 className="font-semibold text-lg mb-1">Select your symptoms</h3>
-            <p className="text-sm text-muted-foreground">
-              Choose all that apply ({selectedSymptoms.length} selected)
-            </p>
+          {/* Header & View Toggle */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold text-lg mb-1">Select your symptoms</h3>
+              <p className="text-sm text-muted-foreground">
+                Choose all that apply ({selectedSymptoms.length} selected)
+              </p>
+            </div>
+
+            <div className="flex bg-muted p-1 rounded-lg">
+              <button
+                onClick={() => setViewMode("list")}
+                className={cn(
+                  "px-3 py-1.5 rounded-md text-xs font-medium transition-all",
+                  viewMode === "list" ? "bg-background shadow-sm" : "hover:bg-background/50"
+                )}
+              >
+                List
+              </button>
+              <button
+                onClick={() => setViewMode("3d")}
+                className={cn(
+                  "px-3 py-1.5 rounded-md text-xs font-medium transition-all flex items-center gap-1.5",
+                  viewMode === "3d" ? "bg-background shadow-sm text-primary" : "hover:bg-background/50"
+                )}
+              >
+                <Box className="w-3.5 h-3.5" />
+                3D Map
+              </button>
+            </div>
           </div>
 
           {/* Search */}
@@ -133,6 +160,21 @@ export function QuickCheckForm({ onSubmit, onBack, isLoading }: QuickCheckFormPr
               className="pl-10"
             />
           </div>
+
+          {/* 3D Map View */}
+          {viewMode === "3d" && !searchQuery ? (
+            <div className="mb-6">
+              <InteractiveBodyMap onSelectPart={(partId) => {
+                setActiveCategory(partId);
+                // Also switch to list view to show specific symptoms for that part
+                // setViewMode("list"); 
+                // Alternatively, just filter the list below naturally
+              }} />
+              <p className="text-center text-xs text-muted-foreground mt-3">
+                Selected Zone: <span className="font-semibold text-primary capitalize">{symptomCategories.find(c => c.id === activeCategory)?.label}</span>
+              </p>
+            </div>
+          ) : null}
 
           {/* Selected Symptoms */}
           {selectedSymptoms.length > 0 && (
@@ -239,8 +281,8 @@ export function QuickCheckForm({ onSubmit, onBack, isLoading }: QuickCheckFormPr
                             ? level.value === 1
                               ? "bg-emerald-500"
                               : level.value === 2
-                              ? "bg-amber-500"
-                              : "bg-red-500"
+                                ? "bg-amber-500"
+                                : "bg-red-500"
                             : "bg-muted"
                         )}
                       />

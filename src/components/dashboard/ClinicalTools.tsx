@@ -84,9 +84,9 @@ interface RedFlagDetectorProps {
 
 export function RedFlagDetector({ userSymptoms, onEmergencyAction }: RedFlagDetectorProps) {
   const normalizedSymptoms = userSymptoms.map(s => s.toLowerCase());
-  
+
   const detectedFlags = redFlagPatterns.map(pattern => {
-    const matchedSymptoms = pattern.symptoms.filter(s => 
+    const matchedSymptoms = pattern.symptoms.filter(s =>
       normalizedSymptoms.some(us => us.includes(s) || s.includes(us))
     );
     return {
@@ -129,18 +129,18 @@ export function RedFlagDetector({ userSymptoms, onEmergencyAction }: RedFlagDete
               </div>
             </div>
           ))}
-          
+
           <div className="flex flex-col sm:flex-row gap-3 mt-4">
-            <Button 
-              variant="destructive" 
+            <Button
+              variant="destructive"
               className="flex-1 gap-2"
               onClick={() => window.location.href = "tel:911"}
             >
               <Phone className="w-4 h-4" />
               Call 911
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="flex-1 gap-2 border-destructive text-destructive hover:bg-destructive/10"
               onClick={onEmergencyAction}
             >
@@ -175,7 +175,7 @@ export function TestRecommendations({ symptoms, predictions }: TestRecommendatio
   const getRecommendations = (): TestRecommendation[] => {
     const recommendations: TestRecommendation[] = [];
     const symptomLower = symptoms.map(s => s.toLowerCase()).join(" ");
-    
+
     // Fever-related tests
     if (symptomLower.includes("fever") || symptomLower.includes("temperature")) {
       recommendations.push({
@@ -186,7 +186,7 @@ export function TestRecommendations({ symptoms, predictions }: TestRecommendatio
         timeframe: "Within 24-48 hours",
       });
     }
-    
+
     // Fatigue-related tests
     if (symptomLower.includes("fatigue") || symptomLower.includes("tired") || symptomLower.includes("weakness")) {
       recommendations.push({
@@ -204,7 +204,7 @@ export function TestRecommendations({ symptoms, predictions }: TestRecommendatio
         timeframe: "Within 1 week",
       });
     }
-    
+
     // Chest symptoms
     if (symptomLower.includes("chest") || symptomLower.includes("heart") || symptomLower.includes("breath")) {
       recommendations.push({
@@ -222,7 +222,7 @@ export function TestRecommendations({ symptoms, predictions }: TestRecommendatio
         timeframe: "Within 24-48 hours",
       });
     }
-    
+
     // Digestive symptoms
     if (symptomLower.includes("stomach") || symptomLower.includes("nausea") || symptomLower.includes("abdominal")) {
       recommendations.push({
@@ -233,7 +233,7 @@ export function TestRecommendations({ symptoms, predictions }: TestRecommendatio
         timeframe: "Within 3-5 days",
       });
     }
-    
+
     // Blood pressure check for headaches, dizziness
     if (symptomLower.includes("headache") || symptomLower.includes("dizzy") || symptomLower.includes("vision")) {
       recommendations.push({
@@ -244,7 +244,7 @@ export function TestRecommendations({ symptoms, predictions }: TestRecommendatio
         timeframe: "Immediately",
       });
     }
-    
+
     // Default if no specific recommendations
     if (recommendations.length === 0) {
       recommendations.push({
@@ -255,7 +255,7 @@ export function TestRecommendations({ symptoms, predictions }: TestRecommendatio
         timeframe: "At next routine visit",
       });
     }
-    
+
     return recommendations;
   };
 
@@ -269,7 +269,7 @@ export function TestRecommendations({ symptoms, predictions }: TestRecommendatio
 
   return (
     <Card>
-      <CardHeader 
+      <CardHeader
         className="cursor-pointer"
         onClick={() => setExpanded(!expanded)}
       >
@@ -286,7 +286,7 @@ export function TestRecommendations({ symptoms, predictions }: TestRecommendatio
           )}
         </div>
       </CardHeader>
-      
+
       <AnimatePresence>
         {expanded && (
           <motion.div
@@ -300,7 +300,7 @@ export function TestRecommendations({ symptoms, predictions }: TestRecommendatio
                 {recommendations.map((rec, i) => {
                   const Icon = typeIcons[rec.type];
                   return (
-                    <div 
+                    <div
                       key={i}
                       className="p-3 rounded-lg border bg-card"
                     >
@@ -334,9 +334,9 @@ export function TestRecommendations({ symptoms, predictions }: TestRecommendatio
                   );
                 })}
               </div>
-              
+
               <p className="text-xs text-muted-foreground mt-4 italic">
-                * These are AI-suggested tests for discussion with your healthcare provider. 
+                * These are AI-suggested tests for discussion with your healthcare provider.
                 Your doctor will determine which tests are actually needed.
               </p>
             </CardContent>
@@ -361,19 +361,19 @@ interface SOAPNotesProps {
   };
 }
 
-export function SOAPNotesGenerator({ 
-  symptoms, 
-  predictions, 
+export function SOAPNotesGenerator({
+  symptoms,
+  predictions,
   recommendations,
   urgencyLevel,
-  patientContext 
+  patientContext
 }: SOAPNotesProps) {
   const [expanded, setExpanded] = useState(false);
 
   const generateSOAPNotes = () => {
     const date = new Date().toLocaleDateString();
     const time = new Date().toLocaleTimeString();
-    
+
     // Subjective
     const subjective = `
 Patient reports: ${symptoms.slice(0, 3).join("; ")}.
@@ -391,12 +391,12 @@ Urgency classification: ${urgencyLevel?.replace("_", " ").toUpperCase() || "Not 
     `.trim();
 
     // Assessment
-    const assessment = predictions.slice(0, 3).map((p, i) => 
+    const assessment = predictions.slice(0, 3).map((p, i) =>
       `${i + 1}. ${p.condition} (${Math.round(p.confidence * 100)}% confidence) - ${p.severity} severity`
     ).join("\n");
 
     // Plan
-    const plan = recommendations.slice(0, 5).map((r, i) => 
+    const plan = recommendations.slice(0, 5).map((r, i) =>
       `${i + 1}. ${r}`
     ).join("\n");
 
@@ -423,16 +423,16 @@ PLAN:
 ${notes.plan}
 
 ---
-Generated by Aura Aid AI - For clinical review only
+Generated by Diagnova AI - For clinical review only
     `.trim();
-    
+
     navigator.clipboard.writeText(fullNotes);
     toast.success("SOAP notes copied to clipboard");
   };
 
   return (
     <Card>
-      <CardHeader 
+      <CardHeader
         className="cursor-pointer"
         onClick={() => setExpanded(!expanded)}
       >
@@ -451,7 +451,7 @@ Generated by Aura Aid AI - For clinical review only
           </div>
         </div>
       </CardHeader>
-      
+
       <AnimatePresence>
         {expanded && (
           <motion.div
@@ -468,9 +468,9 @@ Generated by Aura Aid AI - For clinical review only
                   {notes.subjective}
                 </p>
               </div>
-              
+
               <Separator />
-              
+
               {/* Objective */}
               <div>
                 <h4 className="font-semibold text-sm text-primary mb-2">O - Objective</h4>
@@ -478,9 +478,9 @@ Generated by Aura Aid AI - For clinical review only
                   {notes.objective}
                 </p>
               </div>
-              
+
               <Separator />
-              
+
               {/* Assessment */}
               <div>
                 <h4 className="font-semibold text-sm text-primary mb-2">A - Assessment</h4>
@@ -488,9 +488,9 @@ Generated by Aura Aid AI - For clinical review only
                   {notes.assessment || "No predictions available"}
                 </p>
               </div>
-              
+
               <Separator />
-              
+
               {/* Plan */}
               <div>
                 <h4 className="font-semibold text-sm text-primary mb-2">P - Plan</h4>
@@ -498,12 +498,12 @@ Generated by Aura Aid AI - For clinical review only
                   {notes.plan || "No recommendations available"}
                 </p>
               </div>
-              
+
               {/* Actions */}
               <div className="flex gap-3 pt-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   className="gap-2"
                   onClick={copyToClipboard}
                 >
@@ -511,9 +511,9 @@ Generated by Aura Aid AI - For clinical review only
                   Copy Notes
                 </Button>
               </div>
-              
+
               <p className="text-xs text-muted-foreground italic">
-                * These notes are AI-generated and should be reviewed by a healthcare professional 
+                * These notes are AI-generated and should be reviewed by a healthcare professional
                 before being added to official medical records.
               </p>
             </CardContent>
@@ -546,7 +546,7 @@ export function DifferentialDiagnosisMatrix({ predictions, symptoms }: Different
 
   return (
     <Card>
-      <CardHeader 
+      <CardHeader
         className="cursor-pointer"
         onClick={() => setExpanded(!expanded)}
       >
@@ -565,7 +565,7 @@ export function DifferentialDiagnosisMatrix({ predictions, symptoms }: Different
           </div>
         </div>
       </CardHeader>
-      
+
       <AnimatePresence>
         {expanded && (
           <motion.div
@@ -593,7 +593,7 @@ export function DifferentialDiagnosisMatrix({ predictions, symptoms }: Different
                       <TableRow key={i}>
                         <TableCell className="font-medium">{pred.condition}</TableCell>
                         <TableCell className="text-center">
-                          <Badge 
+                          <Badge
                             variant={pred.confidence >= 0.7 ? "default" : "secondary"}
                             className="text-xs"
                           >
@@ -601,7 +601,7 @@ export function DifferentialDiagnosisMatrix({ predictions, symptoms }: Different
                           </Badge>
                         </TableCell>
                         {symptomList.map((symptom, j) => {
-                          const hasMatch = pred.influencingSymptoms?.some((s: string) => 
+                          const hasMatch = pred.influencingSymptoms?.some((s: string) =>
                             s.toLowerCase().includes(symptom.toLowerCase()) ||
                             symptom.toLowerCase().includes(s.toLowerCase())
                           );
@@ -620,7 +620,7 @@ export function DifferentialDiagnosisMatrix({ predictions, symptoms }: Different
                   </TableBody>
                 </Table>
               </div>
-              
+
               <p className="text-xs text-muted-foreground mt-4 italic">
                 * This matrix shows symptom-condition correlations. Green checks indicate matching symptoms.
               </p>

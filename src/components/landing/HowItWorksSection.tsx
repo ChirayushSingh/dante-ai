@@ -49,7 +49,7 @@ export const HowItWorksSection = () => {
             <span className="gradient-text">Understand Symptoms</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            Unlike simple symptom checkers, Aura Aid AI has a real conversation with you. 
+            Unlike simple symptom checkers, Diagnova AI has a real conversation with you.
             Get accurate insights through dynamic, personalized assessment.
           </p>
         </motion.div>
@@ -68,18 +68,18 @@ export const HowItWorksSection = () => {
               {index < steps.length - 1 && (
                 <div className="hidden lg:block absolute top-16 left-[60%] w-full h-0.5 bg-gradient-to-r from-border to-transparent" />
               )}
-              
+
               <div className="relative text-center">
                 {/* Step number */}
                 <span className="absolute -top-4 left-1/2 -translate-x-1/2 text-7xl font-bold text-primary/5 font-display">
                   {item.step}
                 </span>
-                
+
                 {/* Icon */}
                 <div className={`relative z-10 w-16 h-16 mx-auto rounded-2xl ${item.color} flex items-center justify-center shadow-lg mb-6`}>
                   <item.icon className="h-7 w-7 text-white" />
                 </div>
-                
+
                 <h3 className="font-display font-semibold text-xl mb-3">{item.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
                   {item.description}
