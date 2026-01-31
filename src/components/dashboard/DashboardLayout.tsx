@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { 
-  Heart, 
-  Stethoscope, 
-  MessageCircle, 
-  History, 
-  BarChart3, 
-  CreditCard, 
-  Key, 
+import {
+  Heart,
+  Stethoscope,
+  MessageCircle,
+  History,
+  BarChart3,
+  CreditCard,
+  Key,
   ChevronLeft,
   User,
   LogOut,
@@ -26,7 +26,6 @@ const navItems = [
   { icon: BarChart3, label: "Analytics", href: "/dashboard/analytics" },
   { icon: User, label: "Profile", href: "/dashboard/profile" },
   { icon: CreditCard, label: "Billing", href: "/dashboard/billing" },
-  { icon: Key, label: "API Keys", href: "/dashboard/api-keys" },
 ];
 
 interface DashboardLayoutProps {
@@ -58,7 +57,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
       {/* Mobile sidebar overlay */}
       {mobileOpen && (
-        <div 
+        <div
           className="lg:hidden fixed inset-0 bg-foreground/20 backdrop-blur-sm z-40"
           onClick={() => setMobileOpen(false)}
         />

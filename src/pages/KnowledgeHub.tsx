@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
-import { 
-  BookOpen, 
-  Search, 
-  Heart, 
-  Brain, 
+import {
+  BookOpen,
+  Search,
+  Heart,
+  Brain,
   Pill,
   Activity,
   Apple,
@@ -36,6 +36,7 @@ const articles = [
     readTime: "5 min",
     tags: ["headache", "migraine", "tension"],
     verified: true,
+    url: "https://www.mayoclinic.org/symptoms/headache/basics/definition/sym-20050800"
   },
   {
     id: "2",
@@ -45,6 +46,7 @@ const articles = [
     readTime: "4 min",
     tags: ["cold", "flu", "respiratory"],
     verified: true,
+    url: "https://www.cdc.gov/flu/symptoms/coldflu.htm"
   },
   {
     id: "3",
@@ -54,6 +56,7 @@ const articles = [
     readTime: "6 min",
     tags: ["heart", "prevention", "exercise"],
     verified: true,
+    url: "https://www.heart.org/en/healthy-living/healthy-lifestyle/my-life-check--lifes-simple-7"
   },
   {
     id: "4",
@@ -63,6 +66,7 @@ const articles = [
     readTime: "7 min",
     tags: ["stress", "anxiety", "mindfulness"],
     verified: true,
+    url: "https://www.nimh.nih.gov/health/publications/so-stressed-out-fact-sheet"
   },
   {
     id: "5",
@@ -72,6 +76,7 @@ const articles = [
     readTime: "5 min",
     tags: ["sleep", "insomnia", "rest"],
     verified: true,
+    url: "https://www.sleepfoundation.org/sleep-hygiene"
   },
   {
     id: "6",
@@ -81,6 +86,7 @@ const articles = [
     readTime: "6 min",
     tags: ["digestion", "gut health", "nutrition"],
     verified: true,
+    url: "https://www.niddk.nih.gov/health-information/digestive-diseases"
   },
   {
     id: "7",
@@ -90,6 +96,7 @@ const articles = [
     readTime: "5 min",
     tags: ["immune", "vitamins", "nutrition"],
     verified: true,
+    url: "https://www.health.harvard.edu/staying-healthy/how-to-boost-your-immune-system"
   },
   {
     id: "8",
@@ -99,6 +106,7 @@ const articles = [
     readTime: "6 min",
     tags: ["depression", "mental health", "therapy"],
     verified: true,
+    url: "https://www.nimh.nih.gov/health/topics/depression"
   },
 ];
 
@@ -107,13 +115,13 @@ const KnowledgeHub = () => {
   const [activeCategory, setActiveCategory] = useState("all");
 
   const filteredArticles = articles.filter((article) => {
-    const matchesSearch = 
+    const matchesSearch =
       article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       article.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
       article.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    
+
     const matchesCategory = activeCategory === "all" || article.category === activeCategory;
-    
+
     return matchesSearch && matchesCategory;
   });
 
@@ -132,7 +140,7 @@ const KnowledgeHub = () => {
           </div>
           <h1 className="font-display text-3xl font-bold mb-3">Health Knowledge Hub</h1>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            AI-curated health articles from verified medical sources. Learn about symptoms, 
+            AI-curated health articles from verified medical sources. Learn about symptoms,
             conditions, prevention, and healthy living.
           </p>
         </motion.div>
@@ -164,11 +172,10 @@ const KnowledgeHub = () => {
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                activeCategory === cat.id
-                  ? "bg-primary text-primary-foreground shadow-md"
-                  : "bg-card border border-border text-muted-foreground hover:bg-muted"
-              }`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${activeCategory === cat.id
+                ? "bg-primary text-primary-foreground shadow-md"
+                : "bg-card border border-border text-muted-foreground hover:bg-muted"
+                }`}
             >
               <cat.icon className="h-4 w-4" />
               {cat.label}
@@ -184,12 +191,15 @@ const KnowledgeHub = () => {
           className="grid md:grid-cols-2 gap-6"
         >
           {filteredArticles.map((article, index) => (
-            <motion.article
+            <motion.a
               key={article.id}
+              href={article.url}
+              target="_blank"
+              rel="noopener noreferrer"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.05 }}
-              className="bg-card rounded-xl border border-border p-6 shadow-sm hover:shadow-md transition-all cursor-pointer group"
+              className="bg-card rounded-xl border border-border p-6 shadow-sm hover:shadow-md transition-all cursor-pointer group block"
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
@@ -201,16 +211,16 @@ const KnowledgeHub = () => {
                   )}
                   <span className="text-xs text-muted-foreground">{article.readTime} read</span>
                 </div>
-                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-all opacity-0 group-hover:opacity-100" />
               </div>
-              
+
               <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">
                 {article.title}
               </h3>
               <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
                 {article.excerpt}
               </p>
-              
+
               <div className="flex flex-wrap gap-2">
                 {article.tags.map((tag) => (
                   <Badge key={tag} variant="secondary" className="text-xs">
@@ -218,7 +228,7 @@ const KnowledgeHub = () => {
                   </Badge>
                 ))}
               </div>
-            </motion.article>
+            </motion.a>
           ))}
         </motion.div>
 
@@ -237,7 +247,7 @@ const KnowledgeHub = () => {
           className="bg-muted/50 rounded-xl p-4 text-center"
         >
           <p className="text-sm text-muted-foreground">
-            📚 All content is reviewed by medical professionals and sourced from verified health organizations. 
+            📚 All content is reviewed by medical professionals and sourced from verified health organizations.
             This information is educational and should not replace professional medical advice.
           </p>
         </motion.div>

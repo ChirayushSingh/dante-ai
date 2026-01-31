@@ -14,7 +14,7 @@ const Auth = () => {
   const navigate = useNavigate();
   const { signIn, signUp } = useAuth();
   const isSignup = searchParams.get("mode") === "signup";
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -58,11 +58,11 @@ const Auth = () => {
           </Link>
 
           <Link to="/" className="flex items-center gap-2 mb-8">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-medium">
-              <Activity className="h-5 w-5 text-primary-foreground" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/20">
+              <Activity className="h-6 w-6 text-white" />
             </div>
-            <span className="font-display font-bold text-xl">
-              Disease<span className="gradient-text">Detector</span>
+            <span className="font-display font-bold text-2xl tracking-tight">
+              Diagnova<span className="text-primary">AI</span>
             </span>
           </Link>
 
