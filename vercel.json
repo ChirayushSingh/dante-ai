@@ -1,0 +1,8 @@
+{
+  "buildCommand": "npm ci --prefer-offline --no-audit --legacy-peer-deps && npm run build",
+  "installCommand": "npm ci --prefer-offline --no-audit --legacy-peer-deps",
+  "outputDirectory": "dist",
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
