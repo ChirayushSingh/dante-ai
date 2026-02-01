@@ -84,8 +84,7 @@ export function useSymptomChat() {
           if (!error && data) {
             setConversationId(data.id);
           }
-        })
-        .catch(() => console.warn("Simulation: Skipped conversation creation"));
+        }, () => console.warn("Simulation: Skipped conversation creation"));
     }
 
     const welcomeMessage: Message = {
@@ -112,11 +111,11 @@ export function useSymptomChat() {
 
     if (conversationId) {
       // Best effort save - unawaited to prevent blocking
-      supabase.from("messages").insert({
+      void supabase.from("messages").insert({
         conversation_id: conversationId,
         role: "user",
         content: content.trim(),
-      }).catch(() => { });
+      }).then(() => { }, () => { });
     }
 
     try {

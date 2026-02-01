@@ -1,0 +1,41 @@
+/* Feature Card Animation Delay */
+.feature-card-animate[data-delay="0"] {
+  animation-delay: 0ms;
+}
+
+.feature-card-animate[data-delay="100"] {
+  animation-delay: 100ms;
+}
+
+.feature-card-animate[data-delay="200"] {
+  animation-delay: 200ms;
+}
+
+.feature-card-animate[data-delay="300"] {
+  animation-delay: 300ms;
+}
+
+.feature-card-animate[data-delay="400"] {
+  animation-delay: 400ms;
+}
+
+.feature-card-animate[data-delay="500"] {
+  animation-delay: 500ms;
+}
+
+.feature-card-animate[data-delay="600"] {
+  animation-delay: 600ms;
+}
+
+.feature-card-animate[data-delay="700"] {
+  animation-delay: 700ms;
+}
+
+.feature-card-animate[data-delay="800"] {
+  animation-delay: 800ms;
+}
+
+.feature-card-animate[data-delay="900"] {
+  animation-delay: 900ms;
+}
+

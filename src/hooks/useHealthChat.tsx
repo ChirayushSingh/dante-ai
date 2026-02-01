@@ -79,11 +79,11 @@ export function useHealthChat() {
     try {
       // 1. Try to save to DB (Best Effort)
       if (conversationId) {
-        await supabase.from("messages").insert({
+        supabase.from("messages").insert({
           conversation_id: conversationId,
           role: "user",
           content: content.trim(),
-        }).catch(err => console.warn("Failed to save message", err));
+        }).then().catch(err => console.warn("Failed to save message", err));
       }
 
       // 2. Try Real Backend First
@@ -161,7 +161,7 @@ export function useHealthChat() {
           conversation_id: conversationId,
           role: "assistant",
           content: simulatedResponse,
-        }).catch(e => console.warn("Failed to save simulated msg", e));
+        }).then().catch(e => console.warn("Failed to save simulated msg", e));
       }
     } finally {
       setIsLoading(false);

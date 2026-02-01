@@ -1,0 +1,40 @@
+{
+  "common": {
+    "welcome": "Willkommen bei Aura Health",
+    "login": "Anmelden",
+    "logout": "Abmelden",
+    "signup": "Registrieren",
+    "profile": "Profil",
+    "settings": "Einstellungen",
+    "home": "Startseite",
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "language": "Sprache"
+  },
+  "health": {
+    "symptoms": "Symptome",
+    "assessment": "Gesundheitsbewertung",
+    "consultation": "Sprachkonsultation",
+    "bodyMap": "Körperkarte",
+    "vitals": "Vitalzeichen",
+    "chatbot": "Gesundheits-Chatbot",
+    "doctor": "Ärzte-Portal",
+    "appointment": "Termin buchen",
+    "medical_history": "Krankengeschichte",
+    "prescriptions": "Rezepte"
+  },
+  "dashboard": {
+    "overview": "Übersicht",
+    "analytics": "Analytik",
+    "reports": "Berichte",
+    "export": "Daten exportieren",
+    "timeline": "Gesundheitsverlauf"
+  },
+  "messages": {
+    "success": "Operation erfolgreich",
+    "error": "Ein Fehler ist aufgetreten",
+    "loading": "Wird geladen...",
+    "processing": "Wird verarbeitet...",
+    "saving": "Wird gespeichert..."
+  }
+}

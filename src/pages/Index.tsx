@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import "./index.css";
 
 const Index = () => {
   return (
@@ -76,7 +77,6 @@ const Index = () => {
                 description="Our advanced neural networks analyze symptoms with 99.8% accuracy against global medical databases."
                 delay="0"
                 gradient="from-violet-500 to-purple-500"
-                image="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=2070"
               />
               <FeatureCard
                 icon={<Shield className="w-10 h-10 text-white" />}
@@ -84,7 +84,6 @@ const Index = () => {
                 description="Your health data is encrypted with military-grade security. HIPAA and GDPR compliant protection."
                 delay="100"
                 gradient="from-emerald-500 to-teal-500"
-                image="https://images.unsplash.com/photo-1563206667-5f5ac2204a85?auto=format&fit=crop&q=80&w=2070"
               />
               <FeatureCard
                 icon={<Zap className="w-10 h-10 text-white" />}
@@ -92,7 +91,6 @@ const Index = () => {
                 description="Get comprehensive health reports in seconds, not days. Real-time analysis at your fingertips."
                 delay="200"
                 gradient="from-amber-500 to-orange-500"
-                image="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=2070"
               />
             </div>
           </div>
@@ -178,7 +176,7 @@ const Index = () => {
               <iframe
                 width="100%"
                 height="100%"
-                src="https://www.youtube.com/embed/A8g84d008TE?si=oYqD4F4wQZ4YqQ8_" // Health AI specific video
+                src="https://www.youtube.com/embed/IcgaNYJwIac?autoplay=1&mute=0"
                 title="Diagnova AI Health Demo"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
@@ -295,14 +293,15 @@ const Index = () => {
 
 const FeatureCard = ({ icon, title, description, delay, gradient, image }: { icon: React.ReactNode, title: string, description: string, delay: string, gradient?: string, image?: string }) => (
   <div
-    className="group relative rounded-3xl overflow-hidden card-hover"
-    style={{ animationDelay: `${delay}ms` }}
+    className="group relative rounded-3xl overflow-hidden card-hover feature-card-animate"
+    data-delay={delay}
   >
-    {/* Background Image with Overlay */}
-    <div className="absolute inset-0">
-      {image && <img src={image} alt={title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />}
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/20" />
-    </div>
+    {/* Gradient Background */}
+    <div className="absolute inset-0 bg-gradient-to-br from-background to-background/50" />
+    <div className={`absolute inset-0 bg-gradient-to-br ${gradient || 'from-primary to-accent'} opacity-10 group-hover:opacity-20 transition-opacity duration-500`} />
+    
+    {/* Animated Gradient Overlay */}
+    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
 
     <div className="relative p-8 h-full flex flex-col justify-end">
       <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${gradient || 'from-primary to-accent'} flex items-center justify-center mb-6 shadow-lg shadow-white/5`}>
@@ -341,8 +340,15 @@ const TestimonialCard = ({ quote, author, role, avatar }: { quote: string, autho
     </div>
     <p className="text-foreground/80 text-lg mb-8 italic leading-relaxed relative z-10">"{quote}"</p>
     <div className="flex items-center gap-4">
-      <div className="w-14 h-14 rounded-full border-2 border-primary/20 p-1">
-        <img src={avatar} alt={author} className="w-full h-full rounded-full object-cover" />
+      <div className="w-14 h-14 rounded-full border-2 border-primary/20 p-1 flex-shrink-0">
+        <img 
+          src={avatar} 
+          alt={author} 
+          className="w-full h-full rounded-full object-cover" 
+          onError={(e) => {
+            e.currentTarget.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${author}`;
+          }}
+        />
       </div>
       <div>
         <div className="font-bold text-foreground text-lg">{author}</div>

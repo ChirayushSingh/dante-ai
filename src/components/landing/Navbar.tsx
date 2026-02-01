@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Sparkles, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 const navLinks = [
   { href: "#features", label: "Features" },
@@ -46,6 +47,7 @@ export const Navbar = () => {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
+            <LanguageSwitcher />
             <Link to="/auth">
               <Button variant="ghost" size="sm">
                 Sign In

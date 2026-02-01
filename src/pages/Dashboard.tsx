@@ -3,9 +3,15 @@ import { EnhancedSymptomChecker } from "@/components/dashboard/EnhancedSymptomCh
 import { EmergencyMode } from "@/components/dashboard/EmergencyMode";
 import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
 import { useOnboarding } from "@/hooks/useOnboarding";
+import { VoiceConsultation } from "@/components/dashboard/VoiceConsultation";
+import { InteractiveBodyMap } from "@/components/dashboard/BodyMap3D";
+import { SmartVitalsDashboard } from "@/components/dashboard/SmartVitalsDashboard";
+import { DoctorPortal } from "@/components/dashboard/DoctorPortal";
+import { useState } from "react";
 
 const Dashboard = () => {
   const { needsOnboarding, isChecking, completeOnboarding } = useOnboarding();
+  const [selectedBodyAreas, setSelectedBodyAreas] = useState<string[]>([]);
 
   // Show loading while checking onboarding status
   if (isChecking) {
@@ -42,6 +48,17 @@ const Dashboard = () => {
       <div className="grid gap-6">
         <EnhancedSymptomChecker />
         <EmergencyMode />
+        <VoiceConsultation />
+        <InteractiveBodyMap 
+          highlightedAreas={selectedBodyAreas}
+          onAreaClick={(area) => {
+            setSelectedBodyAreas(prev => 
+              prev.includes(area) ? prev.filter(a => a !== area) : [...prev, area]
+            );
+          }}
+        />
+        <SmartVitalsDashboard />
+        <DoctorPortal />
       </div>
     </DashboardLayout>
   );

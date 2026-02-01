@@ -1,0 +1,40 @@
+{
+  "common": {
+    "welcome": "Welcome to Aura Health",
+    "login": "Login",
+    "logout": "Logout",
+    "signup": "Sign Up",
+    "profile": "Profile",
+    "settings": "Settings",
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact",
+    "language": "Language"
+  },
+  "health": {
+    "symptoms": "Symptoms",
+    "assessment": "Health Assessment",
+    "consultation": "Voice Consultation",
+    "bodyMap": "Body Map",
+    "vitals": "Health Vitals",
+    "chatbot": "Health Chatbot",
+    "doctor": "Doctor Portal",
+    "appointment": "Book Appointment",
+    "medical_history": "Medical History",
+    "prescriptions": "Prescriptions"
+  },
+  "dashboard": {
+    "overview": "Overview",
+    "analytics": "Analytics",
+    "reports": "Reports",
+    "export": "Export Data",
+    "timeline": "Health Timeline"
+  },
+  "messages": {
+    "success": "Operation successful",
+    "error": "An error occurred",
+    "loading": "Loading...",
+    "processing": "Processing...",
+    "saving": "Saving..."
+  }
+}
