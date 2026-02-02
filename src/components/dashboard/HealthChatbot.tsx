@@ -22,6 +22,8 @@ export function HealthChatbot() {
     }
   }, []);
 
+  const showEmergency = messages.some(m => m.role === "user" && RED_FLAG_KEYWORDS.some(k => m.content.toLowerCase().includes(k)));
+
   return (
     <div className="space-y-4">
       {/* Header */}
@@ -30,6 +32,20 @@ export function HealthChatbot() {
         animate={{ opacity: 1, y: 0 }}
         className="flex items-center justify-between"
       >
+        {/* Emergency banner */}
+      </motion.div>
+
+      {showEmergency && (
+        <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-800 flex items-center justify-between">
+          <div>
+            <strong>Emergency warning:</strong> We detected symptoms that may need urgent care. If you are experiencing severe symptoms, call your local emergency number immediately.
+          </div>
+          <div className="flex items-center gap-2">
+            <a className="text-sm underline" href="tel:911">Call emergency services</a>
+            <Button size="sm" variant="ghost" onClick={() => window.alert('Please call emergency services or seek immediate care.')}>Noted</Button>
+          </div>
+        </div>
+      )}
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20">
             <Bot className="w-6 h-6 text-primary" />
