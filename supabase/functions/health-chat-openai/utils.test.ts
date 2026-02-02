@@ -31,6 +31,14 @@ Deno.test("phone detection handles various international formats", () => {
   }
 });
 
+Deno.test("NLP-based name and place redaction", () => {
+  const text = "Patient name: John Doe. Lives in Seattle.";
+  const scrubbed = scrubPII(text);
+  if (!scrubbed.includes("[REDACTED_NAME]") || !scrubbed.includes("[REDACTED_LOCATION]")) {
+    throw new Error("NLP PII redaction failed: " + scrubbed);
+  }
+});
+
 Deno.test("credit card candidates are validated with Luhn and redacted only if valid", () => {
   const valid = "My card is 4111 1111 1111 1111"; // valid Visa test number
   const invalid = "Number 1234 5678 9012 3456"; // fails Luhn

@@ -1,4 +1,8 @@
 import { parsePhoneNumberFromString } from "https://esm.sh/libphonenumber-js@1.9.51";
+import nlp from "https://esm.sh/compromise@13.12.0";
+import peoplePlugin from "https://esm.sh/compromise-people@0.1.1";
+
+nlp.extend(peoplePlugin);
 
 export const RED_FLAG_KEYWORDS = [
   "chest pain",
@@ -85,6 +89,23 @@ export function scrubPII(text: string) {
     if (sanitized.length >= 13 && sanitized.length <= 19 && luhnCheck(sanitized)) {
       out = out.replace(candidate, "[REDACTED_CREDIT_CARD]");
     }
+  }
+
+  // Use compromise NLP to detect people and places and redact them (best-effort)
+  try {
+    const doc = nlp(out);
+    const people = doc.people().out('array');
+    for (const p of people) {
+      if (p && p.trim()) out = out.replace(p, "[REDACTED_NAME]");
+    }
+
+    // places (cities, addresses) — compromise places tends to find named places
+    const places = doc.places().out('array');
+    for (const pl of places) {
+      if (pl && pl.trim()) out = out.replace(pl, "[REDACTED_LOCATION]");
+    }
+  } catch (e) {
+    console.warn('NLP PII detection failed', e);
   }
 
   // redact passport-like tokens (alphanumeric 6-9 chars) but only if contains a digit (heuristic)
