@@ -1,8 +1,5 @@
 import { parsePhoneNumberFromString } from "https://esm.sh/libphonenumber-js@1.9.51";
-import nlp from "https://esm.sh/compromise@13.12.0";
-import peoplePlugin from "https://esm.sh/compromise-people@0.1.1";
-
-nlp.extend(peoplePlugin);
+import nlp from "https://esm.sh/compromise@13.11.3";
 
 export const RED_FLAG_KEYWORDS = [
   "chest pain",

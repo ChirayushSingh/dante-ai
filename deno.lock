@@ -5,6 +5,8 @@
     "https://deno.land/std@0.168.0/testing/_diff.ts": "a23e7fc2b4d8daa3e158fa06856bedf5334ce2a2831e8bf9e509717f455adb2c",
     "https://deno.land/std@0.168.0/testing/_format.ts": "cd11136e1797791045e639e9f0f4640d5b4166148796cad37e6ef75f7d7f3832",
     "https://deno.land/std@0.168.0/testing/asserts.ts": "51353e79437361d4b02d8e32f3fc83b22231bc8f8d4c841d86fd32b0b0afe940",
+    "https://esm.sh/compromise@13.11.3": "b0abea95c9813a0f75a3447944fd3ae7f5856c2690cfc615a858d9ab52551cd1",
+    "https://esm.sh/compromise@13.11.3/denonext/compromise.mjs": "23038561cea5d3449cb56e47439f7ce9730fe20f0ad925721e1fade2903a09a9",
     "https://esm.sh/libphonenumber-js@1.9.51": "b6f234a51ef3000b670e8edbc0af02788729532035e89bfa74d2dd46677ba271",
     "https://esm.sh/libphonenumber-js@1.9.51/denonext/libphonenumber-js.mjs": "3bbdd0eeeb29378459a214f8a399918947281641130e8dd9cb25fd5fea73e218"
   },
