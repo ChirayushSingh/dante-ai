@@ -16,6 +16,17 @@ This PoC adds:
 - `OPENAI_MODEL` - optional, default `gpt-4o-mini`.
 - `VITE_USE_OPENAI_POC` - if set to `true`, front-end `useHealthChat` will use the OpenAI PoC endpoint by default.
 
+## Supabase deploy secrets (CI)
+
+To enable automatic deployment of the Supabase function from the CI workflow, add the following secrets to your GitHub repository settings:
+
+- `SUPABASE_ACCESS_TOKEN` - a personal access token with permissions to deploy functions. You can create one using the Supabase CLI or dashboard.
+- `SUPABASE_PROJECT_REF` - the project reference (project id) for your Supabase project.
+
+When these secrets are present, the workflow will attempt to log in and deploy `health-chat-openai` on feature branch pushes. If secrets are not configured, the workflow will run tests but skip deployment.
+
+> ⚠️ Security note: store these secrets in GitHub Secrets and **do not** hard-code any credentials in the repository. For production deployments, consider using a CI service account with least privilege and rotate keys regularly.
+
 ## Notes & Safety
 
 - This PoC is NOT HIPAA-compliant. The HIPAA storage behavior is a **mock** and only simulates encrypting and logging an encrypted payload. Do not treat it as real secure storage.

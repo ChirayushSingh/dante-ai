@@ -1,16 +1,19 @@
 import { assertEquals } from "https://deno.land/std@0.168.0/testing/asserts.ts";
 import { scrubPII, detectRedFlags, simulateHipaaEncrypt } from "./utils.ts";
 
-Deno.test("scrubPII redacts emails, phones, and SSN-like strings", () => {
-  const text = "Contact me at john.doe@example.com or +1 (555) 123-4567. My SSN is 123-45-6789.";
+Deno.test("scrubPII redacts emails, phones, SSN, DOB, credit cards, and MRN-like tokens", () => {
+  const text = "Contact: john.doe@example.com / +1 (555) 123-4567 / SSN 123-45-6789 / DOB 02/14/1985 / Card 4111 1111 1111 1111 / MRN: 987654";
   const scrubbed = scrubPII(text);
   console.log(scrubbed);
-  if (scrubbed.includes("john.doe@example.com") || scrubbed.includes("+1 (555) 123-4567") || scrubbed.includes("123-45-6789")) {
+  if (scrubbed.includes("john.doe@example.com") || scrubbed.includes("+1 (555) 123-4567") || scrubbed.includes("123-45-6789") || scrubbed.includes("02/14/1985") || scrubbed.includes("4111 1111 1111 1111") || scrubbed.includes("MRN: 987654")) {
     throw new Error("PII not redacted");
   }
   assertEquals(scrubbed.includes("[REDACTED_EMAIL]"), true);
   assertEquals(scrubbed.includes("[REDACTED_PHONE]"), true);
   assertEquals(scrubbed.includes("[REDACTED_SSN]"), true);
+  assertEquals(scrubbed.includes("[REDACTED_DOB]"), true);
+  assertEquals(scrubbed.includes("[REDACTED_CREDIT_CARD]"), true);
+  assertEquals(scrubbed.includes("[REDACTED_MRN]"), true);
 });
 
 Deno.test("detectRedFlags finds known keywords", () => {
