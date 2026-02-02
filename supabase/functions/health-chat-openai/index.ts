@@ -40,7 +40,7 @@ serve(async (req) => {
 
       // If HIPAA save requested, simulate storing a scrubbed & encrypted record
       if (options?.saveHipaa) {
-        const scrubbed = scrubPII(lastContent);
+        const scrubbed = await scrubPII(lastContent);
         const encrypted = simulateHipaaEncrypt(scrubbed);
         // In a real implementation you'd store `encrypted` securely using your HIPAA-compliant store
         console.log("[HIPAA_MOCK] Stored encrypted record id=mock-", crypto.randomUUID());
@@ -69,7 +69,11 @@ serve(async (req) => {
     }
 
     // PII scrub the content we send to OpenAI as a precaution
-    const sanitizedMessages = messages.map((m: any) => ({ role: m.role, content: scrubPII(String(m.content || "")) }));
+    const sanitizedMessages: any[] = [];
+    for (const m of messages) {
+      const s = await scrubPII(String(m.content || ""));
+      sanitizedMessages.push({ role: m.role, content: s });
+    }
 
     // Optionally simulate HIPAA save (mock)
     if (options?.saveHipaa) {

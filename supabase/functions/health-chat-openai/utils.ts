@@ -36,8 +36,46 @@ export function luhnCheck(cc: string) {
   return sum % 10 === 0;
 }
 
+// Google DLP integration (optional, configured via env vars)
+export async function detectPiiWithGoogleDLP(text: string) {
+  const apiKey = Deno.env.get("GOOGLE_DLP_API_KEY");
+  const projectId = Deno.env.get("GOOGLE_PROJECT_ID");
+  if (!apiKey || !projectId) return [];
+
+  const url = `https://dlp.googleapis.com/v2/projects/${projectId}/content:inspect?key=${apiKey}`;
+  const body = {
+    item: { value: text },
+    inspectConfig: {
+      includeQuote: true,
+      infoTypes: [
+        { name: "PERSON_NAME" },
+        { name: "PHONE_NUMBER" },
+        { name: "EMAIL_ADDRESS" },
+        { name: "CREDIT_CARD_NUMBER" },
+        { name: "US_SOCIAL_SECURITY_NUMBER" },
+        { name: "DATE_OF_BIRTH" },
+      ],
+      minLikelihood: "POSSIBLE",
+    },
+  };
+
+  try {
+    const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    if (!res.ok) {
+      console.warn("Google DLP returned non-ok", res.status);
+      return [];
+    }
+    const data = await res.json();
+    const findings = data?.result?.findings || [];
+    return findings.map((f: any) => ({ quote: f.quote, infoType: f.infoType?.name }));
+  } catch (e) {
+    console.warn("Google DLP call failed", e);
+    return [];
+  }
+}
+
 // Enhanced PII scrubber using libphonenumber-js for better phone detection and Luhn for card validation
-export function scrubPII(text: string) {
+export async function scrubPII(text: string) {
   let out = String(text || "");
 
   // redact emails
