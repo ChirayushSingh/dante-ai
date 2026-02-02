@@ -20,12 +20,19 @@ This PoC adds:
 
 To enable automatic deployment of the Supabase function from the CI workflow, add the following secrets to your GitHub repository settings:
 
-- `SUPABASE_ACCESS_TOKEN` - a personal access token with permissions to deploy functions. You can create one using the Supabase CLI or dashboard.
-- `SUPABASE_PROJECT_REF` - the project reference (project id) for your Supabase project.
+- `SUPABASE_ACCESS_TOKEN` - a personal access token with permissions to deploy functions. You can create one using the Supabase CLI or from the Supabase project dashboard. Steps (short):
+  1. Install the Supabase CLI (https://supabase.com/docs/guides/cli).
+  2. Run `supabase login` and follow the prompt to authenticate.
+  3. Use `supabase projects tokens create --name "ci-deploy"` or create a token in the dashboard and copy the value.
+  4. Save the token as `SUPABASE_ACCESS_TOKEN` in GitHub repository secrets.
+
+- `SUPABASE_PROJECT_REF` - the project reference (project id) for your Supabase project. You can find this in the Supabase dashboard project's settings.
 
 When these secrets are present, the workflow will attempt to log in and deploy `health-chat-openai` on feature branch pushes. If secrets are not configured, the workflow will run tests but skip deployment.
 
 > ⚠️ Security note: store these secrets in GitHub Secrets and **do not** hard-code any credentials in the repository. For production deployments, consider using a CI service account with least privilege and rotate keys regularly.
+
+> Note: If you prefer manual PR deploys, create the PR and trigger a workflow run or run `supabase functions deploy health-chat-openai` locally after linking your project.
 
 ## Notes & Safety
 
