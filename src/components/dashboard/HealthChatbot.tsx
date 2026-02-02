@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { PERSONA_TEMPLATES, EMPATHY_LEVELS, RED_FLAG_KEYWORDS } from "@/lib/healthPrompts";
 import { Bot, RefreshCw, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChatInterface } from "@/components/chat/ChatInterface";
@@ -8,6 +9,11 @@ import { MedicalDisclaimer } from "@/components/MedicalDisclaimer";
 
 export function HealthChatbot() {
   const { messages, isLoading, sendMessage, startNewConversation } = useHealthChat();
+
+  const [persona, setPersona] = useState<"empathic_primary_care" | "concise_clinical" | "pediatric_nurturing">("empathic_primary_care");
+  const [empathy, setEmpathy] = useState<"low" | "medium" | "high">("medium");
+  const [useOpenAIPoC, setUseOpenAIPoC] = useState(false);
+  const [saveHipaa, setSaveHipaa] = useState(false);
 
   // Start conversation on mount
   useEffect(() => {
@@ -33,6 +39,42 @@ export function HealthChatbot() {
             <p className="text-sm text-muted-foreground">
               Ask me anything about health and wellness
             </p>
+
+            {/* Persona & empathy controls */}
+            <div className="mt-2 flex items-center gap-2 text-xs">
+              <label className="text-muted-foreground">Persona:</label>
+              <select
+                value={persona}
+                onChange={(e) => setPersona(e.target.value as any)}
+                className="text-xs rounded border px-2 py-1"
+              >
+                <option value="empathic_primary_care">Empathic Primary Care</option>
+                <option value="concise_clinical">Concise Clinical</option>
+                <option value="pediatric_nurturing">Pediatric (Nurturing)</option>
+              </select>
+
+              <label className="text-muted-foreground">Empathy:</label>
+              <select
+                value={empathy}
+                onChange={(e) => setEmpathy(e.target.value as any)}
+                className="text-xs rounded border px-2 py-1"
+              >
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+
+              <label className="ml-2 text-muted-foreground flex items-center gap-1">
+                <input type="checkbox" checked={useOpenAIPoC} onChange={(e) => setUseOpenAIPoC(e.target.checked)} />
+                Use OpenAI PoC
+              </label>
+
+              <label className="text-muted-foreground flex items-center gap-1">
+                <input type="checkbox" checked={saveHipaa} onChange={(e) => setSaveHipaa(e.target.checked)} />
+                Mock HIPAA Save
+              </label>
+            </div>
+
           </div>
         </div>
         {messages.length > 1 && (
@@ -58,7 +100,7 @@ export function HealthChatbot() {
         <ChatInterface
           messages={messages}
           isLoading={isLoading}
-          onSendMessage={sendMessage}
+          onSendMessage={(content: string) => sendMessage(content, { persona, empathy, useOpenAIPoC, saveHipaa })}
           placeholder="Ask about health topics, medications, conditions..."
         />
       </motion.div>
@@ -87,7 +129,7 @@ export function HealthChatbot() {
               variant="outline"
               size="sm"
               className="text-xs"
-              onClick={() => sendMessage(topic)}
+              onClick={() => sendMessage(topic, { persona, empathy, useOpenAIPoC, saveHipaa })}
               disabled={isLoading}
             >
               {topic}

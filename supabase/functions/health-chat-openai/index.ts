@@ -1,0 +1,142 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+const RED_FLAG_KEYWORDS = [
+  "chest pain",
+  "severe shortness of breath",
+  "difficulty breathing",
+  "heavy bleeding",
+  "unconscious",
+  "passing out",
+  "suicide",
+  "severe allergic",
+  "unable to breathe",
+  "severe abdominal pain",
+];
+
+// Basic PII scrubber - demo only
+function scrubPII(text: string) {
+  // redact emails
+  let out = text.replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, "[REDACTED_EMAIL]");
+  // redact phone numbers
+  out = out.replace(/\+?\d[\d\s\-()]{7,}\d/g, "[REDACTED_PHONE]");
+  // redact SSN-like
+  out = out.replace(/\b\d{3}-\d{2}-\d{4}\b/g, "[REDACTED_SSN]");
+  return out;
+}
+
+function simulateHipaaEncrypt(plaintext: string) {
+  // This simulates encryption for a PoC: DO NOT use for real PHI
+  return btoa(unescape(encodeURIComponent(plaintext)));
+}
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const { messages, options } = await req.json();
+
+    if (!Array.isArray(messages)) {
+      return new Response(JSON.stringify({ error: "Missing messages array" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    const lastUser = messages.slice().reverse().find((m: any) => m.role === "user");
+    const lastContent = (lastUser && String(lastUser.content || "")).toLowerCase();
+
+    const foundRedFlags = RED_FLAG_KEYWORDS.filter(k => lastContent.includes(k));
+
+    const OPENAI_KEY = Deno.env.get("OPENAI_API_KEY");
+    const OPENAI_MODEL = Deno.env.get("OPENAI_MODEL") || "gpt-4o-mini";
+
+    if (!OPENAI_KEY) {
+      throw new Error("OPENAI_API_KEY is not configured");
+    }
+
+    // If red-flag detected, immediately return an urgent, non-diagnostic escalation message
+    if (foundRedFlags.length > 0) {
+      const urgentMsg = `**EMERGENCY DETECTED**\nWe detected urgent symptoms (e.g., ${foundRedFlags.join(", ")}). This may require immediate medical attention. Please call your local emergency services (e.g., 911) or go to the nearest emergency department now.\n\nI am an AI assistant providing educational information, not medical advice.`;
+
+      // If HIPAA save requested, simulate storing a scrubbed & encrypted record
+      if (options?.saveHipaa) {
+        const scrubbed = scrubPII(lastContent);
+        const encrypted = simulateHipaaEncrypt(scrubbed);
+        // In a real implementation you'd store `encrypted` securely using your HIPAA-compliant store
+        console.log("[HIPAA_MOCK] Stored encrypted record id=mock-", crypto.randomUUID());
+      }
+
+      return new Response(new TextEncoder().encode(urgentMsg), {
+        headers: { ...corsHeaders, "Content-Type": "text/plain" },
+      });
+    }
+
+    // Build system prompt based on options.persona + empathy
+    let systemPrompt = "You are a knowledgeable, friendly AI health assistant. Provide evidence-based, general health information. Always include the reminder that you are an AI assistant providing educational information, not medical advice.";
+
+    if (options?.persona === "empathic_primary_care") {
+      systemPrompt = "You are an empathetic primary care physician assistant. Use a warm, supportive tone, ask open-ended questions to clarify symptoms, and provide clear next steps. Do not provide diagnoses or prescriptions.";
+    } else if (options?.persona === "concise_clinical") {
+      systemPrompt = "You are a concise clinical assistant. Ask direct, specific questions focused on diagnostic features. Avoid unnecessary reassuring language. Do not provide diagnoses or prescribe treatments.";
+    } else if (options?.persona === "pediatric_nurturing") {
+      systemPrompt = "You are a pediatric clinician addressing a caregiver, using nurturing and reassuring language. Ask about feeding, activity, and age-appropriate concerns. Do not provide dosing or definitive diagnoses.";
+    }
+
+    if (options?.empathy === "high") {
+      systemPrompt += " Use warm, highly empathic and supportive phrasing.";
+    } else if (options?.empathy === "low") {
+      systemPrompt += " Use a neutral, factual tone.";
+    }
+
+    // PII scrub the content we send to OpenAI as a precaution
+    const sanitizedMessages = messages.map((m: any) => ({ role: m.role, content: scrubPII(String(m.content || "")) }));
+
+    // Optionally simulate HIPAA save (mock)
+    if (options?.saveHipaa) {
+      const toSave = JSON.stringify({ messages: sanitizedMessages, meta: { savedAt: new Date().toISOString(), persona: options?.persona } });
+      const encrypted = simulateHipaaEncrypt(toSave);
+      console.log("[HIPAA_MOCK] encrypted length", encrypted.length);
+      // In a real app, write `encrypted` to a secure store and return an id
+    }
+
+    // Call OpenAI Chat Completions (streaming)
+    const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${OPENAI_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: OPENAI_MODEL,
+        messages: [
+          { role: "system", content: systemPrompt },
+          ...sanitizedMessages,
+        ],
+        temperature: 0.2,
+        stream: true,
+      }),
+    });
+
+    if (!openaiRes.ok) {
+      const errTxt = await openaiRes.text();
+      console.error("OpenAI error", openaiRes.status, errTxt);
+      return new Response(JSON.stringify({ error: "OpenAI API error" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    // Proxy the stream back to client (SSE-like)
+    return new Response(openaiRes.body, {
+      headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+    });
+
+  } catch (error) {
+    console.error("health-chat-openai error:", error);
+    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+});

@@ -28,6 +28,8 @@ export function useHealthChat() {
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
 
+  const CHAT_OPENAI_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/health-chat-openai`;
+
   const startNewConversation = useCallback(async () => {
     // For demo/simulation, we don't block on user auth or DB creation
     setMessages([]);
@@ -63,7 +65,7 @@ export function useHealthChat() {
     setMessages([welcomeMessage]);
   }, [user]);
 
-  const sendMessage = useCallback(async (content: string) => {
+  const sendMessage = useCallback(async (content: string, options?: { persona?: string; empathy?: string; useOpenAIPoC?: boolean; saveHipaa?: boolean }) => {
     if (!content.trim() || isLoading) return;
 
     const userMessage: Message = {
@@ -86,14 +88,18 @@ export function useHealthChat() {
         }).then().catch(err => console.warn("Failed to save message", err));
       }
 
+      // Choose endpoint: OpenAI PoC if requested or forced by env
+      const useOpenAI = options?.useOpenAIPoC || import.meta.env.VITE_USE_OPENAI_POC === "true";
+      const targetUrl = useOpenAI ? CHAT_OPENAI_URL : CHAT_URL;
+
       // 2. Try Real Backend First
-      const response = await fetch(CHAT_URL, {
+      const response = await fetch(targetUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: [...messages, userMessage].map(m => ({ role: m.role, content: m.content })) }),
+        body: JSON.stringify({ messages: [...messages, userMessage].map(m => ({ role: m.role, content: m.content })), options }),
       });
 
       if (!response.ok) {
@@ -125,9 +131,18 @@ export function useHealthChat() {
         assistantContent += chunk;
         setMessages(prev => prev.map(m =>
           m.id === assistantMessageId
-            ? { ...m, content: m.content + chunk } // Append raw for simplicity in this swift fix, real parsing is better but complex
+            ? { ...m, content: m.content + chunk }
             : m
         ));
+      }
+
+      // Optionally persist assistant message
+      if (conversationId) {
+        supabase.from("messages").insert({
+          conversation_id: conversationId,
+          role: "assistant",
+          content: assistantContent,
+        }).then().catch(err => console.warn("Failed to save assistant message", err));
       }
 
     } catch (error) {
