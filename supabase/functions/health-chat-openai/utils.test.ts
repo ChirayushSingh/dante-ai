@@ -16,6 +16,28 @@ Deno.test("scrubPII redacts emails, phones, SSN, DOB, credit cards, and MRN-like
   assertEquals(scrubbed.includes("[REDACTED_MRN]"), true);
 });
 
+Deno.test("phone detection handles various international formats", () => {
+  const samples = [
+    "+44 7700 900123",
+    "+1 (212) 555-0123",
+    "0044 7700 900123",
+    "(212)5550123",
+  ];
+  for (const s of samples) {
+    const scrubbed = scrubPII("Contact: " + s);
+    if (!scrubbed.includes("[REDACTED_PHONE]")) {
+      throw new Error(`Failed to redact phone sample: "${s}" -> "${scrubbed}"`);
+    }
+  }
+});
+
+Deno.test("credit card candidates are validated with Luhn and redacted only if valid", () => {
+  const valid = "My card is 4111 1111 1111 1111"; // valid Visa test number
+  const invalid = "Number 1234 5678 9012 3456"; // fails Luhn
+  assertEquals(scrubPII(valid).includes("[REDACTED_CREDIT_CARD]"), true);
+  assertEquals(scrubPII(invalid).includes("[REDACTED_CREDIT_CARD]"), false);
+});
+
 Deno.test("detectRedFlags finds known keywords", () => {
   const content = "I have chest pain and difficulty breathing";
   const found = detectRedFlags(content);
