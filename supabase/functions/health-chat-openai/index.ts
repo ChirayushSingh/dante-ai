@@ -5,34 +5,10 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const RED_FLAG_KEYWORDS = [
-  "chest pain",
-  "severe shortness of breath",
-  "difficulty breathing",
-  "heavy bleeding",
-  "unconscious",
-  "passing out",
-  "suicide",
-  "severe allergic",
-  "unable to breathe",
-  "severe abdominal pain",
-];
+import { RED_FLAG_KEYWORDS, detectRedFlags, scrubPII, simulateHipaaEncrypt } from "./utils.ts";
 
-// Basic PII scrubber - demo only
-function scrubPII(text: string) {
-  // redact emails
-  let out = text.replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, "[REDACTED_EMAIL]");
-  // redact phone numbers
-  out = out.replace(/\+?\d[\d\s\-()]{7,}\d/g, "[REDACTED_PHONE]");
-  // redact SSN-like
-  out = out.replace(/\b\d{3}-\d{2}-\d{4}\b/g, "[REDACTED_SSN]");
-  return out;
-}
+// NOTE: moved PII / red-flag helpers to `utils.ts` to make them unit-testable
 
-function simulateHipaaEncrypt(plaintext: string) {
-  // This simulates encryption for a PoC: DO NOT use for real PHI
-  return btoa(unescape(encodeURIComponent(plaintext)));
-}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {

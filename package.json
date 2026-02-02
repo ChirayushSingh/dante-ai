@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:deno": "deno test --unstable supabase/functions/health-chat-openai --allow-read"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
