@@ -125,17 +125,24 @@ export function useHealthChat() {
         timestamp: new Date(),
       }]);
 
+      let streamBuffer = "";
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
 
-        // Handle SSE "data: " prefix and multiple chunks in one message
-        const lines = chunk.split("\n");
+        const chunk = decoder.decode(value, { stream: true });
+        streamBuffer += chunk;
+
+        const lines = streamBuffer.split("\n");
+        streamBuffer = lines.pop() || "";
+
         for (const line of lines) {
-          if (line.startsWith("data: ") && line !== "data: [DONE]") {
+          const trimmed = line.trim();
+          if (!trimmed || trimmed === "data: [DONE]") continue;
+
+          if (trimmed.startsWith("data: ")) {
             try {
-              const jsonString = line.replace("data: ", "");
+              const jsonString = trimmed.replace("data: ", "");
               const parsed = JSON.parse(jsonString);
               const content = parsed.choices[0]?.delta?.content || "";
               if (content) {
@@ -147,7 +154,7 @@ export function useHealthChat() {
                 ));
               }
             } catch (e) {
-              console.warn("Failed to parse stream chunk", e);
+              console.warn("Stream parse skip:", e);
             }
           }
         }
