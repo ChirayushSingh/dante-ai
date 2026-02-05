@@ -12,7 +12,7 @@ export function HealthChatbot() {
 
   const [persona, setPersona] = useState<"empathic_primary_care" | "concise_clinical" | "pediatric_nurturing">("empathic_primary_care");
   const [empathy, setEmpathy] = useState<"low" | "medium" | "high">("medium");
-  const [useOpenAIPoC, setUseOpenAIPoC] = useState(false);
+  const [useOpenAIPoC, setUseOpenAIPoC] = useState(true);
   const [saveHipaa, setSaveHipaa] = useState(false);
 
   // Start conversation on mount
@@ -27,14 +27,6 @@ export function HealthChatbot() {
   return (
     <div className="space-y-4">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between"
-      >
-        {/* Emergency banner */}
-      </motion.div>
-
       {showEmergency && (
         <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-800 flex items-center justify-between">
           <div>
@@ -46,6 +38,12 @@ export function HealthChatbot() {
           </div>
         </div>
       )}
+
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center justify-between"
+      >
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20">
             <Bot className="w-6 h-6 text-primary" />
@@ -90,7 +88,6 @@ export function HealthChatbot() {
                 Mock HIPAA Save
               </label>
             </div>
-
           </div>
         </div>
         {messages.length > 1 && (

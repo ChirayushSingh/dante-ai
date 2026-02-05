@@ -97,15 +97,17 @@ export function useHealthChat() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         },
         body: JSON.stringify({ messages: [...messages, userMessage].map(m => ({ role: m.role, content: m.content })), options }),
       });
 
       if (!response.ok) {
-        // Fallback to Simulation Mode if backend fails (e.g., no functions deployed)
-        console.warn("Backend unavailable, using simulation mode.");
-        throw new Error("Backend unavailable");
+        const errorText = await response.text();
+        console.error("Backend Error:", response.status, errorText);
+        toast.error(`Chat connection error (${response.status}). Using offline mode.`);
+        throw new Error(`Backend unavailable: ${response.status}`);
       }
 
       // Process Stream
@@ -127,13 +129,28 @@ export function useHealthChat() {
         const { done, value } = await reader.read();
         if (done) break;
         const chunk = decoder.decode(value, { stream: true });
-        // Simple stream parsing for demo
-        assistantContent += chunk;
-        setMessages(prev => prev.map(m =>
-          m.id === assistantMessageId
-            ? { ...m, content: m.content + chunk }
-            : m
-        ));
+
+        // Handle SSE "data: " prefix and multiple chunks in one message
+        const lines = chunk.split("\n");
+        for (const line of lines) {
+          if (line.startsWith("data: ") && line !== "data: [DONE]") {
+            try {
+              const jsonString = line.replace("data: ", "");
+              const parsed = JSON.parse(jsonString);
+              const content = parsed.choices[0]?.delta?.content || "";
+              if (content) {
+                assistantContent += content;
+                setMessages(prev => prev.map(m =>
+                  m.id === assistantMessageId
+                    ? { ...m, content: m.content + content }
+                    : m
+                ));
+              }
+            } catch (e) {
+              console.warn("Failed to parse stream chunk", e);
+            }
+          }
+        }
       }
 
       // Optionally persist assistant message

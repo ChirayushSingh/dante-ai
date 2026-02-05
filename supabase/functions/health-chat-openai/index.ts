@@ -27,11 +27,11 @@ serve(async (req) => {
 
     const foundRedFlags = RED_FLAG_KEYWORDS.filter(k => lastContent.includes(k));
 
-    const OPENAI_KEY = Deno.env.get("OPENAI_API_KEY");
-    const OPENAI_MODEL = Deno.env.get("OPENAI_MODEL") || "gpt-4o-mini";
+    const GROQ_KEY = Deno.env.get("GROQ_API_KEY");
+    const GROQ_MODEL = Deno.env.get("GROQ_MODEL") || "llama-3.3-70b-versatile";
 
-    if (!OPENAI_KEY) {
-      throw new Error("OPENAI_API_KEY is not configured");
+    if (!GROQ_KEY) {
+      throw new Error("GROQ_API_KEY is not configured");
     }
 
     // If red-flag detected, immediately return an urgent, non-diagnostic escalation message
@@ -83,15 +83,15 @@ serve(async (req) => {
       // In a real app, write `encrypted` to a secure store and return an id
     }
 
-    // Call OpenAI Chat Completions (streaming)
-    const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
+    // Call Groq Chat Completions (streaming) - OpenAI compatible
+    const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${OPENAI_KEY}`,
+        Authorization: `Bearer ${GROQ_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: OPENAI_MODEL,
+        model: GROQ_MODEL,
         messages: [
           { role: "system", content: systemPrompt },
           ...sanitizedMessages,
@@ -101,20 +101,35 @@ serve(async (req) => {
       }),
     });
 
-    if (!openaiRes.ok) {
-      const errTxt = await openaiRes.text();
-      console.error("OpenAI error", openaiRes.status, errTxt);
-      return new Response(JSON.stringify({ error: "OpenAI API error" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    if (!groqRes.ok) {
+      const errTxt = await groqRes.text();
+      console.error("Groq error", groqRes.status, errTxt);
+      let errorDetail = "Groq API error";
+      try {
+        const parsed = JSON.parse(errTxt);
+        errorDetail = parsed.error?.message || errTxt;
+      } catch (e) {
+        errorDetail = errTxt;
+      }
+      return new Response(JSON.stringify({ error: `Groq Error (${groqRes.status}): ${errorDetail}` }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
     }
 
     // Proxy the stream back to client (SSE-like)
-    return new Response(openaiRes.body, {
+    return new Response(groqRes.body, {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
 
   } catch (error) {
     console.error("health-chat-openai error:", error);
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    const stack = error instanceof Error ? error.stack : "";
+    return new Response(JSON.stringify({
+      error: message,
+      details: stack
+    }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

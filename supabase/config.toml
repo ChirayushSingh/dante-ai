@@ -1,1 +1,4 @@
-project_id = "ljlkkkxjnwqpgtxrnphk"
+project_id = "sfsbmxhvcvywldvdbhfa"
+
+[functions.health-chat-openai]
+verify_jwt = false
