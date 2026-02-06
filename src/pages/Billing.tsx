@@ -1,8 +1,30 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { Button } from "@/components/ui/button";
-import { Check, Sparkles, CreditCard, Calendar, AlertCircle, Zap, Building2, Crown } from "lucide-react";
+import {
+  Check,
+  Sparkles,
+  CreditCard,
+  Calendar,
+  AlertCircle,
+  Zap,
+  Building2,
+  Crown,
+  Plus,
+  FileText,
+  Download,
+  Loader2,
+  DollarSign
+} from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { useProfile } from "@/hooks/useProfile";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
+import { toast } from "sonner";
 
 const plans = [
   {
@@ -54,164 +76,187 @@ const plans = [
 
 const Billing = () => {
   const { user } = useAuth();
-  
+  const { profile } = useProfile();
+  const [invoices, setInvoices] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const isDoctor = profile?.role === 'doctor' || profile?.role === 'clinic_admin';
+
+  useEffect(() => {
+    if (user) {
+      fetchInvoices();
+    }
+  }, [user, profile]);
+
+  const fetchInvoices = async () => {
+    setIsLoading(true);
+    try {
+      let query = supabase.from("invoices").select("*, profiles!invoices_patient_id_fkey(full_name), clinics(name)");
+
+      if (isDoctor) {
+        // If doctor/admin, show invoices for their clinic
+        const { data: doc } = await supabase.from("doctors").select("clinic_id").eq("user_id", user?.id).single();
+        if (doc) {
+          query = query.eq("clinic_id", doc.clinic_id);
+        }
+      } else {
+        // If patient, show only their invoices
+        query = query.eq("patient_id", user?.id);
+      }
+
+      const { data, error } = await query.order("created_at", { ascending: false });
+      if (!error) setInvoices(data || []);
+    } catch (err) {
+      console.error("Error fetching invoices:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="max-w-5xl mx-auto space-y-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <h1 className="font-display text-3xl font-bold mb-2">Billing & Plans</h1>
-          <p className="text-muted-foreground">
-            Manage your subscription and billing information
-          </p>
-        </motion.div>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="font-display text-4xl font-bold mb-2">Billing & Invoices</h1>
+            <p className="text-muted-foreground italic">Manage your payments and clinic financial records.</p>
+          </div>
+          {isDoctor && (
+            <Button className="gap-2 bg-primary shadow-lg shadow-primary/20">
+              <Plus className="h-4 w-4" /> Create New Invoice
+            </Button>
+          )}
+        </div>
 
-        {/* Current Plan */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="bg-gradient-to-br from-card to-muted/50 rounded-2xl border border-border p-6 shadow-sm"
-        >
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Zap className="h-6 w-6 text-primary" />
+        <Tabs defaultValue="plans" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-8 h-12">
+            <TabsTrigger value="plans" className="gap-2"><Crown className="h-4 w-4" /> Platform Plans</TabsTrigger>
+            <TabsTrigger value="history" className="gap-2"><FileText className="h-4 w-4" /> Invoice History</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="plans" className="space-y-8">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 p-8 opacity-10">
+                <Crown className="w-48 h-48 rotate-12" />
               </div>
-              <div>
-                <h2 className="font-semibold text-lg mb-1">Current Plan: Free</h2>
-                <p className="text-sm text-muted-foreground">
-                  You have 5 symptom checks remaining this month
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 bg-warning/10 text-warning text-sm px-3 py-1.5 rounded-full">
-              <AlertCircle className="h-4 w-4" />
-              <span>Limited features</span>
-            </div>
-          </div>
-          
-          {/* Usage Progress */}
-          <div className="mt-6">
-            <div className="flex justify-between text-sm mb-2">
-              <span className="text-muted-foreground">Symptom checks used</span>
-              <span className="font-medium">0 / 5</span>
-            </div>
-            <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-primary to-accent rounded-full" style={{ width: "0%" }} />
-            </div>
-          </div>
-          
-          <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              <span>Renews: N/A</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CreditCard className="h-4 w-4" />
-              <span>No payment method</span>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Plans */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <h2 className="font-display text-xl font-semibold mb-6">Available Plans</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {plans.map((plan) => (
-              <div
-                key={plan.name}
-                className={`relative bg-card rounded-2xl p-6 border ${
-                  plan.popular ? "border-primary shadow-lg scale-105" : "border-border"
-                } ${plan.current ? "ring-2 ring-primary" : ""}`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <div className="bg-gradient-to-r from-primary to-accent text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
-                      <Sparkles className="h-3 w-3" />
-                      Popular
-                    </div>
-                  </div>
-                )}
-
-                {plan.current && (
-                  <div className="absolute -top-3 right-4">
-                    <div className="bg-success text-white text-xs font-semibold px-3 py-1 rounded-full">
-                      Current
-                    </div>
-                  </div>
-                )}
-
-                <div className="text-center mb-6">
-                  <div className={`w-12 h-12 rounded-xl mx-auto mb-4 flex items-center justify-center ${
-                    plan.popular ? "bg-gradient-to-br from-primary to-accent" : "bg-muted"
-                  }`}>
-                    <plan.icon className={`h-6 w-6 ${plan.popular ? "text-white" : "text-muted-foreground"}`} />
-                  </div>
-                  <h3 className="font-display font-bold text-lg mb-2">{plan.name}</h3>
-                  <div className="flex items-baseline justify-center gap-1">
-                    <span className="font-display text-3xl font-bold">{plan.price}</span>
-                    <span className="text-muted-foreground text-sm">{plan.period}</span>
+              <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
+                <div>
+                  <Badge className="bg-primary/20 text-primary hover:bg-primary/30 border-none mb-4">ACTIVE PLAN</Badge>
+                  <h2 className="text-4xl font-bold mb-2">Aura Free</h2>
+                  <p className="text-slate-400 max-w-md italic">Essential features for individuals starting their health journey.</p>
+                </div>
+                <div className="text-center md:text-right">
+                  <p className="text-sm text-slate-400 uppercase tracking-widest font-bold mb-1">Usage Today</p>
+                  <p className="text-2xl font-mono">0 / 5 Checks</p>
+                  <div className="w-48 h-2 bg-slate-700 rounded-full mt-2 overflow-hidden">
+                    <div className="h-full bg-primary" style={{ width: "0%" }} />
                   </div>
                 </div>
-
-                <ul className="space-y-3 mb-6">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-2 text-sm">
-                      <Check className={`h-4 w-4 flex-shrink-0 mt-0.5 ${plan.popular ? "text-primary" : "text-muted-foreground"}`} />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <Button
-                  variant={plan.current ? "outline" : plan.popular ? "default" : "outline"}
-                  className={`w-full ${plan.popular ? "bg-gradient-to-r from-primary to-accent hover:opacity-90" : ""}`}
-                  disabled={plan.current}
-                >
-                  {plan.current ? "Current Plan" : "Upgrade"}
-                </Button>
               </div>
-            ))}
-          </div>
-        </motion.div>
+            </motion.div>
 
-        {/* Payment History */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="bg-card rounded-2xl border border-border p-6 shadow-sm"
-        >
-          <h2 className="font-display text-xl font-semibold mb-4">Payment History</h2>
-          <div className="text-center py-8 text-muted-foreground">
-            <CreditCard className="h-12 w-12 mx-auto mb-3 opacity-50" />
-            <p>No payment history yet</p>
-            <p className="text-sm mt-1">Upgrade to a paid plan to see your invoices here</p>
-          </div>
-        </motion.div>
+            <div className="grid md:grid-cols-3 gap-6">
+              {plans.map((plan) => (
+                <Card
+                  key={plan.name}
+                  className={`border-none rounded-3xl shadow-sm hover:shadow-xl transition-all ${plan.popular ? 'ring-2 ring-primary scale-105' : ''}`}
+                >
+                  <CardHeader className="text-center pb-2">
+                    <div className={`w-12 h-12 rounded-2xl mx-auto mb-4 flex items-center justify-center ${plan.popular ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-slate-50'}`}>
+                      <plan.icon className="h-6 w-6" />
+                    </div>
+                    <CardTitle className="text-2xl">{plan.name}</CardTitle>
+                    <div className="flex items-baseline justify-center gap-1 mt-2">
+                      <span className="text-3xl font-bold">{plan.price}</span>
+                      <span className="text-muted-foreground text-sm">{plan.period}</span>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <ul className="space-y-3">
+                      {plan.features.map((feature) => (
+                        <li key={feature} className="flex gap-2 text-sm text-slate-600">
+                          <Check className="h-4 w-4 text-primary flex-shrink-0" /> {feature}
+                        </li>
+                      ))}
+                    </ul>
+                    <Button
+                      className={`w-full h-11 rounded-2xl ${plan.current ? 'bg-slate-100 text-slate-500 hover:bg-slate-100' : plan.popular ? 'bg-primary shadow-lg shadow-primary/20' : 'bg-slate-900'}`}
+                      disabled={plan.current}
+                    >
+                      {plan.current ? "Current Plan" : "Upgrade"}
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
 
-        {/* FAQ */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="bg-muted/50 rounded-xl p-6"
-        >
-          <h3 className="font-semibold mb-2">Have questions about billing?</h3>
-          <p className="text-sm text-muted-foreground">
-            Contact our support team at <a href="mailto:billing@auraaid.ai" className="text-primary hover:underline">billing@auraaid.ai</a> or 
-            check our <a href="#" className="text-primary hover:underline">billing FAQ</a>.
-          </p>
-        </motion.div>
+          <TabsContent value="history" className="space-y-6">
+            {isLoading ? (
+              <div className="flex justify-center py-20"><Loader2 className="animate-spin h-8 w-8 text-primary" /></div>
+            ) : invoices.length === 0 ? (
+              <Card className="rounded-3xl border-dashed border-2 border-slate-200">
+                <CardContent className="py-20 text-center">
+                  <div className="p-4 bg-slate-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                    <DollarSign className="h-8 w-8 text-slate-300" />
+                  </div>
+                  <h3 className="font-bold text-lg mb-1">No Invoices Found</h3>
+                  <p className="text-muted-foreground italic">Records will appear here once medical visits are processed.</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="space-y-4">
+                {invoices.map((invoice) => (
+                  <Card key={invoice.id} className="rounded-2xl border-slate-100 shadow-sm hover:shadow-md transition-all overflow-hidden">
+                    <CardContent className="p-0">
+                      <div className="flex flex-col md:flex-row items-center border-l-4 border-primary">
+                        <div className="p-6 flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <Badge variant={invoice.status === 'paid' ? 'secondary' : 'destructive'} className="rounded-full px-3 bg-opacity-10">
+                              {invoice.status.toUpperCase()}
+                            </Badge>
+                            <span className="text-xs text-slate-400 font-medium">#{invoice.id.slice(0, 8)}</span>
+                          </div>
+                          <h3 className="font-bold text-lg">{isDoctor ? invoice.profiles?.full_name : invoice.clinics?.name}</h3>
+                          <p className="text-sm text-slate-500">{invoice.description}</p>
+                        </div>
+                        <div className="p-6 bg-slate-50 flex items-center gap-12 w-full md:w-auto border-t md:border-t-0 md:border-l border-slate-100">
+                          <div className="text-right">
+                            <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-1">Date</p>
+                            <p className="font-medium text-sm">{format(new Date(invoice.created_at), "MMM dd, yyyy")}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-1">Amount</p>
+                            <p className="text-xl font-bold text-slate-900">${invoice.amount}</p>
+                          </div>
+                          <Button variant="ghost" size="icon" className="hover:bg-primary/10 hover:text-primary rounded-xl">
+                            <Download className="h-5 w-5" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
+
+        <Card className="bg-slate-50 border-none rounded-3xl p-6">
+          <CardContent className="flex items-center gap-4 p-0">
+            <div className="p-3 bg-white rounded-2xl shadow-sm">
+              <AlertCircle className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <p className="font-bold">Need help with billing?</p>
+              <p className="text-sm text-muted-foreground italic">Our financial support team is available 24/7 at support@auraaid.ai</p>
+            </div>
+            <Button variant="link" className="ml-auto text-primary font-bold">Contact Support</Button>
+          </CardContent>
+        </Card>
       </div>
     </DashboardLayout>
   );

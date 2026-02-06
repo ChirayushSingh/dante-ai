@@ -134,7 +134,7 @@ export const Footer = () => {
       <div className="border-t border-border">
         <div className="container-wide py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} Diagnova AI. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Aura AI. All rights reserved.</p>
             <p>Made with ❤️ for your health</p>
           </div>
         </div>

@@ -35,7 +35,7 @@ const Index = () => {
               </h1>
 
               <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto animate-fade-up stagger-1 leading-relaxed">
-                Experience the future of medical analysis. Diagnova combines cutting-edge AI with clinical precision to deliver instant, accurate insights.
+                Experience the future of medical analysis. Aura combines cutting-edge AI with clinical precision to deliver instant, accurate insights.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 animate-fade-up stagger-2">
@@ -63,7 +63,7 @@ const Index = () => {
                 ✨ Powerful Capabilities
               </div>
               <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-6">
-                Why Choose <span className="gradient-text">Diagnova AI?</span>
+                Why Choose <span className="gradient-text">Aura AI?</span>
               </h2>
               <p className="text-muted-foreground text-lg">
                 We combine advanced medical knowledge with state-of-the-art artificial intelligence.
@@ -124,7 +124,7 @@ const Index = () => {
                       User: "I've been having improved headaches lately."
                     </div>
                     <div className="p-3 bg-primary/10 rounded-lg text-sm text-foreground">
-                      Diagnova AI: "I understand. Let's analyze this further. Are you experiencing any sensitivity to light?"
+                      Aura AI: "I understand. Let's analyze this further. Are you experiencing any sensitivity to light?"
                     </div>
                   </div>
                 </div>
@@ -135,7 +135,7 @@ const Index = () => {
                   🚀 Simple Process
                 </div>
                 <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">
-                  How Diagnova Works
+                  How Aura Works
                 </h2>
                 <div className="space-y-8">
                   <StepRow
@@ -166,7 +166,7 @@ const Index = () => {
               🔴 Live Demo
             </div>
             <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-6">
-              See Diagnova in Action
+              See Aura in Action
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-12">
               Watch how quickly you can get accurate health insights applied to real-world scenarios.
@@ -177,7 +177,7 @@ const Index = () => {
                 width="100%"
                 height="100%"
                 src="https://www.youtube.com/embed/IcgaNYJwIac?autoplay=1&mute=0"
-                title="Diagnova AI Health Demo"
+                title="Aura AI Health Demo"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
                 className="absolute inset-0"
@@ -207,7 +207,7 @@ const Index = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <TestimonialCard
-                quote="I was worried about my mother's symptoms. Diagnova helped us understand it might be dehydration, not something worse. Saved us a panic trip to the ER!"
+                quote="I was worried about my mother's symptoms. Aura helped us understand it might be dehydration, not something worse. Saved us a panic trip to the ER!"
                 author="Priya Sharma"
                 role="Mumbai, India"
                 avatar="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150"
@@ -236,7 +236,7 @@ const Index = () => {
                 🏥 Our Mission
               </div>
               <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">
-                About Diagnova AI
+                About Aura AI
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 We are a team of doctors, data scientists, and engineers dedicated to democratizing healthcare.
@@ -275,7 +275,7 @@ const Index = () => {
               Ready to prioritize your health?
             </h2>
             <p className="text-white/80 text-xl max-w-2xl mx-auto mb-10">
-              Join the healthcare revolution today with Diagnova AI.
+              Join the healthcare revolution today with Aura AI.
             </p>
             <Link to="/auth">
               <Button size="lg" className="bg-white text-foreground hover:bg-white/90 rounded-full px-8 h-14 text-lg font-semibold shadow-glow">
@@ -299,7 +299,7 @@ const FeatureCard = ({ icon, title, description, delay, gradient, image }: { ico
     {/* Gradient Background */}
     <div className="absolute inset-0 bg-gradient-to-br from-background to-background/50" />
     <div className={`absolute inset-0 bg-gradient-to-br ${gradient || 'from-primary to-accent'} opacity-10 group-hover:opacity-20 transition-opacity duration-500`} />
-    
+
     {/* Animated Gradient Overlay */}
     <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
 
@@ -341,10 +341,10 @@ const TestimonialCard = ({ quote, author, role, avatar }: { quote: string, autho
     <p className="text-foreground/80 text-lg mb-8 italic leading-relaxed relative z-10">"{quote}"</p>
     <div className="flex items-center gap-4">
       <div className="w-14 h-14 rounded-full border-2 border-primary/20 p-1 flex-shrink-0">
-        <img 
-          src={avatar} 
-          alt={author} 
-          className="w-full h-full rounded-full object-cover" 
+        <img
+          src={avatar}
+          alt={author}
+          className="w-full h-full rounded-full object-cover"
           onError={(e) => {
             e.currentTarget.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${author}`;
           }}

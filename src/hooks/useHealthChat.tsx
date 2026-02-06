@@ -59,7 +59,7 @@ export function useHealthChat() {
     const welcomeMessage: Message = {
       id: crypto.randomUUID(),
       role: "assistant",
-      content: "Hello! I'm Diagnova AI, your health assistant. I can help analyze symptoms, explain medical terms, and guide your wellness journey.\n\nTell me what you're feeling, or ask a question like:\n\n* \"I have a throbbing headache on the left side\"\n* \"What are the signs of dehydration?\"\n* \"How can I improve my sleep quality?\"",
+      content: "Hello! I'm Aura AI, your health assistant. I can help analyze symptoms, explain medical terms, and guide your wellness journey.\n\nTell me what you're feeling, or ask a question like:\n\n* \"I have a throbbing headache on the left side\"\n* \"What are the signs of dehydration?\"\n* \"How can I improve my sleep quality?\"",
       timestamp: new Date(),
     };
     setMessages([welcomeMessage]);
@@ -81,11 +81,15 @@ export function useHealthChat() {
     try {
       // 1. Try to save to DB (Best Effort)
       if (conversationId) {
-        supabase.from("messages").insert({
-          conversation_id: conversationId,
-          role: "user",
-          content: content.trim(),
-        }).then().catch(err => console.warn("Failed to save message", err));
+        // Fire and forget, errors logged to console
+        (async () => {
+          const { error } = await supabase.from("messages").insert({
+            conversation_id: conversationId,
+            role: "user",
+            content: content.trim(),
+          });
+          if (error) console.warn("Failed to save message", error);
+        })();
       }
 
       // Choose endpoint: OpenAI PoC if requested or forced by env
@@ -162,11 +166,14 @@ export function useHealthChat() {
 
       // Optionally persist assistant message
       if (conversationId) {
-        supabase.from("messages").insert({
-          conversation_id: conversationId,
-          role: "assistant",
-          content: assistantContent,
-        }).then().catch(err => console.warn("Failed to save assistant message", err));
+        (async () => {
+          const { error } = await supabase.from("messages").insert({
+            conversation_id: conversationId,
+            role: "assistant",
+            content: assistantContent,
+          });
+          if (error) console.warn("Failed to save assistant message", error);
+        })();
       }
 
     } catch (error) {
@@ -196,11 +203,14 @@ export function useHealthChat() {
       setMessages(prev => [...prev, assistantMessage]);
 
       if (conversationId) {
-        supabase.from("messages").insert({
-          conversation_id: conversationId,
-          role: "assistant",
-          content: simulatedResponse,
-        }).then().catch(e => console.warn("Failed to save simulated msg", e));
+        (async () => {
+          const { error } = await supabase.from("messages").insert({
+            conversation_id: conversationId,
+            role: "assistant",
+            content: simulatedResponse,
+          });
+          if (error) console.warn("Failed to save simulated msg", error);
+        })();
       }
     } finally {
       setIsLoading(false);

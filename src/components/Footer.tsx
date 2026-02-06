@@ -86,7 +86,7 @@ const Footer = () => {
 
                 <div className="border-t border-border mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-sm text-muted-foreground">
-                        © {new Date().getFullYear()} Diagnova AI. All rights reserved.
+                        © {new Date().getFullYear()} Aura AI. All rights reserved.
                     </p>
                     <div className="flex gap-8 text-sm text-muted-foreground">
                         <span className="flex items-center gap-2">

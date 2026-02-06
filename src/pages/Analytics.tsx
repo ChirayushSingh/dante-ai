@@ -7,14 +7,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import {
   Activity, Users, TrendingUp, Calendar, BarChart3, PieChart,
-  AlertTriangle, CheckCircle, Clock, AlertOctagon, Loader2
+  AlertTriangle, CheckCircle, Clock, AlertOctagon, Loader2,
+  DollarSign, MapPin, Stethoscope
 } from "lucide-react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  BarChart, Bar, PieChart as RechartsPie, Pie, Cell, Legend
+  BarChart, Bar, PieChart as RechartsPie, Pie, Cell, Legend, AreaChart, Area
 } from "recharts";
 import { format, subDays, startOfDay } from "date-fns";
-import { UrgencyBadge } from "@/components/dashboard/UrgencyBadge";
+import { useProfile } from "@/hooks/useProfile";
 import { HealthTimeline } from "@/components/dashboard/HealthTimeline";
 
 const URGENCY_COLORS = {
@@ -24,10 +25,14 @@ const URGENCY_COLORS = {
   emergency: "#ef4444",
 };
 
+const CHART_COLORS = ["#8b5cf6", "#3b82f6", "#10b981", "#f59e0b", "#ef4444"];
+
 export default function Analytics() {
   const { user } = useAuth();
+  const { profile } = useProfile();
+  const isDoctor = profile?.role === 'doctor' || profile?.role === 'clinic_admin';
 
-  // Fetch user's symptom checks for personal analytics
+  // 1. Fetch Personal Symptom Checks
   const { data: symptomChecks, isLoading: checksLoading } = useQuery({
     queryKey: ["userSymptomChecks", user?.id],
     queryFn: async () => {
@@ -36,331 +41,230 @@ export default function Analytics() {
         .from("symptom_checks")
         .select("*")
         .eq("user_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(100);
+        .order("created_at", { ascending: false });
       if (error) throw error;
       return data;
     },
     enabled: !!user,
   });
 
-  // Calculate personal stats
-  const personalStats = {
-    totalChecks: symptomChecks?.length || 0,
-    urgencyDistribution: symptomChecks?.reduce((acc, check) => {
-      if (check.urgency_level) {
-        acc[check.urgency_level] = (acc[check.urgency_level] || 0) + 1;
-      }
-      return acc;
-    }, {} as Record<string, number>) || {},
-    checksThisMonth: symptomChecks?.filter(check => {
-      const checkDate = new Date(check.created_at);
-      const monthAgo = subDays(new Date(), 30);
-      return checkDate >= monthAgo;
-    }).length || 0,
-  };
+  // 2. Fetch Clinic Data if Doctor
+  const { data: clinicStats, isLoading: clinicLoading } = useQuery({
+    queryKey: ["clinicStats", user?.id],
+    queryFn: async () => {
+      if (!user || !isDoctor) return null;
 
-  // Generate chart data for checks over time
-  const checksOverTime = Array.from({ length: 14 }, (_, i) => {
-    const date = subDays(new Date(), 13 - i);
-    const dayStart = startOfDay(date);
-    const count = symptomChecks?.filter(check => {
-      const checkDate = new Date(check.created_at);
-      return format(checkDate, "yyyy-MM-dd") === format(dayStart, "yyyy-MM-dd");
-    }).length || 0;
-    return {
-      date: format(date, "MMM d"),
-      checks: count,
-    };
+      const { data: doc } = await supabase.from("doctors").select("clinic_id").eq("user_id", user.id).single();
+      if (!doc) return null;
+
+      const [appointments, invoices] = await Promise.all([
+        supabase.from("appointments").select("*").eq("clinic_id", doc.clinic_id),
+        supabase.from("invoices").select("*").eq("clinic_id", doc.clinic_id)
+      ]);
+
+      return {
+        appointments: appointments.data || [],
+        invoices: invoices.data || [],
+        totalRevenue: invoices.data?.reduce((sum, inv) => sum + Number(inv.amount), 0) || 0,
+        patientCount: new Set(appointments.data?.map(a => a.patient_id)).size
+      };
+    },
+    enabled: !!user && isDoctor,
   });
 
-  // Urgency distribution for pie chart
-  const urgencyData = Object.entries(personalStats.urgencyDistribution).map(([level, count]) => ({
-    name: level.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase()),
-    value: count,
-    level: level as keyof typeof URGENCY_COLORS,
-  }));
-
-  // Extract common symptoms from predictions
-  const commonSymptoms = symptomChecks?.reduce((acc, check) => {
-    const predictions = check.predictions as Array<{ condition: string }> || [];
-    predictions.forEach(p => {
-      acc[p.condition] = (acc[p.condition] || 0) + 1;
-    });
-    return acc;
-  }, {} as Record<string, number>) || {};
-
-  const topConditions = Object.entries(commonSymptoms)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 5)
-    .map(([name, count]) => ({ name, count }));
-
-  if (checksLoading) {
+  if (checksLoading || (isDoctor && clinicLoading)) {
     return (
       <DashboardLayout>
-        <div className="flex items-center justify-center h-96">
+        <div className="flex items-center justify-center min-h-[60vh]">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       </DashboardLayout>
     );
   }
 
+  // Personal Data Processing
+  const personalStats = {
+    totalChecks: symptomChecks?.length || 0,
+    urgencyDistribution: symptomChecks?.reduce((acc, check) => {
+      if (check.urgency_level) acc[check.urgency_level] = (acc[check.urgency_level] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>) || {},
+  };
+
+  const checksOverTime = Array.from({ length: 14 }, (_, i) => {
+    const date = subDays(new Date(), 13 - i);
+    const count = symptomChecks?.filter(check =>
+      format(new Date(check.created_at), "yyyy-MM-dd") === format(date, "yyyy-MM-dd")
+    ).length || 0;
+    return { date: format(date, "MMM d"), checks: count };
+  });
+
+  // Clinic Data Processing
+  const revenueOverTime = Array.from({ length: 7 }, (_, i) => {
+    const date = subDays(new Date(), 6 - i);
+    const amount = clinicStats?.invoices?.filter(inv =>
+      format(new Date(inv.created_at), "yyyy-MM-dd") === format(date, "yyyy-MM-dd")
+    ).reduce((sum, inv) => sum + Number(inv.amount), 0) || 0;
+    return { date: format(date, "MMM d"), amount };
+  });
+
+  const appointmentsByStatus = clinicStats?.appointments?.reduce((acc: any, app: any) => {
+    acc[app.status] = (acc[app.status] || 0) + 1;
+    return acc;
+  }, {});
+
+  const statusData = Object.entries(appointmentsByStatus || {}).map(([name, value]) => ({ name, value }));
+
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="max-w-6xl mx-auto space-y-8 py-4">
         <div>
-          <h1 className="text-2xl font-bold">Health Analytics</h1>
-          <p className="text-muted-foreground">
-            Track your symptom history and health trends
-          </p>
+          <h1 className="font-display text-4xl font-bold mb-2">Health Insights</h1>
+          <p className="text-muted-foreground italic">Advanced analytics and trends for {isDoctor ? "your clinic" : "your health"}.</p>
         </div>
 
-        {/* Stats Overview */}
-        <div className="grid gap-4 md:grid-cols-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-primary/10">
-                    <Activity className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Total Checks</p>
-                    <p className="text-2xl font-bold">{personalStats.totalChecks}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
+        <Tabs defaultValue={isDoctor ? "clinic" : "personal"} className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-8 h-12">
+            <TabsTrigger value="personal" className="gap-2"><Activity className="h-4 w-4" /> Personal Health</TabsTrigger>
+            {isDoctor && <TabsTrigger value="clinic" className="gap-2"><Building2 className="h-4 w-4" /> Clinic Performance</TabsTrigger>}
+          </TabsList>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
-          >
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-emerald-500/10">
-                    <CheckCircle className="w-6 h-6 text-emerald-500" />
+          <TabsContent value="personal" className="space-y-8">
+            <div className="grid gap-4 md:grid-cols-4">
+              <Card className="rounded-3xl border-none shadow-sm bg-primary/5">
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-4">
+                    <Activity className="h-8 w-8 text-primary" />
+                    <div>
+                      <p className="text-xs font-bold text-slate-400 uppercase">Total Checks</p>
+                      <p className="text-2xl font-bold">{personalStats.totalChecks}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Self-Care</p>
-                    <p className="text-2xl font-bold">
-                      {personalStats.urgencyDistribution.self_care || 0}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
+                </CardContent>
+              </Card>
+              {/* Add more tiny stats cards if needed */}
+            </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-amber-500/10">
-                    <Clock className="w-6 h-6 text-amber-500" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Consult Soon</p>
-                    <p className="text-2xl font-bold">
-                      {personalStats.urgencyDistribution.consult_soon || 0}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-          >
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-orange-500/10">
-                    <AlertTriangle className="w-6 h-6 text-orange-500" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Urgent/Emergency</p>
-                    <p className="text-2xl font-bold">
-                      {(personalStats.urgencyDistribution.urgent || 0) + 
-                       (personalStats.urgencyDistribution.emergency || 0)}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </div>
-
-        {/* Charts */}
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* Checks Over Time */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <Card className="h-full">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-primary" />
-                  Symptom Checks Over Time
-                </CardTitle>
-                <CardDescription>Your activity in the last 14 days</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={checksOverTime}>
-                      <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                      <XAxis dataKey="date" className="text-xs" />
-                      <YAxis allowDecimals={false} className="text-xs" />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: "hsl(var(--background))",
-                          border: "1px solid hsl(var(--border))",
-                          borderRadius: "8px",
-                        }}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="checks"
-                        stroke="hsl(var(--primary))"
-                        strokeWidth={2}
-                        dot={{ fill: "hsl(var(--primary))" }}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Urgency Distribution */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
-          >
-            <Card className="h-full">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <PieChart className="w-5 h-5 text-primary" />
-                  Urgency Distribution
-                </CardTitle>
-                <CardDescription>Breakdown of assessment urgency levels</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {urgencyData.length > 0 ? (
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card className="rounded-3xl border-none shadow-sm bg-white overflow-hidden">
+                <CardHeader>
+                  <CardTitle className="text-lg">Symptom Activity</CardTitle>
+                </CardHeader>
+                <CardContent>
                   <div className="h-[300px]">
                     <ResponsiveContainer width="100%" height="100%">
-                      <RechartsPie>
-                        <Pie
-                          data={urgencyData}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={60}
-                          outerRadius={100}
-                          paddingAngle={5}
-                          dataKey="value"
-                        >
-                          {urgencyData.map((entry, index) => (
-                            <Cell
-                              key={`cell-${index}`}
-                              fill={URGENCY_COLORS[entry.level]}
-                            />
-                          ))}
-                        </Pie>
+                      <AreaChart data={checksOverTime}>
+                        <defs>
+                          <linearGradient id="colorChecks" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.1} />
+                            <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 10 }} />
                         <Tooltip />
-                        <Legend />
-                      </RechartsPie>
+                        <Area type="monotone" dataKey="checks" stroke="#8b5cf6" fillOpacity={1} fill="url(#colorChecks)" strokeWidth={3} />
+                      </AreaChart>
                     </ResponsiveContainer>
                   </div>
-                ) : (
-                  <div className="h-[300px] flex items-center justify-center text-muted-foreground">
-                    No data yet. Complete some symptom checks to see analytics.
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </motion.div>
-        </div>
+                </CardContent>
+              </Card>
 
-        {/* Top Conditions */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="w-5 h-5 text-primary" />
-                Most Common Conditions Identified
-              </CardTitle>
-              <CardDescription>Based on your symptom check history</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {topConditions.length > 0 ? (
-                <div className="h-[250px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={topConditions} layout="vertical">
-                      <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                      <XAxis type="number" allowDecimals={false} />
-                      <YAxis dataKey="name" type="category" width={150} className="text-xs" />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: "hsl(var(--background))",
-                          border: "1px solid hsl(var(--border))",
-                          borderRadius: "8px",
-                        }}
-                      />
-                      <Bar dataKey="count" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              ) : (
-                <div className="h-[250px] flex items-center justify-center text-muted-foreground">
-                  No conditions identified yet. Start a symptom check to begin tracking.
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
+              <Card className="rounded-3xl border-none shadow-sm bg-white">
+                <CardHeader>
+                  <CardTitle className="text-lg">Urgency Distribution</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <HealthTimeline limit={5} showTrends={false} />
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
 
-        {/* Health Timeline */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
-        >
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-primary" />
-                Health Timeline
-              </CardTitle>
-              <CardDescription>
-                Visual history of your health events and trends
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <HealthTimeline limit={15} showTrends={true} />
-            </CardContent>
-          </Card>
-        </motion.div>
+          {isDoctor && (
+            <TabsContent value="clinic" className="space-y-8">
+              <div className="grid gap-4 md:grid-cols-3">
+                <Card className="rounded-3xl border-none shadow-sm bg-emerald-50 text-emerald-900">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center gap-4">
+                      <DollarSign className="h-8 w-8" />
+                      <div>
+                        <p className="text-xs font-bold uppercase opacity-60">Total Revenue</p>
+                        <p className="text-2xl font-bold">${clinicStats?.totalRevenue}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="rounded-3xl border-none shadow-sm bg-blue-50 text-blue-900">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center gap-4">
+                      <Users className="h-8 w-8" />
+                      <div>
+                        <p className="text-xs font-bold uppercase opacity-60">Total Patients</p>
+                        <p className="text-2xl font-bold">{clinicStats?.patientCount}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="rounded-3xl border-none shadow-sm bg-purple-50 text-purple-900">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center gap-4">
+                      <Calendar className="h-8 w-8" />
+                      <div>
+                        <p className="text-xs font-bold uppercase opacity-60">Total Visits</p>
+                        <p className="text-2xl font-bold">{clinicStats?.appointments?.length}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2">
+                <Card className="rounded-3xl border-none shadow-sm">
+                  <CardHeader>
+                    <CardTitle className="text-lg">Revenue Stream (7 Days)</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={revenueOverTime}>
+                          <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 10 }} />
+                          <Tooltip />
+                          <Bar dataKey="amount" fill="#10b981" radius={[8, 8, 0, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="rounded-3xl border-none shadow-sm">
+                  <CardHeader>
+                    <CardTitle className="text-lg">Visit Status Breakdown</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <RechartsPie>
+                          <Pie
+                            data={statusData}
+                            cx="50%" cy="50%"
+                            innerRadius={60} outerRadius={80}
+                            paddingAngle={5} dataKey="value"
+                          >
+                            {statusData.map((_, index) => (
+                              <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip />
+                          <Legend />
+                        </RechartsPie>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          )}
+        </Tabs>
       </div>
     </DashboardLayout>
   );

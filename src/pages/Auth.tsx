@@ -21,6 +21,7 @@ const Auth = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    role: "patient"
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,7 +35,7 @@ const Auth = () => {
     }
 
     const { error } = isSignup
-      ? await signUp(formData.email, formData.password, formData.name)
+      ? await signUp(formData.email, formData.password, formData.name, formData.role)
       : await signIn(formData.email, formData.password);
 
     if (error) {
@@ -45,7 +46,13 @@ const Auth = () => {
 
     toast.success(isSignup ? "Account created successfully!" : "Welcome back!");
     setIsLoading(false);
-    navigate("/dashboard");
+
+    // Redirect clinic/doctors to onboarding if needed
+    if (isSignup && (formData.role === 'doctor' || formData.role === 'clinic_admin')) {
+      navigate("/dashboard/onboarding");
+    } else {
+      navigate("/dashboard");
+    }
   };
 
   return (
@@ -62,7 +69,7 @@ const Auth = () => {
               <Activity className="h-6 w-6 text-white" />
             </div>
             <span className="font-display font-bold text-2xl tracking-tight">
-              Diagnova<span className="text-primary">AI</span>
+              Aura<span className="text-primary">AI</span>
             </span>
           </Link>
 
@@ -77,13 +84,43 @@ const Auth = () => {
 
           <motion.form initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} onSubmit={handleSubmit} className="space-y-5">
             {isSignup && (
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input id="name" type="text" placeholder="John Doe" className="pl-10" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
+              <>
+                <div className="space-y-2">
+                  <Label>I am a...</Label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, role: 'patient' })}
+                      className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${formData.role === 'patient'
+                        ? 'border-primary bg-primary/5 text-primary'
+                        : 'border-muted bg-transparent text-muted-foreground hover:border-muted-foreground'
+                        }`}
+                    >
+                      <User className="h-6 w-6 mb-2" />
+                      <span className="text-sm font-medium">Patient</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, role: 'doctor' })}
+                      className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${formData.role === 'doctor'
+                        ? 'border-primary bg-primary/5 text-primary'
+                        : 'border-muted bg-transparent text-muted-foreground hover:border-muted-foreground'
+                        }`}
+                    >
+                      <Activity className="h-6 w-6 mb-2" />
+                      <span className="text-sm font-medium">Doctor/Clinic</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full Name</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input id="name" type="text" placeholder="John Doe" className="pl-10" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
+                  </div>
+                </div>
+              </>
             )}
 
             <div className="space-y-2">
@@ -164,7 +201,7 @@ const Auth = () => {
             transition={{ delay: 0.4 }}
             className="text-white/80 max-w-md text-xl leading-relaxed"
           >
-            Join 50,000+ users trusting Diagnova for instant symptom analysis and personalized care.
+            Join 50,000+ users trusting Aura for instant symptom analysis and personalized care.
           </motion.p>
         </div>
       </div>

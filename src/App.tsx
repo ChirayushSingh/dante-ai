@@ -15,6 +15,10 @@ import Profile from "./pages/Profile";
 import HealthChat from "./pages/HealthChat";
 import Analytics from "./pages/Analytics";
 import KnowledgeHub from "./pages/KnowledgeHub";
+import ClinicOnboarding from "./pages/ClinicOnboarding";
+import PatientRegistration from "./pages/PatientRegistration";
+import BookAppointment from "./pages/BookAppointment";
+import SecureMessaging from "./pages/SecureMessaging";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +35,9 @@ const App = () => (
             <Route path="/testimonials" element={<Testimonials />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
+            <Route path="/dashboard/book" element={<RequireAuth><BookAppointment /></RequireAuth>} />
+            <Route path="/dashboard/onboarding" element={<RequireAuth><ClinicOnboarding /></RequireAuth>} />
+            <Route path="/dashboard/registration" element={<RequireAuth><PatientRegistration /></RequireAuth>} />
             <Route path="/dashboard/chat" element={<RequireAuth><HealthChat /></RequireAuth>} />
             <Route path="/dashboard/history" element={<RequireAuth><History /></RequireAuth>} />
             <Route path="/dashboard/analytics" element={<RequireAuth><Analytics /></RequireAuth>} />
@@ -38,6 +45,7 @@ const App = () => (
             <Route path="/dashboard/profile" element={<RequireAuth><Profile /></RequireAuth>} />
             <Route path="/dashboard/billing" element={<RequireAuth><Billing /></RequireAuth>} />
             <Route path="/dashboard/api-keys" element={<RequireAuth><ApiKeys /></RequireAuth>} />
+            <Route path="/dashboard/messages" element={<RequireAuth><SecureMessaging /></RequireAuth>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

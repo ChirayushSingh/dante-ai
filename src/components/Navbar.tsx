@@ -46,7 +46,7 @@ const Navbar = () => {
                         <Activity className="w-6 h-6" />
                     </div>
                     <span className="font-display font-bold text-xl tracking-tight text-foreground">
-                        Diagnova<span className="text-primary">AI</span>
+                        Aura<span className="text-primary">AI</span>
                     </span>
                 </Link>
 

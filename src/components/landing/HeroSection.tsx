@@ -121,7 +121,7 @@ export const HeroSection = () => {
                   <div className="w-3 h-3 rounded-full bg-success/50" />
                   <span className="ml-2 text-xs text-muted-foreground flex items-center gap-2">
                     <Heart className="h-3 w-3 text-primary" />
-                    Diagnova AI - Symptom Interview
+                    Aura AI - Symptom Interview
                   </span>
                 </div>
                 <div className="p-6 bg-[var(--gradient-card)] space-y-4">

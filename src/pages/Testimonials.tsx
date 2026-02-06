@@ -202,7 +202,7 @@ const Testimonials = () => {
                             Stories from Our Community
                         </h1>
                         <p className="text-xl text-muted-foreground max-w-2xl">
-                            Real people, real health stories. See how Diagnova AI is making a difference in the lives of thousands across India.
+                            Real people, real health stories. See how Aura AI is making a difference in the lives of thousands across India.
                         </p>
                     </div>
                 </section>
@@ -226,7 +226,7 @@ const Testimonials = () => {
                             Ready to Share Your Story?
                         </h2>
                         <p className="text-white/80 text-xl max-w-2xl mx-auto mb-10">
-                            Join thousands of happy users and take control of your health journey with Diagnova AI.
+                            Join thousands of happy users and take control of your health journey with Aura AI.
                         </p>
                         <Link to="/auth">
                             <Button size="lg" className="bg-white text-primary hover:bg-white/90 rounded-full px-8 h-14 text-lg font-semibold shadow-lg">
@@ -242,7 +242,7 @@ const Testimonials = () => {
     );
 };
 
-const TestimonialCard = ({ quote, author, role, location, avatar, rating }: { 
+const TestimonialCard = ({ quote, author, role, location, avatar, rating }: {
     quote: string
     author: string
     role: string

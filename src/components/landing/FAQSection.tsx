@@ -9,7 +9,7 @@ import {
 const faqs = [
   {
     question: "How does the conversational symptom interview work?",
-    answer: "Unlike simple symptom forms, Diagnova AI has an actual conversation with you. When you describe your symptoms, our AI asks intelligent follow-up questions based on your answers—just like a real healthcare professional would. This dynamic approach helps gather more accurate information for better assessments.",
+    answer: "Unlike simple symptom forms, Aura AI has an actual conversation with you. When you describe your symptoms, our AI asks intelligent follow-up questions based on your answers—just like a real healthcare professional would. This dynamic approach helps gather more accurate information for better assessments.",
   },
   {
     question: "What do the urgency levels mean?",
@@ -50,7 +50,7 @@ export const FAQSection = () => {
             <span className="gradient-text">Questions</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            Everything you need to know about Diagnova AI and how it works.
+            Everything you need to know about Aura AI and how it works.
           </p>
         </motion.div>
 

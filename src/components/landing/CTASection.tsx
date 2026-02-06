@@ -28,7 +28,7 @@ export const CTASection = () => {
             Your Intelligent Healthcare Support System
           </h2>
           <p className="text-lg text-white/80 mb-10 max-w-xl mx-auto">
-            Join thousands who trust Diagnova AI for personalized health insights.
+            Join thousands who trust Aura AI for personalized health insights.
             Safer, smarter, and designed around you.
           </p>
 

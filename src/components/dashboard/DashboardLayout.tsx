@@ -19,14 +19,24 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 
-const navItems = [
+const patientNavItems = [
   { icon: Stethoscope, label: "Symptom Check", href: "/dashboard" },
+  { icon: MessageSquare, label: "Messages", href: "/dashboard/messages" },
   { icon: MessageCircle, label: "Health Chat", href: "/dashboard/chat" },
   { icon: BookOpen, label: "Health Hub", href: "/dashboard/knowledge" },
   { icon: History, label: "History", href: "/dashboard/history" },
   { icon: BarChart3, label: "Analytics", href: "/dashboard/analytics" },
   { icon: User, label: "Profile", href: "/dashboard/profile" },
   { icon: CreditCard, label: "Billing", href: "/dashboard/billing" },
+];
+
+const doctorNavItems = [
+  { icon: Stethoscope, label: "Doctor Portal", href: "/dashboard" },
+  { icon: MessageSquare, label: "Secure Messages", href: "/dashboard/messages" },
+  { icon: History, label: "Clinical History", href: "/dashboard/history" },
+  { icon: BarChart3, label: "Clinic Analytics", href: "/dashboard/analytics" },
+  { icon: User, label: "Profile", href: "/dashboard/profile" },
+  { icon: CreditCard, label: "Clinic Billing", href: "/dashboard/billing" },
 ];
 
 interface DashboardLayoutProps {
@@ -38,6 +48,9 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const { user, signOut } = useAuth();
+  const { profile } = useProfile();
+  const isDoctor = profile?.role === 'doctor' || profile?.role === 'clinic_admin';
+  const currentNavItems = isDoctor ? doctorNavItems : patientNavItems;
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -48,7 +61,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             <Activity className="h-5 w-5 text-white" />
           </div>
           <span className="font-display font-bold text-lg">
-            Diagnova<span className="gradient-text">AI</span>
+            Aura<span className="gradient-text">AI</span>
           </span>
         </Link>
         <Button variant="ghost" size="icon" onClick={() => setMobileOpen(!mobileOpen)}>
@@ -81,7 +94,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             {!collapsed && (
               <div className="flex flex-col">
                 <span className="font-display font-bold text-lg leading-tight">
-                  Diagnova<span className="gradient-text">AI</span>
+                  Aura<span className="gradient-text">AI</span>
                 </span>
                 <span className="text-[9px] text-muted-foreground -mt-0.5 tracking-wider">HEALTH AI</span>
               </div>
@@ -100,7 +113,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
         {/* Navigation */}
         <nav className="p-4 space-y-1.5">
-          {navItems.map((item) => {
+          {currentNavItems.map((item) => {
             const isActive = location.pathname === item.href;
             return (
               <Link

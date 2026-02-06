@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -14,148 +14,121 @@ import {
   CheckCircle,
   AlertCircle,
   Download,
+  Loader2,
+  Brain,
+  Pill,
 } from 'lucide-react';
-
-interface Patient {
-  id: string;
-  name: string;
-  age: number;
-  email: string;
-  phone: string;
-  avatar: string;
-  lastVisit: string;
-  status: 'active' | 'pending' | 'discharged';
-  conditions: string[];
-  nextAppointment?: string;
-}
-
-interface Appointment {
-  id: string;
-  patientName: string;
-  patientId: string;
-  date: string;
-  time: string;
-  duration: number;
-  type: string;
-  status: 'scheduled' | 'completed' | 'cancelled';
-  notes?: string;
-}
-
-interface Prescription {
-  id: string;
-  patientName: string;
-  medication: string;
-  dosage: string;
-  duration: string;
-  createdDate: string;
-  status: 'active' | 'expired';
-}
-
-const mockPatients: Patient[] = [
-  {
-    id: '1',
-    name: 'John Doe',
-    age: 45,
-    email: 'john@example.com',
-    phone: '+1 (555) 123-4567',
-    avatar: '👨‍💼',
-    lastVisit: '2026-01-28',
-    status: 'active',
-    conditions: ['Hypertension', 'Type 2 Diabetes'],
-    nextAppointment: '2026-02-10',
-  },
-  {
-    id: '2',
-    name: 'Jane Smith',
-    age: 38,
-    email: 'jane@example.com',
-    phone: '+1 (555) 234-5678',
-    avatar: '👩‍⚕️',
-    lastVisit: '2026-01-25',
-    status: 'active',
-    conditions: ['Migraines'],
-    nextAppointment: '2026-02-05',
-  },
-  {
-    id: '3',
-    name: 'Robert Johnson',
-    age: 62,
-    email: 'robert@example.com',
-    phone: '+1 (555) 345-6789',
-    avatar: '👴',
-    lastVisit: '2026-01-20',
-    status: 'pending',
-    conditions: ['Heart Disease', 'Hypertension'],
-  },
-];
-
-const mockAppointments: Appointment[] = [
-  {
-    id: '1',
-    patientName: 'John Doe',
-    patientId: '1',
-    date: '2026-02-10',
-    time: '10:00 AM',
-    duration: 30,
-    type: 'Checkup',
-    status: 'scheduled',
-  },
-  {
-    id: '2',
-    patientName: 'Jane Smith',
-    patientId: '2',
-    date: '2026-02-05',
-    time: '2:00 PM',
-    duration: 45,
-    type: 'Consultation',
-    status: 'scheduled',
-  },
-  {
-    id: '3',
-    patientName: 'Sarah Williams',
-    patientId: '4',
-    date: '2026-02-02',
-    time: '11:30 AM',
-    duration: 30,
-    type: 'Checkup',
-    status: 'completed',
-  },
-];
-
-const mockPrescriptions: Prescription[] = [
-  {
-    id: '1',
-    patientName: 'John Doe',
-    medication: 'Lisinopril',
-    dosage: '10mg',
-    duration: '30 days',
-    createdDate: '2026-01-20',
-    status: 'active',
-  },
-  {
-    id: '2',
-    patientName: 'Jane Smith',
-    medication: 'Sumatriptan',
-    dosage: '50mg',
-    duration: 'As needed',
-    createdDate: '2026-01-25',
-    status: 'active',
-  },
-];
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { useProfile } from '@/hooks/useProfile';
+import { AiNotesSummary } from '../tools/AiNotesSummary';
+import { PrescriptionGenerator } from '../tools/PrescriptionGenerator';
+import { DoctorMessaging } from './DoctorMessaging';
+import { AiDiagnosisAssistant } from '../tools/AiDiagnosisAssistant';
+import { toast } from 'sonner';
 
 export function DoctorPortal() {
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  const { user } = useAuth();
+  const { profile } = useProfile();
+  const [loading, setLoading] = useState(true);
+  const [doctorInfo, setDoctorInfo] = useState<any>(null);
+  const [patients, setPatients] = useState<any[]>([]);
+  const [appointments, setAppointments] = useState<any[]>([]);
+  const [prescriptions, setPrescriptions] = useState<any[]>([]);
+  const [selectedPatient, setSelectedPatient] = useState<any>(null);
+  const [patientChecks, setPatientChecks] = useState<any[]>([]);
+  const [fetchingChecks, setFetchingChecks] = useState(false);
+  const [showTool, setShowTool] = useState<'prescription' | 'summary' | 'chat' | 'diagnosis' | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // ... existing doc fetching ...
+        // 1. Get Doctor Info
+        const { data: doc, error: docError } = await (supabase
+          .from('doctors' as any) as any)
+          .select('*, clinics(*)')
+          .eq('user_id', user.id)
+          .single();
+
+        if (docError) throw docError;
+        setDoctorInfo(doc);
+
+        // 2. Get Appointments
+        const { data: apps, error: appsError } = await (supabase
+          .from('appointments' as any) as any)
+          .select('*, profiles:patient_id(*)')
+          .eq('doctor_id', doc.id)
+          .order('scheduled_at', { ascending: true });
+
+        if (appsError) throw appsError;
+        setAppointments(apps);
+
+        // 3. Get Prescriptions
+        const { data: pres, error: presError } = await (supabase
+          .from('prescriptions' as any) as any)
+          .select('*, profiles:patient_id(*)')
+          .eq('doctor_id', doc.id)
+          .order('issued_at', { ascending: false });
+
+        if (presError) throw presError;
+        setPrescriptions(pres);
+
+        // 4. Extract unique patients
+        const patientMap = new Map();
+        apps.forEach((a: any) => {
+          if (a.profiles) {
+            patientMap.set(a.profiles.id, a.profiles);
+          }
+        });
+        setPatients(Array.from(patientMap.values()));
+
+      } catch (error: any) {
+        console.error("Error fetching doctor portal data:", error);
+        toast.error("Failed to load portal data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [user]);
+
+  useEffect(() => {
+    if (selectedPatient) {
+      const fetchPatientHistory = async () => {
+        setFetchingChecks(true);
+        try {
+          const { data, error } = await supabase
+            .from('symptom_checks')
+            .select('*')
+            .eq('user_id', selectedPatient.id)
+            .order('created_at', { ascending: false })
+            .limit(5);
+
+          if (!error) setPatientChecks(data || []);
+        } catch (err) {
+          console.error("Error fetching patient checks:", err);
+        } finally {
+          setFetchingChecks(false);
+        }
+      };
+      fetchPatientHistory();
+    }
+  }, [selectedPatient]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
+      case 'completed':
+      case 'confirmed':
         return 'bg-green-100 text-green-800';
       case 'pending':
+      case 'scheduled':
         return 'bg-yellow-100 text-yellow-800';
-      case 'discharged':
-        return 'bg-gray-100 text-gray-800';
-      case 'completed':
-        return 'bg-blue-100 text-blue-800';
       case 'cancelled':
         return 'bg-red-100 text-red-800';
       default:
@@ -163,25 +136,71 @@ export function DoctorPortal() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center p-20">
+        <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
+        <p className="text-muted-foreground">Loading your clinical dashboard...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Doctor Portal</h1>
-          <p className="text-gray-600 mt-1">Manage patients and appointments efficiently</p>
+          <p className="text-gray-600 mt-1">
+            {doctorInfo?.clinics?.name || "Private Practice"} | {doctorInfo?.specialization}
+          </p>
         </div>
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          Add Patient
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setShowTool('diagnosis')} className="gap-2 bg-primary/5 border-primary/20 hover:bg-primary/10">
+            <Sparkles className="h-4 w-4 text-primary" /> AI Assistant
+          </Button>
+          <Button variant="outline" onClick={() => setShowTool('summary')} className="gap-2">
+            <Brain className="h-4 w-4" /> AI Summary
+          </Button>
+          <Button onClick={() => setShowTool('prescription')} className="gap-2">
+            <Plus className="h-4 w-4" /> New Prescription
+          </Button>
+        </div>
       </div>
+
+      {showTool === 'summary' && (
+        <AiNotesSummary />
+      )}
+
+      {showTool === 'prescription' && selectedPatient && (
+        <PrescriptionGenerator
+          patientId={selectedPatient.user_id}
+          patientName={selectedPatient.full_name}
+          doctorId={doctorInfo.id}
+          onSuccess={() => setShowTool(null)}
+        />
+      )}
+
+      {showTool === 'chat' && selectedPatient && (
+        <DoctorMessaging
+          patientId={selectedPatient.user_id}
+          patientName={selectedPatient.full_name}
+          onClose={() => setShowTool(null)}
+        />
+      )}
+
+      {showTool === 'diagnosis' && (
+        <div className="max-w-2xl mx-auto">
+          <AiDiagnosisAssistant />
+          <Button variant="ghost" className="w-full mt-4" onClick={() => setShowTool(null)}>Close Assistant</Button>
+        </div>
+      )}
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
-              <p className="text-4xl font-bold text-blue-600">{mockPatients.length}</p>
+              <p className="text-4xl font-bold text-blue-600">{patients.length}</p>
               <p className="text-gray-600 text-sm">Total Patients</p>
             </div>
           </CardContent>
@@ -190,9 +209,9 @@ export function DoctorPortal() {
           <CardContent className="pt-6">
             <div className="text-center">
               <p className="text-4xl font-bold text-green-600">
-                {mockAppointments.filter((a) => a.status === 'scheduled').length}
+                {appointments.filter((a) => a.status === 'scheduled').length}
               </p>
-              <p className="text-gray-600 text-sm">Scheduled Appointments</p>
+              <p className="text-gray-600 text-sm">Scheduled</p>
             </div>
           </CardContent>
         </Card>
@@ -200,33 +219,64 @@ export function DoctorPortal() {
           <CardContent className="pt-6">
             <div className="text-center">
               <p className="text-4xl font-bold text-purple-600">
-                {mockAppointments.filter((a) => a.status === 'completed').length}
+                {appointments.filter((a) => a.status === 'completed').length}
               </p>
-              <p className="text-gray-600 text-sm">Completed Today</p>
+              <p className="text-gray-600 text-sm">Completed</p>
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
-              <p className="text-4xl font-bold text-orange-600">{mockPrescriptions.length}</p>
-              <p className="text-gray-600 text-sm">Active Prescriptions</p>
+              <p className="text-4xl font-bold text-orange-600">{prescriptions.length}</p>
+              <p className="text-gray-600 text-sm">Issued Prescriptions</p>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <Tabs defaultValue="patients" className="w-full">
+      <Tabs defaultValue="appointments" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="patients">Patients</TabsTrigger>
           <TabsTrigger value="appointments">Appointments</TabsTrigger>
-          <TabsTrigger value="prescriptions">Prescriptions</TabsTrigger>
+          <TabsTrigger value="patients">Patient List</TabsTrigger>
+          <TabsTrigger value="prescriptions">History</TabsTrigger>
         </TabsList>
 
-        {/* Patients Tab */}
+        <TabsContent value="appointments" className="space-y-4">
+          {appointments.length === 0 ? (
+            <p className="text-center p-10 text-muted-foreground bg-slate-50 rounded-2xl">No appointments scheduled.</p>
+          ) : (
+            appointments.map((appointment) => (
+              <Card key={appointment.id} onClick={() => setSelectedPatient(appointment.profiles)} className="cursor-pointer hover:border-primary transition-all">
+                <CardContent className="pt-6">
+                  <div className="flex items-start justify-between">
+                    <div className="flex gap-4 flex-1">
+                      <Calendar className="h-5 w-5 text-gray-400 mt-1" />
+                      <div className="flex-1">
+                        <h3 className="font-semibold">{appointment.profiles?.full_name || "Unknown Patient"}</h3>
+                        <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 mt-2">
+                          <p className="flex items-center gap-1">
+                            <Calendar className="h-4 w-4" /> {new Date(appointment.scheduled_at).toLocaleDateString()}
+                          </p>
+                          <p className="flex items-center gap-1">
+                            <Clock className="h-4 w-4" /> {new Date(appointment.scheduled_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <Badge className={getStatusColor(appointment.status)}>
+                      {appointment.status}
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </TabsContent>
+
         <TabsContent value="patients" className="space-y-4">
           <div className="grid grid-cols-1 gap-4">
-            {mockPatients.map((patient) => (
+            {patients.map((patient) => (
               <Card
                 key={patient.id}
                 className="cursor-pointer hover:shadow-lg transition-shadow"
@@ -235,35 +285,18 @@ export function DoctorPortal() {
                 <CardContent className="pt-6">
                   <div className="flex items-start justify-between">
                     <div className="flex gap-4">
-                      <div className="text-4xl">{patient.avatar}</div>
+                      <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-xl">
+                        {patient.avatar_url ? <img src={patient.avatar_url} alt="" className="w-full h-full rounded-full" /> : <User />}
+                      </div>
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <h3 className="font-semibold text-lg">{patient.name}</h3>
-                          <Badge className={getStatusColor(patient.status)}>
-                            {patient.status}
-                          </Badge>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
-                          <p>Age: {patient.age}</p>
+                        <h3 className="font-semibold text-lg">{patient.full_name}</h3>
+                        <div className="grid grid-cols-2 gap-x-8 gap-y-1 text-sm text-gray-600 mt-1">
                           <p>📧 {patient.email}</p>
-                          <p>📱 {patient.phone}</p>
-                          <p>Last visit: {patient.lastVisit}</p>
-                        </div>
-                        <div className="mt-3">
-                          <p className="text-xs font-semibold text-gray-700 mb-1">Conditions:</p>
-                          <div className="flex gap-1 flex-wrap">
-                            {patient.conditions.map((condition) => (
-                              <Badge key={condition} variant="secondary">
-                                {condition}
-                              </Badge>
-                            ))}
-                          </div>
+                          <p>📱 {patient.phone || "N/A"}</p>
+                          <p>🩸 Blood: {patient.blood_type || "N/A"}</p>
                         </div>
                       </div>
                     </div>
-                    <Button variant="ghost" size="sm">
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -271,77 +304,27 @@ export function DoctorPortal() {
           </div>
         </TabsContent>
 
-        {/* Appointments Tab */}
-        <TabsContent value="appointments" className="space-y-4">
-          {mockAppointments.map((appointment) => (
-            <Card key={appointment.id}>
-              <CardContent className="pt-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex gap-4 flex-1">
-                    <Calendar className="h-5 w-5 text-gray-400 mt-1" />
-                    <div className="flex-1">
-                      <h3 className="font-semibold">{appointment.patientName}</h3>
-                      <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 mt-2">
-                        <p className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4" /> {appointment.date}
-                        </p>
-                        <p className="flex items-center gap-1">
-                          <Clock className="h-4 w-4" /> {appointment.time}
-                        </p>
-                        <p>Duration: {appointment.duration} min</p>
-                        <p>Type: {appointment.type}</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge
-                      className={getStatusColor(appointment.status)}
-                      variant="secondary"
-                    >
-                      {appointment.status === 'completed' ? (
-                        <CheckCircle className="h-3 w-3 mr-1" />
-                      ) : (
-                        <AlertCircle className="h-3 w-3 mr-1" />
-                      )}
-                      {appointment.status}
-                    </Badge>
-                    <Button variant="ghost" size="sm">
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </TabsContent>
-
-        {/* Prescriptions Tab */}
         <TabsContent value="prescriptions" className="space-y-4">
-          {mockPrescriptions.map((prescription) => (
+          {prescriptions.map((prescription) => (
             <Card key={prescription.id}>
               <CardContent className="pt-6">
                 <div className="flex items-start justify-between">
                   <div className="flex gap-4 flex-1">
                     <FileText className="h-5 w-5 text-gray-400 mt-1" />
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <h3 className="font-semibold">{prescription.patientName}</h3>
-                        <Badge className={getStatusColor(prescription.status)}>
-                          {prescription.status}
-                        </Badge>
+                      <h3 className="font-semibold">{prescription.profiles?.full_name}</h3>
+                      <div className="mt-2 space-y-2">
+                        {Array.isArray(prescription.medications) && prescription.medications.map((m: any, idx: number) => (
+                          <div key={idx} className="flex items-center gap-2 text-sm bg-primary/5 p-2 rounded-lg">
+                            <Pill className="h-3 w-3 text-primary" />
+                            <span className="font-medium">{m.name}</span>
+                            <span className="text-muted-foreground">{m.dosage} - {m.frequency} ({m.duration})</span>
+                          </div>
+                        ))}
                       </div>
-                      <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
-                        <p>Medication: {prescription.medication}</p>
-                        <p>Dosage: {prescription.dosage}</p>
-                        <p>Duration: {prescription.duration}</p>
-                        <p>Created: {prescription.createdDate}</p>
-                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">Issued on: {new Date(prescription.issued_at).toLocaleDateString()}</p>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" className="gap-1">
-                    <Download className="h-4 w-4" />
-                    Print
-                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -349,47 +332,49 @@ export function DoctorPortal() {
         </TabsContent>
       </Tabs>
 
-      {/* Patient Details Sidebar */}
+      {/* Patient Details Sidebar/Card */}
       {selectedPatient && (
-        <Card className="border-l-4 border-l-blue-500">
+        <Card className="border-l-4 border-l-primary shadow-xl">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="h-5 w-5" />
-              Patient Details
+              Patient Focus: {selectedPatient.full_name}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div>
-              <h3 className="font-semibold text-lg">{selectedPatient.name}</h3>
-              <p className="text-gray-600">{selectedPatient.age} years old</p>
-            </div>
-            <div className="space-y-2 text-sm">
-              <p>
-                <span className="font-semibold">Email:</span> {selectedPatient.email}
-              </p>
-              <p>
-                <span className="font-semibold">Phone:</span> {selectedPatient.phone}
-              </p>
-              <p>
-                <span className="font-semibold">Last Visit:</span> {selectedPatient.lastVisit}
-              </p>
-              {selectedPatient.nextAppointment && (
-                <p>
-                  <span className="font-semibold">Next Appointment:</span>{' '}
-                  {selectedPatient.nextAppointment}
-                </p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Button className="w-full gap-2">
-                <MessageSquare className="h-4 w-4" />
-                Send Message
+            <div className="flex gap-2">
+              <Button className="flex-1 gap-2" onClick={() => setShowTool('prescription')}>
+                <Pill className="h-4 w-4" /> Prescribe
               </Button>
-              <Button variant="outline" className="w-full gap-2">
-                <FileText className="h-4 w-4" />
-                View Records
+              <Button variant="outline" className="flex-1 gap-2" onClick={() => setShowTool('chat')}>
+                <MessageSquare className="h-4 w-4" /> Chat
+              </Button>
+              <Button variant="outline" className="flex-1 gap-2" onClick={() => setShowTool('summary')}>
+                <Brain className="h-4 w-4" /> AI Note
               </Button>
             </div>
+            <div className="space-y-2 text-sm border-t pt-4">
+              <p><span className="font-semibold">Email:</span> {selectedPatient.email}</p>
+              <p><span className="font-semibold">Gender:</span> {selectedPatient.gender || "Unspecified"}</p>
+              <p><span className="font-semibold">Blood Type:</span> {selectedPatient.blood_type || "Unknown"}</p>
+            </div>
+
+            {patientChecks.length > 0 && (
+              <div className="space-y-2 border-t pt-4">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Recent Symptom Checks</h4>
+                <div className="space-y-2">
+                  {patientChecks.map((check: any) => (
+                    <div key={check.id} className="p-2 rounded-lg bg-orange-50 border border-orange-100 text-xs">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="font-semibold text-orange-900">{check.symptoms?.[0] || "Checkup"}</span>
+                        <span className="text-[10px] opacity-70">{new Date(check.created_at).toLocaleDateString()}</span>
+                      </div>
+                      <p className="text-orange-800 line-clamp-2">{check.recommendation || "Observation required."}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
