@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { PERSONA_TEMPLATES, EMPATHY_LEVELS, RED_FLAG_KEYWORDS } from "@/lib/healthPrompts";
-import { Bot, RefreshCw, Sparkles } from "lucide-react";
+import { Bot, RefreshCw, Sparkles, Mic, MicOff, Volume2, VolumeX, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChatInterface } from "@/components/chat/ChatInterface";
 import { useHealthChat } from "@/hooks/useHealthChat";
 import { MedicalDisclaimer } from "@/components/MedicalDisclaimer";
 
 export function HealthChatbot() {
-  const { messages, isLoading, sendMessage, startNewConversation } = useHealthChat();
+  const { messages, isLoading, sendMessage, startNewConversation, isSpeaking, stopSpeaking, voiceEnabled, setVoiceEnabled } = useHealthChat();
+  const [isListening, setIsListening] = useState(false);
 
   const [persona, setPersona] = useState<"empathic_primary_care" | "concise_clinical" | "pediatric_nurturing">("empathic_primary_care");
   const [empathy, setEmpathy] = useState<"low" | "medium" | "high">("medium");
@@ -23,6 +24,30 @@ export function HealthChatbot() {
   }, []);
 
   const showEmergency = messages.some(m => m.role === "user" && RED_FLAG_KEYWORDS.some(k => m.content.toLowerCase().includes(k)));
+
+  const startListening = () => {
+    if (!('webkitSpeechRecognition' in window)) {
+      alert("Speech recognition is not supported in this browser. Please use Chrome.");
+      return;
+    }
+
+    const recognition = new (window as any).webkitSpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => setIsListening(true);
+    recognition.onend = () => setIsListening(false);
+
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      if (transcript) {
+        sendMessage(transcript, { persona, empathy, useOpenAIPoC, saveHipaa });
+      }
+    };
+
+    recognition.start();
+  };
 
   return (
     <div className="space-y-4">
@@ -102,6 +127,31 @@ export function HealthChatbot() {
           </Button>
         )}
       </motion.div>
+
+      {/* Voice Controls */}
+      <div className="flex items-center justify-center gap-4 py-2">
+        <Button
+          variant={isListening ? "destructive" : "outline"}
+          size="lg"
+          className={`rounded-full w-16 h-16 shadow-lg transition-all duration-300 ${isListening ? "animate-pulse scale-110" : "hover:scale-105"}`}
+          onClick={startListening}
+          disabled={isLoading}
+        >
+          {isListening ? <MicOff className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
+        </Button>
+
+        <Button
+          variant={voiceEnabled ? "default" : "ghost"}
+          size="icon"
+          className="rounded-full w-10 h-10"
+          onClick={() => {
+            if (isSpeaking) stopSpeaking();
+            setVoiceEnabled(!voiceEnabled);
+          }}
+        >
+          {voiceEnabled ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5 text-muted-foreground" />}
+        </Button>
+      </div>
 
       {/* Chat Interface */}
       <motion.div

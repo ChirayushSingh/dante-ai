@@ -27,6 +27,38 @@ export function useHealthChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
+
+  // Stop speaking when component unmounts
+  useEffect(() => {
+    return () => {
+      window.speechSynthesis.cancel();
+    };
+  }, []);
+
+  const speak = useCallback((text: string) => {
+    if (!voiceEnabled) return;
+
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+
+    // Select a pleasant voice if available
+    const voices = window.speechSynthesis.getVoices();
+    const preferredVoice = voices.find(v => v.name.includes("Google US English") || v.name.includes("Samantha"));
+    if (preferredVoice) utterance.voice = preferredVoice;
+
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+
+    window.speechSynthesis.speak(utterance);
+  }, [voiceEnabled]);
+
+  const stopSpeaking = useCallback(() => {
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
+  }, []);
 
   const CHAT_OPENAI_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/health-chat-openai`;
 
@@ -176,6 +208,11 @@ export function useHealthChat() {
         })();
       }
 
+      // Speak the response if voice is enabled
+      if (assistantContent) {
+        speak(assistantContent);
+      }
+
     } catch (error) {
       // SIMULATION MODE IMPLEMENTATION
       console.log("Using Simulation Mode due to error:", error);
@@ -212,10 +249,12 @@ export function useHealthChat() {
           if (error) console.warn("Failed to save simulated msg", error);
         })();
       }
+      // Speak simulation
+      speak(simulatedResponse);
     } finally {
       setIsLoading(false);
     }
-  }, [messages, isLoading, conversationId]);
+  }, [messages, isLoading, conversationId, voiceEnabled, speak]);
 
   return {
     messages,
@@ -223,5 +262,9 @@ export function useHealthChat() {
     conversationId,
     sendMessage,
     startNewConversation,
+    isSpeaking,
+    stopSpeaking,
+    voiceEnabled,
+    setVoiceEnabled
   };
 }
