@@ -5,6 +5,7 @@ import {
   Heart,
   Stethoscope,
   MessageCircle,
+  MessageSquare,
   History,
   BarChart3,
   CreditCard,

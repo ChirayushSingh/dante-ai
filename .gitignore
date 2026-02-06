@@ -30,3 +30,4 @@ dist-ssr
 # Temporary Files
 *.mjs
 supabase/.temp/
+.vercel
