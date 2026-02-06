@@ -26,7 +26,7 @@ export const Navbar = () => {
             </div>
             <div className="flex flex-col">
               <span className="font-display font-bold text-xl text-foreground leading-tight">
-                Aura<span className="gradient-text">Aid</span>
+                Diagnova<span className="gradient-text">AI</span>
               </span>
               <span className="text-[10px] text-muted-foreground -mt-0.5 tracking-wider">HEALTH AI</span>
             </div>

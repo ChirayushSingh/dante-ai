@@ -63,7 +63,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             <Activity className="h-5 w-5 text-white" />
           </div>
           <span className="font-display font-bold text-lg">
-            Aura<span className="gradient-text">AI</span>
+            Diagnova<span className="gradient-text">AI</span>
           </span>
         </Link>
         <Button variant="ghost" size="icon" onClick={() => setMobileOpen(!mobileOpen)}>
@@ -96,7 +96,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             {!collapsed && (
               <div className="flex flex-col">
                 <span className="font-display font-bold text-lg leading-tight">
-                  Aura<span className="gradient-text">AI</span>
+                  Diagnova<span className="gradient-text">AI</span>
                 </span>
                 <span className="text-[9px] text-muted-foreground -mt-0.5 tracking-wider">HEALTH AI</span>
               </div>

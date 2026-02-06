@@ -1,9 +1,10 @@
 {
   "common": {
-    "welcome": "Bienvenue dans Aura Health",
+    "welcome": "Bienvenue dans Diagnova Health",
     "login": "Connexion",
     "logout": "Déconnexion",
     "signup": "S'inscrire",
+    "app.title": "Diagnova AI",
     "profile": "Profil",
     "settings": "Paramètres",
     "home": "Accueil",

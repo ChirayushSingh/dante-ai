@@ -3,13 +3,13 @@ import { motion } from "framer-motion";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { 
-  Key, 
-  Copy, 
-  Eye, 
-  EyeOff, 
-  Plus, 
-  Trash2, 
+import {
+  Key,
+  Copy,
+  Eye,
+  EyeOff,
+  Plus,
+  Trash2,
   RotateCcw,
   AlertCircle,
   Lock,
@@ -49,7 +49,7 @@ const ApiKeys = () => {
 
   const fetchKeys = async () => {
     if (!user) return;
-    
+
     const { data, error } = await supabase
       .from("api_keys")
       .select("*")
@@ -64,13 +64,13 @@ const ApiKeys = () => {
 
   const createKey = async () => {
     if (!user || !newKeyName.trim()) return;
-    
+
     setIsCreating(true);
-    
+
     // Generate a random key
     const keyValue = `aura_${crypto.randomUUID().replace(/-/g, '')}`;
     const keyPrefix = keyValue.slice(0, 12);
-    
+
     // In production, you would hash the key before storing
     const { error } = await supabase.from("api_keys").insert({
       user_id: user.id,
@@ -87,7 +87,7 @@ const ApiKeys = () => {
     } else {
       toast.error("Failed to create API key");
     }
-    
+
     setIsCreating(false);
   };
 
@@ -125,7 +125,7 @@ const ApiKeys = () => {
           <div>
             <h1 className="font-display text-3xl font-bold mb-2">API Keys</h1>
             <p className="text-muted-foreground">
-              Manage your API keys for programmatic access
+              Manage your API keys for access to Diagnova AI services.
             </p>
           </div>
         </motion.div>
@@ -148,8 +148,8 @@ const ApiKeys = () => {
               onChange={(e) => setNewKeyName(e.target.value)}
               className="flex-1"
             />
-            <Button 
-              onClick={createKey} 
+            <Button
+              onClick={createKey}
               disabled={!newKeyName.trim() || isCreating}
               className="gap-2"
             >
@@ -203,7 +203,7 @@ const ApiKeys = () => {
           <div>
             <p className="font-medium text-foreground mb-1">Keep your API keys secure</p>
             <p className="text-sm text-muted-foreground">
-              Never share your API keys or expose them in client-side code. 
+              Never share your API keys or expose them in client-side code.
               Rotate keys immediately if you suspect they've been compromised.
             </p>
           </div>
@@ -246,9 +246,9 @@ const ApiKeys = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       className="h-8 w-8 text-destructive hover:text-destructive"
                       onClick={() => deleteKey(apiKey.id)}
                     >
@@ -265,8 +265,8 @@ const ApiKeys = () => {
 
                 <div className="flex items-center gap-6 text-sm text-muted-foreground">
                   <span>
-                    Last used: {apiKey.last_used_at 
-                      ? format(new Date(apiKey.last_used_at), "MMM dd, yyyy") 
+                    Last used: {apiKey.last_used_at
+                      ? format(new Date(apiKey.last_used_at), "MMM dd, yyyy")
                       : "Never"}
                   </span>
                   <span>{apiKey.requests_count.toLocaleString()} requests</span>
@@ -291,18 +291,18 @@ const ApiKeys = () => {
             <Code className="h-5 w-5 text-primary" />
             <h2 className="font-display text-xl font-semibold">Quick Start</h2>
           </div>
-          
+
           <div className="bg-muted rounded-lg p-4 font-mono text-sm overflow-x-auto">
             <pre className="text-muted-foreground">
-{`curl -X POST https://api.auraaid.ai/v1/symptom-check \\
+              {`curl -X POST https://api.auraaid.ai/v1/symptom-check \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{"symptoms": ["headache", "fever", "fatigue"]}'`}
             </pre>
           </div>
-          
+
           <p className="text-sm text-muted-foreground mt-4">
-            Need more help? Check out our <a href="#" className="text-primary hover:underline">API documentation</a> for 
+            Need more help? Check out our <a href="#" className="text-primary hover:underline">API documentation</a> for
             detailed endpoints, examples, and SDKs.
           </p>
         </motion.div>
@@ -318,7 +318,7 @@ const ApiKeys = () => {
             <Lock className="h-5 w-5 text-primary" />
             <h2 className="font-display text-xl font-semibold">Usage Limits</h2>
           </div>
-          
+
           <div className="space-y-4">
             <div>
               <div className="flex justify-between text-sm mb-2">
@@ -329,9 +329,9 @@ const ApiKeys = () => {
                 <div className="h-full bg-gradient-to-r from-primary to-accent rounded-full" style={{ width: "0%" }} />
               </div>
             </div>
-            
+
             <p className="text-sm text-muted-foreground">
-              Need more requests? <a href="/dashboard/billing" className="text-primary hover:underline">Upgrade to Enterprise</a> for 
+              Need more requests? <a href="/dashboard/billing" className="text-primary hover:underline">Upgrade to Enterprise</a> for
               custom rate limits and dedicated support.
             </p>
           </div>

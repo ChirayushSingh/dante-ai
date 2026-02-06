@@ -69,7 +69,7 @@ const Auth = () => {
               <Activity className="h-6 w-6 text-white" />
             </div>
             <span className="font-display font-bold text-2xl tracking-tight">
-              Aura<span className="text-primary">AI</span>
+              Diagnova<span className="text-primary">AI</span>
             </span>
           </Link>
 
@@ -201,7 +201,7 @@ const Auth = () => {
             transition={{ delay: 0.4 }}
             className="text-white/80 max-w-md text-xl leading-relaxed"
           >
-            Join 50,000+ users trusting Aura for instant symptom analysis and personalized care.
+            Join 50,000+ users trusting Diagnova for instant symptom analysis and personalized care.
           </motion.p>
         </div>
       </div>
