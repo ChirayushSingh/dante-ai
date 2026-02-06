@@ -202,7 +202,7 @@ const Testimonials = () => {
                             Stories from Our Community
                         </h1>
                         <p className="text-xl text-muted-foreground max-w-2xl">
-                            Real people, real health stories. See how Aura AI is making a difference in the lives of thousands across India.
+                            Real people, real health stories. See how Diagnova AI is making a difference in the lives of thousands across India.
                         </p>
                     </div>
                 </section>

@@ -59,7 +59,7 @@ export function useHealthChat() {
     const welcomeMessage: Message = {
       id: crypto.randomUUID(),
       role: "assistant",
-      content: "Hello! I'm Aura AI, your health assistant. I can help analyze symptoms, explain medical terms, and guide your wellness journey.\n\nTell me what you're feeling, or ask a question like:\n\n* \"I have a throbbing headache on the left side\"\n* \"What are the signs of dehydration?\"\n* \"How can I improve my sleep quality?\"",
+      content: "Hello! I'm Diagnova AI, your health assistant. I can help analyze symptoms, explain medical terms, and guide your wellness journey.\n\nTell me what you're feeling, or ask a question like:\n\n* \"I have a throbbing headache on the left side\"\n* \"What are the signs of dehydration?\"\n* \"How can I improve my sleep quality?\"",
       timestamp: new Date(),
     };
     setMessages([welcomeMessage]);

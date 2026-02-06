@@ -35,7 +35,7 @@ const Index = () => {
               </h1>
 
               <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto animate-fade-up stagger-1 leading-relaxed">
-                Experience the future of medical analysis. Aura combines cutting-edge AI with clinical precision to deliver instant, accurate insights.
+                Experience the future of medical analysis. Diagnova combines cutting-edge AI with clinical precision to delivery instant, accurate insights.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 animate-fade-up stagger-2">
@@ -63,7 +63,7 @@ const Index = () => {
                 ✨ Powerful Capabilities
               </div>
               <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-6">
-                Why Choose <span className="gradient-text">Aura AI?</span>
+                Why Choose <span className="gradient-text">Diagnova AI?</span>
               </h2>
               <p className="text-muted-foreground text-lg">
                 We combine advanced medical knowledge with state-of-the-art artificial intelligence.
@@ -135,7 +135,7 @@ const Index = () => {
                   🚀 Simple Process
                 </div>
                 <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">
-                  How Aura Works
+                  How Diagnova Works
                 </h2>
                 <div className="space-y-8">
                   <StepRow
@@ -166,7 +166,7 @@ const Index = () => {
               🔴 Live Demo
             </div>
             <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground mb-6">
-              See Aura in Action
+              See Diagnova in Action
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-12">
               Watch how quickly you can get accurate health insights applied to real-world scenarios.
@@ -177,7 +177,7 @@ const Index = () => {
                 width="100%"
                 height="100%"
                 src="https://www.youtube.com/embed/IcgaNYJwIac?autoplay=1&mute=0"
-                title="Aura AI Health Demo"
+                title="Diagnova AI Health Demo"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
                 className="absolute inset-0"
@@ -207,7 +207,7 @@ const Index = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <TestimonialCard
-                quote="I was worried about my mother's symptoms. Aura helped us understand it might be dehydration, not something worse. Saved us a panic trip to the ER!"
+                quote="I was worried about my mother's symptoms. Diagnova helped us understand it might be dehydration, not something worse. Saved us a panic trip to the ER!"
                 author="Priya Sharma"
                 role="Mumbai, India"
                 avatar="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150"
@@ -236,7 +236,7 @@ const Index = () => {
                 🏥 Our Mission
               </div>
               <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">
-                About Aura AI
+                About Diagnova AI
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 We are a team of doctors, data scientists, and engineers dedicated to democratizing healthcare.
@@ -275,7 +275,7 @@ const Index = () => {
               Ready to prioritize your health?
             </h2>
             <p className="text-white/80 text-xl max-w-2xl mx-auto mb-10">
-              Join the healthcare revolution today with Aura AI.
+              Join the healthcare revolution today with Diagnova AI.
             </p>
             <Link to="/auth">
               <Button size="lg" className="bg-white text-foreground hover:bg-white/90 rounded-full px-8 h-14 text-lg font-semibold shadow-glow">

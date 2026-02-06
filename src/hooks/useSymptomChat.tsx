@@ -90,7 +90,7 @@ export function useSymptomChat() {
     const welcomeMessage: Message = {
       id: crypto.randomUUID(),
       role: "assistant",
-      content: "Hello! I'm Aura AI. Tell me what's bothering you today - describe your main symptom, and I'll help you analyze it.",
+      content: "Hello! I'm Diagnova AI. Tell me what's bothering you today - describe your main symptom, and I'll help you analyze it.",
       timestamp: new Date(),
     };
     setMessages([welcomeMessage]);

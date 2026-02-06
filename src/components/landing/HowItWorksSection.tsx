@@ -49,7 +49,7 @@ export const HowItWorksSection = () => {
             <span className="gradient-text">Understand Symptoms</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            Unlike simple symptom checkers, Aura AI has a real conversation with you.
+            Unlike simple symptom checkers, Diagnova AI has a real conversation with you.
             Get accurate insights through dynamic, personalized assessment.
           </p>
         </motion.div>
