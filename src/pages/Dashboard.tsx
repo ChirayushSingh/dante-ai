@@ -4,7 +4,7 @@ import { EmergencyMode } from "@/components/dashboard/EmergencyMode";
 import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
 import { useOnboarding } from "@/hooks/useOnboarding";
 import { VoiceConsultation } from "@/components/dashboard/VoiceConsultation";
-import { InteractiveBodyMap } from "@/components/dashboard/BodyMap3D";
+import { InteractiveBodyMap } from "@/components/tools/InteractiveBodyMap";
 import { SmartVitalsDashboard } from "@/components/dashboard/SmartVitalsDashboard";
 import { DoctorPortal } from "@/components/dashboard/DoctorPortal";
 import { useProfile } from "@/hooks/useProfile";
@@ -104,8 +104,7 @@ const Dashboard = () => {
           <div className="grid gap-6">
             <VoiceConsultation />
             <InteractiveBodyMap
-              highlightedAreas={selectedBodyAreas}
-              onAreaClick={(area) => {
+              onPartSelect={(area) => {
                 setSelectedBodyAreas(prev =>
                   prev.includes(area) ? prev.filter(a => a !== area) : [...prev, area]
                 );

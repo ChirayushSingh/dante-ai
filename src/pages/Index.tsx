@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import { InteractiveBodyMap as BodyMap3D } from "@/components/tools/InteractiveBodyMap";
 import "./index.css";
 
 const Index = () => {
@@ -182,6 +183,48 @@ const Index = () => {
                 allowFullScreen
                 className="absolute inset-0"
               ></iframe>
+            </div>
+          </div>
+        </section>
+
+        {/* 3D Interactive Body Map Preview */}
+        <section id="3d-body-map" className="py-24 bg-background">
+          <div className="container px-4 mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="space-y-6">
+                <div className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary font-semibold">
+                  3D Interactive Body Map
+                </div>
+                <h2 className="text-3xl md:text-5xl font-display font-bold text-foreground">
+                  Explore symptoms on a live 3D body
+                </h2>
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  Diagnova&apos;s 3D body scanner lets you precisely select where you feel discomfort, so the AI can
+                  combine location, intensity, and associated symptoms for more accurate, explainable suggestions.
+                </p>
+                <ul className="space-y-3 text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-primary mt-1" />
+                    <span>Click on head, chest, stomach, arms, and legs to localize symptoms.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-primary mt-1" />
+                    <span>Clean, geometric 3D visualization optimized for medical clarity.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-primary mt-1" />
+                    <span>Seamlessly connects with the AI symptom checker inside your dashboard.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="max-w-xl mx-auto w-full">
+                <BodyMap3D
+                  onPartSelect={() => {
+                    // Landing page preview: selection is visual only.
+                  }}
+                />
+              </div>
             </div>
           </div>
         </section>

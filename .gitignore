@@ -32,3 +32,8 @@ dist-ssr
 supabase/.temp/
 .vercel
 .env*.local
+
+# Lockfiles for other package managers (project uses npm)
+yarn.lock
+pnpm-lock.yaml
+bun.lockb
