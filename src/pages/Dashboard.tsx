@@ -9,6 +9,7 @@ import { SmartVitalsDashboard } from "@/components/dashboard/SmartVitalsDashboar
 import { DoctorPortal } from "@/components/dashboard/DoctorPortal";
 import { useProfile } from "@/hooks/useProfile";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Loader2, Calendar, ChevronRight, Activity } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ const Dashboard = () => {
   const { needsOnboarding, isChecking, completeOnboarding } = useOnboarding();
   const { profile, loading: profileLoading } = useProfile();
   const [selectedBodyAreas, setSelectedBodyAreas] = useState<string[]>([]);
+  const navigate = useNavigate();
 
   // Show loading while checking onboarding status or profile
   if (isChecking || profileLoading) {
@@ -37,7 +39,22 @@ const Dashboard = () => {
   return (
     <DashboardLayout>
       {isDoctor ? (
-        <DoctorPortal />
+        <div className="space-y-6">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-display font-bold text-foreground">
+                Welcome back, {profile?.full_name?.split(' ')[0] || 'Doctor'}
+              </h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                You are using the Diagnova <span className="font-semibold">Doctor / Clinic</span> workspace.
+              </p>
+            </div>
+            <span className="inline-flex items-center rounded-full bg-primary/10 text-primary text-xs font-medium px-3 py-1 border border-primary/20">
+              Doctor Mode
+            </span>
+          </div>
+          <DoctorPortal />
+        </div>
       ) : (
         <>
           <div className="mb-8 relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary/10 via-accent/10 to-primary/5 p-8">
@@ -45,13 +62,18 @@ const Dashboard = () => {
               <div className="w-32 h-32 bg-primary rounded-full blur-3xl animate-pulse" />
             </div>
 
-            <div className="relative z-10">
-              <h1 className="text-3xl font-display font-bold text-foreground mb-2">
-                Hello, {profile?.full_name?.split(' ')[0] || 'Friend'}! 👋
-              </h1>
-              <p className="text-muted-foreground text-lg max-w-xl">
-                How are you feeling today? I'm here to help you check your symptoms and stay healthy.
-              </p>
+            <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h1 className="text-3xl font-display font-bold text-foreground mb-1">
+                  Hello, {profile?.full_name?.split(' ')[0] || 'Friend'}! 👋
+                </h1>
+                <p className="text-muted-foreground text-lg max-w-xl">
+                  How are you feeling today? I'm here to help you check your symptoms and stay healthy.
+                </p>
+              </div>
+              <span className="inline-flex items-center rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium px-3 py-1 border border-emerald-200 mt-2 sm:mt-0">
+                Patient Mode
+              </span>
             </div>
           </div>
 
@@ -70,7 +92,7 @@ const Dashboard = () => {
                   <p className="text-muted-foreground text-sm">Add your allergies, conditions and blood type for better AI insights.</p>
                 </div>
               </div>
-              <Button onClick={() => window.location.href = '/dashboard/registration'} className="bg-accent hover:bg-accent/90 text-white whitespace-nowrap">
+              <Button onClick={() => navigate('/dashboard/registration')} className="bg-accent hover:bg-accent/90 text-white whitespace-nowrap">
                 Complete Now
               </Button>
             </motion.div>

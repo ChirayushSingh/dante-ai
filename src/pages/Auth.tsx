@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MedicalDisclaimer } from "@/components/MedicalDisclaimer";
-import { Activity, Mail, Lock, User, ArrowLeft, Loader2 } from "lucide-react";
+import { Activity, Mail, Lock, User, ArrowLeft, Loader2, Stethoscope, Building2, Check } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
@@ -14,6 +14,9 @@ const Auth = () => {
   const navigate = useNavigate();
   const { signIn, signUp } = useAuth();
   const isSignup = searchParams.get("mode") === "signup";
+  const initialRoleParam = searchParams.get("role") === "doctor" ? "doctor" : "patient";
+
+  const [selectedRole, setSelectedRole] = useState<"patient" | "doctor">(initialRoleParam as "patient" | "doctor");
 
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -21,8 +24,13 @@ const Auth = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    role: "patient"
+    role: initialRoleParam
   });
+
+  const handleSelectRole = (role: "patient" | "doctor") => {
+    setSelectedRole(role);
+    setFormData((prev) => ({ ...prev, role }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,54 +81,106 @@ const Auth = () => {
             </span>
           </Link>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-            <h1 className="font-display text-3xl font-bold mb-2">
-              {isSignup ? "Create your account" : "Welcome back"}
-            </h1>
-            <p className="text-muted-foreground">
-              {isSignup ? "Start your journey to better health understanding" : "Sign in to access your health dashboard"}
-            </p>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8 space-y-6">
+            <div>
+              <h1 className="font-display text-3xl font-bold mb-2">
+                {isSignup
+                  ? selectedRole === "patient"
+                    ? "Create your patient account"
+                    : "Create your doctor/clinic account"
+                  : selectedRole === "patient"
+                    ? "Sign in as patient"
+                    : "Sign in as doctor/clinic"}
+              </h1>
+              <p className="text-muted-foreground">
+                {selectedRole === "patient"
+                  ? "For individuals and families who want instant AI health insights."
+                  : "For doctors, clinics and hospitals who want AI-assisted triage, documentation and clinic intelligence."}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => handleSelectRole("patient")}
+                className={`flex flex-col items-start gap-3 p-4 rounded-2xl border-2 text-left transition-all ${selectedRole === "patient"
+                  ? "border-primary bg-primary/5"
+                  : "border-muted bg-transparent hover:border-muted-foreground"
+                  }`}
+              >
+                <div className="flex items-center gap-2">
+                  <User className="h-5 w-5 text-primary" />
+                  <span className="text-sm font-semibold">Patient</span>
+                </div>
+                <ul className="text-xs text-muted-foreground space-y-1">
+                  <li className="flex items-center gap-1">
+                    <Check className="h-3 w-3 text-primary" />
+                    24/7 AI symptom checks
+                  </li>
+                  <li className="flex items-center gap-1">
+                    <Check className="h-3 w-3 text-primary" />
+                    3D body map & health timeline
+                  </li>
+                  <li className="flex items-center gap-1">
+                    <Check className="h-3 w-3 text-primary" />
+                    Family profiles & reminders
+                  </li>
+                </ul>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleSelectRole("doctor")}
+                className={`flex flex-col items-start gap-3 p-4 rounded-2xl border-2 text-left transition-all ${selectedRole === "doctor"
+                  ? "border-primary bg-primary/5"
+                  : "border-muted bg-transparent hover:border-muted-foreground"
+                  }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Stethoscope className="h-5 w-5 text-primary" />
+                  <span className="text-sm font-semibold">Doctor / Clinic</span>
+                </div>
+                <ul className="text-xs text-muted-foreground space-y-1">
+                  <li className="flex items-center gap-1">
+                    <Check className="h-3 w-3 text-primary" />
+                    AI‑triaged incoming cases and priority queues
+                  </li>
+                  <li className="flex items-center gap-1">
+                    <Check className="h-3 w-3 text-primary" />
+                    AI scribe for SOAP notes, visit summaries and prescriptions
+                  </li>
+                  <li className="flex items-center gap-1">
+                    <Check className="h-3 w-3 text-primary" />
+                    Lightweight EMR, clinic analytics and employer/insurer workflows
+                  </li>
+                </ul>
+              </button>
+            </div>
           </motion.div>
 
-          <motion.form initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} onSubmit={handleSubmit} className="space-y-5">
+          <motion.form
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            onSubmit={handleSubmit}
+            className="space-y-5"
+          >
             {isSignup && (
-              <>
-                <div className="space-y-2">
-                  <Label>I am a...</Label>
-                  <div className="grid grid-cols-2 gap-4">
-                    <button
-                      type="button"
-                      onClick={() => setFormData({ ...formData, role: 'patient' })}
-                      className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${formData.role === 'patient'
-                        ? 'border-primary bg-primary/5 text-primary'
-                        : 'border-muted bg-transparent text-muted-foreground hover:border-muted-foreground'
-                        }`}
-                    >
-                      <User className="h-6 w-6 mb-2" />
-                      <span className="text-sm font-medium">Patient</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setFormData({ ...formData, role: 'doctor' })}
-                      className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all ${formData.role === 'doctor'
-                        ? 'border-primary bg-primary/5 text-primary'
-                        : 'border-muted bg-transparent text-muted-foreground hover:border-muted-foreground'
-                        }`}
-                    >
-                      <Activity className="h-6 w-6 mb-2" />
-                      <span className="text-sm font-medium">Doctor/Clinic</span>
-                    </button>
-                  </div>
+              <div className="space-y-2">
+                <Label htmlFor="name">Full Name</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder={selectedRole === "patient" ? "John Doe" : "Dr. Meera Sharma / Sunrise Clinic"}
+                    className="pl-10"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    required
+                  />
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input id="name" type="text" placeholder="John Doe" className="pl-10" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
-                  </div>
-                </div>
-              </>
+              </div>
             )}
 
             <div className="space-y-2">

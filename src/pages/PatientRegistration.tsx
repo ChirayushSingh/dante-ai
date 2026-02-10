@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -30,6 +30,59 @@ export default function PatientRegistration() {
     const [conditions, setConditions] = useState<string[]>([]);
     const [medications, setMedications] = useState<string[]>([]);
 
+    // Load existing profile and medical details so users can edit instead of starting from scratch
+    useEffect(() => {
+        const loadExisting = async () => {
+            if (!user) return;
+            try {
+                const { data: profile } = await supabase
+                    .from("profiles")
+                    .select("gender, blood_type, height_cm, weight_kg, date_of_birth")
+                    .eq("user_id", user.id)
+                    .single();
+
+                if (profile) {
+                    setFormData({
+                        gender: profile.gender || "",
+                        blood_type: profile.blood_type || "",
+                        height_cm: profile.height_cm ? String(profile.height_cm) : "",
+                        weight_kg: profile.weight_kg ? String(profile.weight_kg) : "",
+                        date_of_birth: profile.date_of_birth || "",
+                    });
+                }
+
+                const { data: allergiesData } = await supabase
+                    .from("allergies")
+                    .select("allergen")
+                    .eq("user_id", user.id);
+                if (allergiesData) {
+                    setAllergies(allergiesData.map((a: any) => a.allergen || "").filter(Boolean));
+                }
+
+                const { data: conditionsData } = await supabase
+                    .from("chronic_conditions")
+                    .select("condition_name")
+                    .eq("user_id", user.id);
+                if (conditionsData) {
+                    setConditions(conditionsData.map((c: any) => c.condition_name || "").filter(Boolean));
+                }
+
+                const { data: medicationsData } = await supabase
+                    .from("medications")
+                    .select("medication_name")
+                    .eq("user_id", user.id)
+                    .eq("is_current", true);
+                if (medicationsData) {
+                    setMedications(medicationsData.map((m: any) => m.medication_name || "").filter(Boolean));
+                }
+            } catch (error) {
+                console.error("Failed to load existing medical profile", error);
+            }
+        };
+
+        loadExisting();
+    }, [user]);
+
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!user) return;
@@ -50,29 +103,29 @@ export default function PatientRegistration() {
 
             if (profileError) throw profileError;
 
-            // 2. Update Allergies
+            // 2. Replace allergies list
+            await supabase.from("allergies").delete().eq("user_id", user.id);
             if (allergies.length > 0) {
-                await supabase.from("allergies").delete().eq("profile_id", user.id);
                 const { error: alError } = await supabase.from("allergies").insert(
-                    allergies.map(a => ({ profile_id: user.id, name: a }))
+                    allergies.map(a => ({ user_id: user.id, allergen: a }))
                 );
                 if (alError) throw alError;
             }
 
-            // 3. Update Chronic Conditions
+            // 3. Replace chronic conditions list
+            await supabase.from("chronic_conditions").delete().eq("user_id", user.id);
             if (conditions.length > 0) {
-                await supabase.from("chronic_conditions").delete().eq("profile_id", user.id);
                 const { error: condError } = await supabase.from("chronic_conditions").insert(
-                    conditions.map(c => ({ profile_id: user.id, name: c }))
+                    conditions.map(c => ({ user_id: user.id, condition_name: c }))
                 );
                 if (condError) throw condError;
             }
 
-            // 4. Update Medications
+            // 4. Replace medications list
+            await supabase.from("medications").delete().eq("user_id", user.id);
             if (medications.length > 0) {
-                await supabase.from("medications").delete().eq("profile_id", user.id);
                 const { error: medError } = await supabase.from("medications").insert(
-                    medications.map(m => ({ profile_id: user.id, name: m }))
+                    medications.map(m => ({ user_id: user.id, medication_name: m, is_current: true }))
                 );
                 if (medError) throw medError;
             }
@@ -110,7 +163,9 @@ export default function PatientRegistration() {
                 >
                     <div className="text-center">
                         <h1 className="text-4xl font-display font-bold text-foreground">Complete Your Health Profile</h1>
-                        <p className="text-muted-foreground mt-2">Help our AI and doctors understand you better for more accurate insights.</p>
+                        <p className="text-muted-foreground mt-2">
+                            Add, edit or delete your medical details below, then submit to keep your profile up to date.
+                        </p>
                     </div>
 
                     <form onSubmit={handleUpdate} className="space-y-8">
@@ -200,7 +255,7 @@ export default function PatientRegistration() {
                         ))}
 
                         <Button type="submit" className="w-full h-12 text-lg shadow-xl shadow-primary/20" disabled={isLoading}>
-                            {isLoading ? <Loader2 className="animate-spin mr-2 h-5 w-5" /> : "Save Medical Profile"}
+                            {isLoading ? <Loader2 className="animate-spin mr-2 h-5 w-5" /> : "Submit Medical Profile"}
                         </Button>
                     </form>
                 </motion.div>
