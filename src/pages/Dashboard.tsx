@@ -22,23 +22,9 @@ const Dashboard = () => {
   const { profile, loading: profileLoading } = useProfile();
   const [selectedBodyAreas, setSelectedBodyAreas] = useState<string[]>([]);
   const navigate = useNavigate();
-
-  // Show loading while checking onboarding status or profile
-  if (isChecking || profileLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="animate-spin h-8 w-8 text-primary" />
-      </div>
-    );
-  }
-
-  // Show onboarding wizard for new users (patients mostly)
-  if (needsOnboarding && profile?.role === 'patient') {
-    return <OnboardingWizard onComplete={completeOnboarding} />;
-  }
+  const { user } = useAuth();
 
   const isDoctor = profile?.role === 'doctor' || profile?.role === 'clinic_admin';
-  const { user } = useAuth();
 
   // Check for doctor onboarding
   useEffect(() => {
@@ -57,6 +43,20 @@ const Dashboard = () => {
       checkDoctorRecord();
     }
   }, [user, isDoctor, profileLoading, navigate]);
+
+  // Show loading while checking onboarding status or profile
+  if (isChecking || profileLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="animate-spin h-8 w-8 text-primary" />
+      </div>
+    );
+  }
+
+  // Show onboarding wizard for new users (patients mostly)
+  if (needsOnboarding && profile?.role === 'patient') {
+    return <OnboardingWizard onComplete={completeOnboarding} />;
+  }
 
   return (
     <DashboardLayout>
