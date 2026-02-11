@@ -10,9 +10,10 @@ import { DoctorPortal } from "@/components/dashboard/DoctorPortal";
 import { useProfile } from "@/hooks/useProfile";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Loader2, Calendar, ChevronRight, Activity } from "lucide-react";
+import { Loader2, Calendar, ChevronRight, Activity, Brain, LineChart, ShieldAlert } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Dashboard = () => {
   const { needsOnboarding, isChecking, completeOnboarding } = useOnboarding();
@@ -56,8 +57,9 @@ const Dashboard = () => {
           <DoctorPortal />
         </div>
       ) : (
-        <>
-          <div className="mb-8 relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary/10 via-accent/10 to-primary/5 p-8">
+        <div className="max-w-7xl mx-auto space-y-8">
+          {/* Hero Welcome Section */}
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary/10 via-accent/10 to-primary/5 p-8">
             <div className="absolute top-0 right-0 p-8 opacity-20">
               <div className="w-32 h-32 bg-primary rounded-full blur-3xl animate-pulse" />
             </div>
@@ -81,7 +83,7 @@ const Dashboard = () => {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="mb-8 p-6 rounded-3xl bg-accent/10 border border-accent/20 flex flex-col md:flex-row items-center justify-between gap-4"
+              className="p-6 rounded-3xl bg-accent/10 border border-accent/20 flex flex-col md:flex-row items-center justify-between gap-4"
             >
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-accent/20 rounded-2xl">
@@ -98,43 +100,75 @@ const Dashboard = () => {
             </motion.div>
           )}
 
-          <div className="grid gap-6 md:grid-cols-2">
-            <EnhancedSymptomChecker />
+          {/* Structured Content with Tabs */}
+          <Tabs defaultValue="assessment" className="space-y-8">
+            <TabsList className="bg-muted/50 p-1 h-auto grid grid-cols-3 rounded-2xl max-w-2xl mx-auto">
+              <TabsTrigger value="assessment" className="rounded-xl py-3 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                <Brain className="w-4 h-4 mr-2" />
+                Assessment AI
+              </TabsTrigger>
+              <TabsTrigger value="monitoring" className="rounded-xl py-3 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                <LineChart className="w-4 h-4 mr-2" />
+                Smart Monitoring
+              </TabsTrigger>
+              <TabsTrigger value="care" className="rounded-xl py-3 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                <ShieldAlert className="w-4 h-4 mr-2" />
+                Care & Support
+              </TabsTrigger>
+            </TabsList>
 
-            <div className="space-y-6">
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                onClick={() => navigate('/dashboard/book')}
-                className="p-6 rounded-3xl bg-blue-600 text-white cursor-pointer shadow-xl shadow-blue-200"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-white/20 rounded-2xl">
-                    <Calendar className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg">Book an Appointment</h3>
-                    <p className="text-blue-100 text-sm">Schedule a visit with your doctor.</p>
-                  </div>
-                  <ChevronRight className="ml-auto" />
+            <TabsContent value="assessment" className="space-y-8 focus-visible:outline-none">
+              <div className="grid gap-8 lg:grid-cols-[1fr,400px]">
+                <div className="space-y-6">
+                  <EnhancedSymptomChecker />
+                  <VoiceConsultation />
                 </div>
-              </motion.div>
+                <div className="space-y-6">
+                  <div className="rounded-3xl border bg-card p-6 shadow-sm">
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                      <Brain className="w-5 h-5 text-primary" />
+                      Interactive Body Map
+                    </h3>
+                    <InteractiveBodyMap
+                      onPartSelect={(area) => {
+                        setSelectedBodyAreas(prev =>
+                          prev.includes(area) ? prev.filter(a => a !== area) : [...prev, area]
+                        );
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
 
-              <EmergencyMode />
-            </div>
-          </div>
+            <TabsContent value="monitoring" className="space-y-8 focus-visible:outline-none">
+              <SmartVitalsDashboard />
+            </TabsContent>
 
-          <div className="grid gap-6">
-            <VoiceConsultation />
-            <InteractiveBodyMap
-              onPartSelect={(area) => {
-                setSelectedBodyAreas(prev =>
-                  prev.includes(area) ? prev.filter(a => a !== area) : [...prev, area]
-                );
-              }}
-            />
-            <SmartVitalsDashboard />
-          </div>
-        </>
+            <TabsContent value="care" className="space-y-8 focus-visible:outline-none">
+              <div className="grid gap-6 md:grid-cols-2">
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  onClick={() => navigate('/dashboard/book')}
+                  className="p-8 rounded-3xl bg-blue-600 text-white cursor-pointer shadow-xl shadow-blue-200 transition-all"
+                >
+                  <div className="flex items-center gap-6">
+                    <div className="p-4 bg-white/20 rounded-2xl">
+                      <Calendar className="h-8 w-8" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-2xl">Book an Appointment</h3>
+                      <p className="text-blue-100 mt-1">Schedule a visit with your doctor or clinic specialist.</p>
+                    </div>
+                    <ChevronRight className="ml-auto h-8 w-8" />
+                  </div>
+                </motion.div>
+
+                <EmergencyMode />
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
       )}
     </DashboardLayout>
   );
