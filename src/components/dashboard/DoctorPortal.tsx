@@ -17,6 +17,7 @@ import {
   Loader2,
   Brain,
   Pill,
+  Sparkles,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -55,6 +56,10 @@ export function DoctorPortal() {
           .single();
 
         if (docError) throw docError;
+        if (!doc) {
+          setLoading(false);
+          return;
+        }
         setDoctorInfo(doc);
 
         // 2. Get Appointments
@@ -135,6 +140,16 @@ export function DoctorPortal() {
         return 'bg-gray-100 text-gray-800';
     }
   };
+
+  if (!doctorInfo && !loading) {
+    return (
+      <div className="flex flex-col items-center justify-center p-20 text-center">
+        <AlertCircle className="h-10 w-10 text-destructive mb-4" />
+        <h3 className="text-lg font-bold">Doctor Profile Not Found</h3>
+        <p className="text-muted-foreground max-w-xs">It seems your doctor profile isn't fully set up yet. Please complete onboarding.</p>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

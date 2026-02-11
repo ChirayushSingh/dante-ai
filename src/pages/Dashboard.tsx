@@ -8,12 +8,14 @@ import { InteractiveBodyMap } from "@/components/tools/InteractiveBodyMap";
 import { SmartVitalsDashboard } from "@/components/dashboard/SmartVitalsDashboard";
 import { DoctorPortal } from "@/components/dashboard/DoctorPortal";
 import { useProfile } from "@/hooks/useProfile";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2, Calendar, ChevronRight, Activity, Brain, LineChart, ShieldAlert } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 const Dashboard = () => {
   const { needsOnboarding, isChecking, completeOnboarding } = useOnboarding();
@@ -36,6 +38,25 @@ const Dashboard = () => {
   }
 
   const isDoctor = profile?.role === 'doctor' || profile?.role === 'clinic_admin';
+  const { user } = useAuth();
+
+  // Check for doctor onboarding
+  useEffect(() => {
+    if (user && isDoctor && !profileLoading) {
+      const checkDoctorRecord = async () => {
+        const { data, error } = await supabase
+          .from('doctors')
+          .select('id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (!data && !error) {
+          navigate('/dashboard/onboarding');
+        }
+      };
+      checkDoctorRecord();
+    }
+  }, [user, isDoctor, profileLoading, navigate]);
 
   return (
     <DashboardLayout>
