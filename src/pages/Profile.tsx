@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
   User, Heart, Pill, AlertTriangle, Plus, X, Save, Loader2,
-  Building2, Stethoscope, MapPin, Phone, Mail, Award, ShieldCheck
+  Building2, Stethoscope, MapPin, Phone, Mail, Award, ShieldCheck, Activity
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
