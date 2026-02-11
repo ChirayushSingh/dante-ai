@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { MedicalDisclaimer } from "@/components/MedicalDisclaimer";
 import { Activity, Mail, Lock, User, ArrowLeft, Loader2, Stethoscope, Building2, Check } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const Auth = () => {
@@ -53,14 +54,42 @@ const Auth = () => {
     }
 
     toast.success(isSignup ? "Account created successfully!" : "Welcome back!");
-    setIsLoading(false);
 
-    // Redirect clinic/doctors to onboarding if needed
+    // For sign-up, redirect based on role
     if (isSignup && (formData.role === 'doctor' || formData.role === 'clinic_admin')) {
+      setIsLoading(false);
       navigate("/dashboard/onboarding");
-    } else {
-      navigate("/dashboard");
+      return;
     }
+
+    // For sign-in, fetch profile to determine correct redirect
+    if (!isSignup) {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("role")
+            .eq("user_id", user.id)
+            .single();
+
+          setIsLoading(false);
+
+          // Redirect based on actual role from database
+          if (profile?.role === 'doctor' || profile?.role === 'clinic_admin') {
+            navigate("/dashboard");
+          } else {
+            navigate("/dashboard");
+          }
+          return;
+        }
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+      }
+    }
+
+    setIsLoading(false);
+    navigate("/dashboard");
   };
 
   return (
