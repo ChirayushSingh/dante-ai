@@ -15,6 +15,7 @@ export interface HealthProfile {
   blood_type: string | null;
   subscription_tier: string;
   checks_remaining: number;
+  role: string;
   // Patient specific enhancements
   emergency_contact_name: string | null;
   emergency_contact_phone: string | null;

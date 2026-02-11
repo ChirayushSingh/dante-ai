@@ -245,11 +245,13 @@ export default function Profile() {
         <div className="flex justify-between items-end">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
-              {profile?.role === 'patient' ? "Health Profile" :
-                profile?.role === 'doctor' ? "Medical Practitioner Profile" : "Clinic Management Profile"}
+              {profile?.role === 'doctor' ? "Medical Practitioner Profile" :
+                profile?.role === 'clinic_admin' ? "Clinic Management Profile" : "Health Profile"}
             </h1>
             <p className="text-muted-foreground text-lg">
-              {profile?.role === 'patient' ? "Manage your health identity and history" : "Update your professional and facility information"}
+              {profile?.role === 'doctor' || profile?.role === 'clinic_admin'
+                ? "Update your professional and facility information"
+                : "Manage your health identity and history"}
             </p>
           </div>
           <Badge className="mb-2 px-4 py-1.5 text-sm font-medium capitalize" variant="secondary">
@@ -283,7 +285,7 @@ export default function Profile() {
                         placeholder="Your full legal name"
                       />
                     </div>
-                    {profile?.role === 'patient' && (
+                    {profile?.role !== 'doctor' && profile?.role !== 'clinic_admin' && (
                       <div className="space-y-2">
                         <Label htmlFor="dob">Date of Birth</Label>
                         <Input
@@ -316,7 +318,7 @@ export default function Profile() {
                       </Select>
                     </div>
 
-                    {profile?.role === 'patient' && (
+                    {profile?.role !== 'doctor' && profile?.role !== 'clinic_admin' && (
                       <div className="space-y-2">
                         <Label>Blood Type</Label>
                         <Select
@@ -336,7 +338,7 @@ export default function Profile() {
                     )}
                   </div>
 
-                  {profile?.role === 'patient' && (
+                  {profile?.role !== 'doctor' && profile?.role !== 'clinic_admin' && (
                     <>
                       <div className="grid gap-6 sm:grid-cols-2">
                         <div className="space-y-2">
@@ -649,7 +651,7 @@ export default function Profile() {
 
           {/* Side Panels */}
           <div className="md:col-span-5 space-y-6">
-            {profile?.role === 'patient' ? (
+            {profile?.role !== 'doctor' && profile?.role !== 'clinic_admin' ? (
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
