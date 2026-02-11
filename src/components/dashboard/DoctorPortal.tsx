@@ -53,9 +53,14 @@ export function DoctorPortal() {
           .from('doctors' as any) as any)
           .select('*, clinics(*)')
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle();
 
-        if (docError) throw docError;
+        if (docError) {
+          console.error("Doctor fetch error:", docError);
+          setLoading(false);
+          return;
+        }
+
         if (!doc) {
           setLoading(false);
           return;
