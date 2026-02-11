@@ -15,6 +15,17 @@ export interface HealthProfile {
   blood_type: string | null;
   subscription_tier: string;
   checks_remaining: number;
+  // Patient specific enhancements
+  emergency_contact_name: string | null;
+  emergency_contact_phone: string | null;
+  emergency_contact_relationship: string | null;
+  primary_physician_name: string | null;
+  primary_physician_phone: string | null;
+  insurance_provider: string | null;
+  insurance_policy_number: string | null;
+  activity_level: string | null;
+  smoking_status: string | null;
+  alcohol_consumption: string | null;
 }
 
 export interface ChronicCondition {
@@ -53,7 +64,7 @@ export function useHealthProfile() {
         .eq("user_id", user.id)
         .single();
       if (error) throw error;
-      return data as HealthProfile;
+      return (data as unknown) as HealthProfile;
     },
     enabled: !!user,
   });
@@ -218,6 +229,14 @@ export function useHealthProfile() {
       conditions: conditionsQuery.data?.map(c => c.condition_name) || [],
       allergies: allergiesQuery.data?.map(a => a.allergen) || [],
       medications: medicationsQuery.data?.map(m => m.medication_name) || [],
+      lifestyle: {
+        activity_level: profileQuery.data?.activity_level,
+        smoking_status: profileQuery.data?.smoking_status,
+        alcohol_consumption: profileQuery.data?.alcohol_consumption,
+      },
+      contacts: {
+        primary_physician: profileQuery.data?.primary_physician_name,
+      }
     };
   };
 

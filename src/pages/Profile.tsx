@@ -54,6 +54,17 @@ export default function Profile() {
     clinic_address: "",
     clinic_phone: "",
     clinic_email: "",
+    // Patient enhanced
+    emergency_contact_name: "",
+    emergency_contact_phone: "",
+    emergency_contact_relationship: "",
+    primary_physician_name: "",
+    primary_physician_phone: "",
+    insurance_provider: "",
+    insurance_policy_number: "",
+    activity_level: "",
+    smoking_status: "",
+    alcohol_consumption: "",
   });
 
   const [isProfessionalLoading, setIsProfessionalLoading] = useState(false);
@@ -68,6 +79,16 @@ export default function Profile() {
         height_cm: profile.height_cm?.toString() || "",
         weight_kg: profile.weight_kg?.toString() || "",
         blood_type: profile.blood_type || "",
+        emergency_contact_name: profile.emergency_contact_name || "",
+        emergency_contact_phone: profile.emergency_contact_phone || "",
+        emergency_contact_relationship: profile.emergency_contact_relationship || "",
+        primary_physician_name: profile.primary_physician_name || "",
+        primary_physician_phone: profile.primary_physician_phone || "",
+        insurance_provider: profile.insurance_provider || "",
+        insurance_policy_number: profile.insurance_policy_number || "",
+        activity_level: profile.activity_level || "",
+        smoking_status: profile.smoking_status || "",
+        alcohol_consumption: profile.alcohol_consumption || "",
       }));
 
       if (profile.role === 'doctor' || profile.role === 'clinic_admin') {
@@ -138,6 +159,16 @@ export default function Profile() {
         height_cm: formData.height_cm ? parseFloat(formData.height_cm) : null,
         weight_kg: formData.weight_kg ? parseFloat(formData.weight_kg) : null,
         blood_type: formData.blood_type || null,
+        emergency_contact_name: formData.emergency_contact_name || null,
+        emergency_contact_phone: formData.emergency_contact_phone || null,
+        emergency_contact_relationship: formData.emergency_contact_relationship || null,
+        primary_physician_name: formData.primary_physician_name || null,
+        primary_physician_phone: formData.primary_physician_phone || null,
+        insurance_provider: formData.insurance_provider || null,
+        insurance_policy_number: formData.insurance_policy_number || null,
+        activity_level: formData.activity_level || null,
+        smoking_status: formData.smoking_status || null,
+        alcohol_consumption: formData.alcohol_consumption || null,
       });
 
       // 2. Update professional data if applicable
@@ -306,30 +337,183 @@ export default function Profile() {
                   </div>
 
                   {profile?.role === 'patient' && (
-                    <div className="grid gap-6 sm:grid-cols-2">
-                      <div className="space-y-2">
-                        <Label htmlFor="height">Height (cm)</Label>
-                        <Input
-                          id="height"
-                          type="number"
-                          className="bg-muted/50 border-none h-11"
-                          value={formData.height_cm}
-                          onChange={(e) => setFormData(prev => ({ ...prev, height_cm: e.target.value }))}
-                          placeholder="e.g. 175"
-                        />
+                    <>
+                      <div className="grid gap-6 sm:grid-cols-2">
+                        <div className="space-y-2">
+                          <Label htmlFor="height">Height (cm)</Label>
+                          <Input
+                            id="height"
+                            type="number"
+                            className="bg-muted/50 border-none h-11"
+                            value={formData.height_cm}
+                            onChange={(e) => setFormData(prev => ({ ...prev, height_cm: e.target.value }))}
+                            placeholder="e.g. 175"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="weight">Weight (kg)</Label>
+                          <Input
+                            id="weight"
+                            type="number"
+                            className="bg-muted/50 border-none h-11"
+                            value={formData.weight_kg}
+                            onChange={(e) => setFormData(prev => ({ ...prev, weight_kg: e.target.value }))}
+                            placeholder="e.g. 72"
+                          />
+                        </div>
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="weight">Weight (kg)</Label>
-                        <Input
-                          id="weight"
-                          type="number"
-                          className="bg-muted/50 border-none h-11"
-                          value={formData.weight_kg}
-                          onChange={(e) => setFormData(prev => ({ ...prev, weight_kg: e.target.value }))}
-                          placeholder="e.g. 72"
-                        />
+
+                      <Separator className="my-4 opacity-50" />
+
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold flex items-center gap-2">
+                          <Phone className="w-5 h-5 text-primary" />
+                          Emergency & Primary Care
+                        </h3>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <div className="space-y-2">
+                            <Label>Emergency Contact Name</Label>
+                            <Input
+                              className="bg-muted/50 border-none h-11"
+                              value={formData.emergency_contact_name}
+                              onChange={(e) => setFormData(prev => ({ ...prev, emergency_contact_name: e.target.value }))}
+                              placeholder="Name"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Relationship</Label>
+                            <Input
+                              className="bg-muted/50 border-none h-11"
+                              value={formData.emergency_contact_relationship}
+                              onChange={(e) => setFormData(prev => ({ ...prev, emergency_contact_relationship: e.target.value }))}
+                              placeholder="e.g. Spouse, Parent"
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Emergency Contact Phone</Label>
+                          <Input
+                            className="bg-muted/50 border-none h-11"
+                            value={formData.emergency_contact_phone}
+                            onChange={(e) => setFormData(prev => ({ ...prev, emergency_contact_phone: e.target.value }))}
+                            placeholder="Phone number"
+                          />
+                        </div>
+
+                        <Separator className="my-2 opacity-30" />
+
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <div className="space-y-2">
+                            <Label>Primary Care Physician</Label>
+                            <Input
+                              className="bg-muted/50 border-none h-11"
+                              value={formData.primary_physician_name}
+                              onChange={(e) => setFormData(prev => ({ ...prev, primary_physician_name: e.target.value }))}
+                              placeholder="Doctor's name"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Physician Contact</Label>
+                            <Input
+                              className="bg-muted/50 border-none h-11"
+                              value={formData.primary_physician_phone}
+                              onChange={(e) => setFormData(prev => ({ ...prev, primary_physician_phone: e.target.value }))}
+                              placeholder="Phone or Clinic number"
+                            />
+                          </div>
+                        </div>
                       </div>
-                    </div>
+
+                      <Separator className="my-4 opacity-50" />
+
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold flex items-center gap-2">
+                          <Building2 className="w-5 h-5 text-primary" />
+                          Insurance Information
+                        </h3>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <div className="space-y-2">
+                            <Label>Insurance Provider</Label>
+                            <Input
+                              className="bg-muted/50 border-none h-11"
+                              value={formData.insurance_provider}
+                              onChange={(e) => setFormData(prev => ({ ...prev, insurance_provider: e.target.value }))}
+                              placeholder="e.g. BlueCross, Aetna"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Policy / ID Number</Label>
+                            <Input
+                              className="bg-muted/50 border-none h-11"
+                              value={formData.insurance_policy_number}
+                              onChange={(e) => setFormData(prev => ({ ...prev, insurance_policy_number: e.target.value }))}
+                              placeholder="Policy number"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <Separator className="my-4 opacity-50" />
+
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold flex items-center gap-2">
+                          <Activity className="w-5 h-5 text-primary" />
+                          Lifestyle & Habits
+                        </h3>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <div className="space-y-2">
+                            <Label>Activity Level</Label>
+                            <Select
+                              value={formData.activity_level}
+                              onValueChange={(value) => setFormData(prev => ({ ...prev, activity_level: value }))}
+                            >
+                              <SelectTrigger className="bg-muted/50 border-none h-11">
+                                <SelectValue placeholder="Select" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="sedentary">Sedentary</SelectItem>
+                                <SelectItem value="lightly_active">Lightly Active</SelectItem>
+                                <SelectItem value="active">Active</SelectItem>
+                                <SelectItem value="very_active">Very Active</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Smoking Status</Label>
+                            <Select
+                              value={formData.smoking_status}
+                              onValueChange={(value) => setFormData(prev => ({ ...prev, smoking_status: value }))}
+                            >
+                              <SelectTrigger className="bg-muted/50 border-none h-11">
+                                <SelectValue placeholder="Select" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="non_smoker">Non-smoker</SelectItem>
+                                <SelectItem value="former_smoker">Former smoker</SelectItem>
+                                <SelectItem value="occasional">Occasional</SelectItem>
+                                <SelectItem value="regular">Regular</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Alcohol Consumption</Label>
+                          <Select
+                            value={formData.alcohol_consumption}
+                            onValueChange={(value) => setFormData(prev => ({ ...prev, alcohol_consumption: value }))}
+                          >
+                            <SelectTrigger className="bg-muted/50 border-none h-11">
+                              <SelectValue placeholder="Select" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="none">None</SelectItem>
+                              <SelectItem value="occasional">Social / Occasional</SelectItem>
+                              <SelectItem value="regular">Regular</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </>
                   )}
 
                   <Separator className="my-4 opacity-50" />
