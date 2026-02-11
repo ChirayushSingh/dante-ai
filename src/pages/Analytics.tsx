@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import {
   Activity, Users, TrendingUp, Calendar, BarChart3, PieChart,
   AlertTriangle, CheckCircle, Clock, AlertOctagon, Loader2,
-  DollarSign, MapPin, Stethoscope
+  DollarSign, MapPin, Stethoscope, Building2
 } from "lucide-react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -29,7 +29,7 @@ const CHART_COLORS = ["#8b5cf6", "#3b82f6", "#10b981", "#f59e0b", "#ef4444"];
 
 export default function Analytics() {
   const { user } = useAuth();
-  const { profile } = useProfile();
+  const { profile, loading: profileLoading } = useProfile();
   const isDoctor = profile?.role === 'doctor' || profile?.role === 'clinic_admin';
 
   // 1. Fetch Personal Symptom Checks
@@ -54,7 +54,7 @@ export default function Analytics() {
     queryFn: async () => {
       if (!user || !isDoctor) return null;
 
-      const { data: doc } = await supabase.from("doctors").select("clinic_id").eq("user_id", user.id).single();
+      const { data: doc } = await supabase.from("doctors").select("clinic_id").eq("user_id", user.id).maybeSingle();
       if (!doc) return null;
 
       const [appointments, invoices] = await Promise.all([
@@ -72,7 +72,7 @@ export default function Analytics() {
     enabled: !!user && isDoctor,
   });
 
-  if (checksLoading || (isDoctor && clinicLoading)) {
+  if (checksLoading || profileLoading || (isDoctor && clinicLoading)) {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
