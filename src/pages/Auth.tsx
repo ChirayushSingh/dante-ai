@@ -67,11 +67,11 @@ const Auth = () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
-          const { data: profile } = await supabase
+          const { data: profile } = await (supabase
             .from("profiles")
             .select("role")
             .eq("user_id", user.id)
-            .single();
+            .single() as unknown as { data: any; error: any });
 
           setIsLoading(false);
 
