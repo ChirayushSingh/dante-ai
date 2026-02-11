@@ -19,6 +19,7 @@ import ClinicOnboarding from "./pages/ClinicOnboarding";
 import PatientRegistration from "./pages/PatientRegistration";
 import BookAppointment from "./pages/BookAppointment";
 import SecureMessaging from "./pages/SecureMessaging";
+import Vitals from "./pages/Vitals";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="/dashboard/billing" element={<RequireAuth><Billing /></RequireAuth>} />
             <Route path="/dashboard/api-keys" element={<RequireAuth><ApiKeys /></RequireAuth>} />
             <Route path="/dashboard/messages" element={<RequireAuth><SecureMessaging /></RequireAuth>} />
+            <Route path="/dashboard/vitals" element={<RequireAuth><Vitals /></RequireAuth>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

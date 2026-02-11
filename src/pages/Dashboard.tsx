@@ -7,6 +7,7 @@ import { VoiceConsultation } from "@/components/dashboard/VoiceConsultation";
 import { InteractiveBodyMap } from "@/components/tools/InteractiveBodyMap";
 import { SmartVitalsDashboard } from "@/components/dashboard/SmartVitalsDashboard";
 import { DoctorPortal } from "@/components/dashboard/DoctorPortal";
+import { DigitalTwinCard } from "@/components/dashboard/DigitalTwinCard";
 import { useProfile } from "@/hooks/useProfile";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -98,6 +99,20 @@ const Dashboard = () => {
                 Patient Mode
               </span>
             </div>
+          </div>
+
+          <div className="grid gap-8 lg:grid-cols-3">
+            <div className="lg:col-span-2">
+              <DigitalTwinCard score={84} />
+            </div>
+            <Card className="border-none shadow-xl bg-primary/5 p-6 flex flex-col justify-center">
+              <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
+                <ShieldAlert className="w-5 h-5 text-primary" />
+                Health Protection
+              </h3>
+              <p className="text-muted-foreground mb-4">Your AI twin confirms you are well-protected against current local flu trends.</p>
+              <Button variant="outline" className="w-full">View detailed trends</Button>
+            </Card>
           </div>
 
           {!profile?.blood_type && (

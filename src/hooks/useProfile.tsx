@@ -12,6 +12,9 @@ export interface UserProfile {
     avatar_url: string | null;
     role: UserRole;
     subscription_tier: string;
+    blood_type?: string | null;
+    gender?: string | null;
+    date_of_birth?: string | null;
 }
 
 export function useProfile() {

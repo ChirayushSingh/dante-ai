@@ -28,6 +28,7 @@ const patientNavItems = [
   { icon: BookOpen, label: "Health Hub", href: "/dashboard/knowledge" },
   { icon: History, label: "History", href: "/dashboard/history" },
   { icon: BarChart3, label: "Analytics", href: "/dashboard/analytics" },
+  { icon: Heart, label: "Vitals", href: "/dashboard/vitals" },
   { icon: User, label: "Profile", href: "/dashboard/profile" },
   { icon: CreditCard, label: "Billing", href: "/dashboard/billing" },
 ];
@@ -37,6 +38,7 @@ const doctorNavItems = [
   { icon: MessageSquare, label: "Secure Messages", href: "/dashboard/messages" },
   { icon: History, label: "Clinical History", href: "/dashboard/history" },
   { icon: BarChart3, label: "Clinic Analytics", href: "/dashboard/analytics" },
+  { icon: Heart, label: "Vitals", href: "/dashboard/vitals" },
   { icon: User, label: "Profile", href: "/dashboard/profile" },
   { icon: CreditCard, label: "Clinic Billing", href: "/dashboard/billing" },
 ];
