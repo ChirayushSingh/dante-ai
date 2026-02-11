@@ -104,7 +104,7 @@ const Dashboard = () => {
             <div className="space-y-6">
               <motion.div
                 whileHover={{ scale: 1.02 }}
-                onClick={() => window.location.href = '/dashboard/book'}
+                onClick={() => navigate('/dashboard/book')}
                 className="p-6 rounded-3xl bg-blue-600 text-white cursor-pointer shadow-xl shadow-blue-200"
               >
                 <div className="flex items-center gap-4">

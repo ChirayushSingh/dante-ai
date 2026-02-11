@@ -13,13 +13,18 @@ import {
     ChevronRight,
     Loader2,
     CheckCircle2,
-    Stethoscope
+    Stethoscope,
+    FileText,
+    Shield
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { format, addDays, setHours, setMinutes, isBefore, startOfToday } from "date-fns";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 
 export default function BookAppointment() {
     const { user } = useAuth();
@@ -31,6 +36,9 @@ export default function BookAppointment() {
     const [selectedDoctor, setSelectedDoctor] = useState<any>(null);
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
+    const [reasonForVisit, setReasonForVisit] = useState("");
+    const [insuranceProvider, setInsuranceProvider] = useState("");
+    const [insuranceId, setInsuranceId] = useState("");
     const [booking, setBooking] = useState(false);
 
     useEffect(() => {
@@ -100,6 +108,10 @@ export default function BookAppointment() {
                 clinic_id: selectedClinic.id,
                 scheduled_at: scheduledAt.toISOString(),
                 status: "scheduled",
+                reason_for_visit: reasonForVisit,
+                insurance_provider: insuranceProvider,
+                insurance_id: insuranceId,
+                notes: reasonForVisit // Fallback to notes as well
             });
 
             if (error) throw error;
@@ -230,8 +242,42 @@ export default function BookAppointment() {
 
                                 <Card className="bg-slate-900 text-white rounded-3xl border-none shadow-2xl p-6 mt-8">
                                     <div className="space-y-4">
-                                        <h3 className="text-lg font-bold border-b border-white/10 pb-4">Booking Summary</h3>
-                                        <div className="space-y-3">
+                                        <h3 className="text-lg font-bold border-b border-white/10 pb-4">Booking Details</h3>
+
+                                        <div className="space-y-4 pt-2">
+                                            <div className="space-y-2">
+                                                <Label className="text-white/70">Reason for Visit</Label>
+                                                <Textarea
+                                                    placeholder="Short description of your symptoms or visit reason..."
+                                                    className="bg-white/10 border-white/20 text-white placeholder:text-white/30 rounded-xl"
+                                                    value={reasonForVisit}
+                                                    onChange={(e) => setReasonForVisit(e.target.value)}
+                                                />
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="space-y-2">
+                                                    <Label className="text-white/70">Insurance Provider</Label>
+                                                    <Input
+                                                        placeholder="Optional"
+                                                        className="bg-white/10 border-white/20 text-white placeholder:text-white/30 rounded-xl"
+                                                        value={insuranceProvider}
+                                                        onChange={(e) => setInsuranceProvider(e.target.value)}
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label className="text-white/70">Insurance ID</Label>
+                                                    <Input
+                                                        placeholder="Optional"
+                                                        className="bg-white/10 border-white/20 text-white placeholder:text-white/30 rounded-xl"
+                                                        value={insuranceId}
+                                                        onChange={(e) => setInsuranceId(e.target.value)}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-3 pt-4 border-t border-white/10">
                                             <div className="flex items-center gap-3 text-sm text-white/70">
                                                 <MapPin className="h-4 w-4" /> {selectedClinic.name}
                                             </div>
@@ -249,7 +295,7 @@ export default function BookAppointment() {
                                         </div>
                                         <Button
                                             className="w-full h-12 mt-4 bg-white text-slate-900 hover:bg-slate-100 rounded-2xl font-bold"
-                                            disabled={!selectedTime || booking}
+                                            disabled={!selectedTime || !reasonForVisit || booking}
                                             onClick={handleBook}
                                         >
                                             {booking ? <Loader2 className="h-5 w-5 animate-spin" /> : "Confirm & Pay"}
