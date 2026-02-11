@@ -71,7 +71,7 @@ const Auth = () => {
             .from("profiles")
             .select("role")
             .eq("user_id", user.id)
-            .single() as unknown as { data: any; error: any });
+            .single() as unknown as { data: { role: string } | null; error: unknown });
 
           setIsLoading(false);
 
