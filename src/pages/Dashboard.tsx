@@ -8,10 +8,13 @@ import { InteractiveBodyMap } from "@/components/tools/InteractiveBodyMap";
 import { SmartVitalsDashboard } from "@/components/dashboard/SmartVitalsDashboard";
 import { DoctorPortal } from "@/components/dashboard/DoctorPortal";
 import { DigitalTwinCard } from "@/components/dashboard/DigitalTwinCard";
+import { CameraVitals } from "@/components/dashboard/CameraVitals";
+import { GuardianVoiceAI } from "@/components/dashboard/GuardianVoiceAI";
+import { EnvironmentalGuardian } from "@/components/dashboard/EnvironmentalGuardian";
 import { useProfile } from "@/hooks/useProfile";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Loader2, Calendar, ChevronRight, Activity, Brain, LineChart, ShieldAlert } from "lucide-react";
+import { Loader2, Calendar, ChevronRight, Activity, Brain, LineChart, ShieldAlert, Shield } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -145,10 +148,14 @@ const Dashboard = () => {
 
           {/* Structured Content with Tabs */}
           <Tabs defaultValue="assessment" className="space-y-8">
-            <TabsList className="bg-muted/50 p-1 h-auto grid grid-cols-3 rounded-2xl max-w-2xl mx-auto">
+            <TabsList className="bg-muted/50 p-1 h-auto grid grid-cols-2 md:grid-cols-4 rounded-2xl max-w-4xl mx-auto gap-1">
               <TabsTrigger value="assessment" className="rounded-xl py-3 data-[state=active]:bg-white data-[state=active]:shadow-sm">
                 <Brain className="w-4 h-4 mr-2" />
                 Assessment AI
+              </TabsTrigger>
+              <TabsTrigger value="guardian" className="rounded-xl py-3 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                <Shield className="w-4 h-4 mr-2" />
+                Guardian AI
               </TabsTrigger>
               <TabsTrigger value="monitoring" className="rounded-xl py-3 data-[state=active]:bg-white data-[state=active]:shadow-sm">
                 <LineChart className="w-4 h-4 mr-2" />
@@ -180,6 +187,16 @@ const Dashboard = () => {
                       }}
                     />
                   </div>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="guardian" className="space-y-8 focus-visible:outline-none">
+              <div className="grid gap-8 lg:grid-cols-2">
+                <CameraVitals />
+                <div className="space-y-8">
+                  <GuardianVoiceAI />
+                  <EnvironmentalGuardian />
                 </div>
               </div>
             </TabsContent>
