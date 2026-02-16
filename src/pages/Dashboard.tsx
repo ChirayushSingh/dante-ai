@@ -112,7 +112,13 @@ const Dashboard = () => {
                 Health Protection
               </h3>
               <p className="text-muted-foreground mb-4">Your AI twin confirms you are well-protected against current local flu trends.</p>
-              <Button variant="outline" className="w-full">View detailed trends</Button>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => navigate('/dashboard/analytics')}
+              >
+                View detailed trends
+              </Button>
             </Card>
           </div>
 

@@ -1,9 +1,19 @@
+import { useState } from "react";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Activity, Heart, Moon, Footprints, Info, RefreshCw } from "lucide-react";
+import { Activity, Heart, Moon, Footprints, Info, RefreshCw, Watch, Smartphone, Bluetooth } from "lucide-react";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, AreaChart, Area } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 
 const heartRateData = [
     { time: "00:00", bpm: 62 },
@@ -26,6 +36,25 @@ const activityData = [
 ];
 
 export default function Vitals() {
+    const [isSyncing, setIsSyncing] = useState(false);
+
+    const handleSync = () => {
+        setIsSyncing(true);
+        toast.info("Synchronizing data with your wearables...");
+
+        setTimeout(() => {
+            setIsSyncing(false);
+            toast.success("Health data synchronized successfully!");
+        }, 3000);
+    };
+
+    const devices = [
+        { name: "Apple Health", icon: Smartphone, color: "text-red-500" },
+        { name: "Fitbit Sense 2", icon: Watch, color: "text-cyan-500" },
+        { name: "Oura Ring Gen3", icon: Activity, color: "text-purple-500" },
+        { name: "Garmin Connect", icon: Bluetooth, color: "text-blue-500" },
+    ];
+
     return (
         <DashboardLayout>
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -35,13 +64,50 @@ export default function Vitals() {
                         <p className="text-muted-foreground text-lg">Real-time health monitoring and trend analysis.</p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <Badge variant="outline" className="px-3 py-1 border-primary/20 bg-primary/5 text-primary">
-                            <RefreshCw className="w-3 h-3 mr-2 animate-spin-slow" />
-                            Syncing with Wearables
+                        <Badge
+                            variant="outline"
+                            className="px-3 py-1 border-primary/20 bg-primary/5 text-primary cursor-pointer hover:bg-primary/10 transition-colors"
+                            onClick={handleSync}
+                        >
+                            <RefreshCw className={`w-3 h-3 mr-2 ${isSyncing ? 'animate-spin' : 'animate-spin-slow'}`} />
+                            {isSyncing ? 'Syncing...' : 'Syncing with Wearables'}
                         </Badge>
-                        <Button variant="outline" size="sm">
-                            Connect Device
-                        </Button>
+
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button variant="outline" size="sm">
+                                    Connect Device
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px]">
+                                <DialogHeader>
+                                    <DialogTitle>Connect Health Device</DialogTitle>
+                                    <DialogDescription>
+                                        Select a device or app to sync your health data with Diagnova AI.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="grid gap-4 py-4">
+                                    {devices.map((device) => (
+                                        <Button
+                                            key={device.name}
+                                            variant="outline"
+                                            className="flex items-center justify-start gap-4 p-6 h-auto hover:bg-muted"
+                                            onClick={() => {
+                                                toast.success(`Connected to ${device.name}!`);
+                                            }}
+                                        >
+                                            <div className={`p-2 rounded-full bg-muted`}>
+                                                <device.icon className={`h-6 w-6 ${device.color}`} />
+                                            </div>
+                                            <div className="text-left">
+                                                <div className="font-semibold">{device.name}</div>
+                                                <div className="text-xs text-muted-foreground">Tap to authorize connection</div>
+                                            </div>
+                                        </Button>
+                                    ))}
+                                </div>
+                            </DialogContent>
+                        </Dialog>
                     </div>
                 </div>
 
