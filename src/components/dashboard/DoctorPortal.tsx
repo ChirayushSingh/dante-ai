@@ -332,168 +332,169 @@ export function DoctorPortal() {
         )}
       </AnimatePresence>
 
-      <TabsList className="grid w-full grid-cols-4">
-        <TabsTrigger value="intelligence" className="font-bold text-primary">
-          <Sparkles className="w-4 h-4 mr-2" />
-          Clinical Intelligence
-        </TabsTrigger>
-        <TabsTrigger value="appointments">Appointments</TabsTrigger>
-        <TabsTrigger value="patients">Patient List</TabsTrigger>
-        <TabsTrigger value="prescriptions">History</TabsTrigger>
-      </TabsList>
+      <Tabs defaultValue="intelligence" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="intelligence" className="font-bold text-primary">
+            <Sparkles className="w-4 h-4 mr-2" />
+            Clinical Intelligence
+          </TabsTrigger>
+          <TabsTrigger value="appointments">Appointments</TabsTrigger>
+          <TabsTrigger value="patients">Patient List</TabsTrigger>
+          <TabsTrigger value="prescriptions">History</TabsTrigger>
+        </TabsList>
 
-      <TabsContent value="intelligence" className="space-y-8 focus-visible:outline-none">
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div className="space-y-6">
-            <AILiveScribe />
+        <TabsContent value="intelligence" className="space-y-8 focus-visible:outline-none">
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div className="space-y-6">
+              <AILiveScribe />
+            </div>
+            <div className="space-y-6">
+              <PredictiveTriage />
+            </div>
           </div>
-          <div className="space-y-6">
-            <PredictiveTriage />
+          <div className="w-full">
+            <WarRoom />
           </div>
-        </div>
-        <div className="w-full">
-          <WarRoom />
-        </div>
-      </TabsContent>
+        </TabsContent>
 
-      <TabsContent value="appointments" className="space-y-4">
-        {appointments.length === 0 ? (
-          <p className="text-center p-10 text-muted-foreground bg-slate-50 rounded-2xl">No appointments scheduled.</p>
-        ) : (
-          appointments.map((appointment) => (
-            <Card key={appointment.id} onClick={() => setSelectedPatient(appointment.profiles)} className="cursor-pointer hover:border-primary transition-all">
-              <CardContent className="pt-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex gap-4 flex-1">
-                    <Calendar className="h-5 w-5 text-gray-400 mt-1" />
-                    <div className="flex-1">
-                      <h3 className="font-semibold">{appointment.profiles?.full_name || "Unknown Patient"}</h3>
-                      <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 mt-2">
-                        <p className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4" /> {new Date(appointment.scheduled_at).toLocaleDateString()}
-                        </p>
-                        <p className="flex items-center gap-1">
-                          <Clock className="h-4 w-4" /> {new Date(appointment.scheduled_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </p>
+        <TabsContent value="appointments" className="space-y-4">
+          {appointments.length === 0 ? (
+            <p className="text-center p-10 text-muted-foreground bg-slate-50 rounded-2xl">No appointments scheduled.</p>
+          ) : (
+            appointments.map((appointment) => (
+              <Card key={appointment.id} onClick={() => setSelectedPatient(appointment.profiles)} className="cursor-pointer hover:border-primary transition-all">
+                <CardContent className="pt-6">
+                  <div className="flex items-start justify-between">
+                    <div className="flex gap-4 flex-1">
+                      <Calendar className="h-5 w-5 text-gray-400 mt-1" />
+                      <div className="flex-1">
+                        <h3 className="font-semibold">{appointment.profiles?.full_name || "Unknown Patient"}</h3>
+                        <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 mt-2">
+                          <p className="flex items-center gap-1">
+                            <Calendar className="h-4 w-4" /> {new Date(appointment.scheduled_at).toLocaleDateString()}
+                          </p>
+                          <p className="flex items-center gap-1">
+                            <Clock className="h-4 w-4" /> {new Date(appointment.scheduled_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <Badge className={getStatusColor(appointment.status)}>
+                      {appointment.status}
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </TabsContent>
+
+        <TabsContent value="patients" className="space-y-4">
+          <div className="grid grid-cols-1 gap-4">
+            {patients.map((patient) => (
+              <Card
+                key={patient.id}
+                className="cursor-pointer hover:shadow-lg transition-shadow"
+                onClick={() => setSelectedPatient(patient)}
+              >
+                <CardContent className="pt-6">
+                  <div className="flex items-start justify-between">
+                    <div className="flex gap-4">
+                      <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-xl">
+                        {patient.avatar_url ? <img src={patient.avatar_url} alt="" className="w-full h-full rounded-full" /> : <User />}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-lg">{patient.full_name}</h3>
+                        <div className="grid grid-cols-2 gap-x-8 gap-y-1 text-sm text-gray-600 mt-1">
+                          <p>📧 {patient.email}</p>
+                          <p>📱 {patient.phone || "N/A"}</p>
+                          <p>🩸 Blood: {patient.blood_type || "N/A"}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <Badge className={getStatusColor(appointment.status)}>
-                    {appointment.status}
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
-      </TabsContent>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
 
-      <TabsContent value="patients" className="space-y-4">
-        <div className="grid grid-cols-1 gap-4">
-          {patients.map((patient) => (
-            <Card
-              key={patient.id}
-              className="cursor-pointer hover:shadow-lg transition-shadow"
-              onClick={() => setSelectedPatient(patient)}
-            >
+        <TabsContent value="prescriptions" className="space-y-4">
+          {prescriptions.map((prescription) => (
+            <Card key={prescription.id}>
               <CardContent className="pt-6">
                 <div className="flex items-start justify-between">
-                  <div className="flex gap-4">
-                    <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-xl">
-                      {patient.avatar_url ? <img src={patient.avatar_url} alt="" className="w-full h-full rounded-full" /> : <User />}
-                    </div>
+                  <div className="flex gap-4 flex-1">
+                    <FileText className="h-5 w-5 text-gray-400 mt-1" />
                     <div className="flex-1">
-                      <h3 className="font-semibold text-lg">{patient.full_name}</h3>
-                      <div className="grid grid-cols-2 gap-x-8 gap-y-1 text-sm text-gray-600 mt-1">
-                        <p>📧 {patient.email}</p>
-                        <p>📱 {patient.phone || "N/A"}</p>
-                        <p>🩸 Blood: {patient.blood_type || "N/A"}</p>
+                      <h3 className="font-semibold">{prescription.profiles?.full_name}</h3>
+                      <div className="mt-2 space-y-2">
+                        {Array.isArray(prescription.medications) && prescription.medications.map((m: any, idx: number) => (
+                          <div key={idx} className="flex items-center gap-2 text-sm bg-primary/5 p-2 rounded-lg">
+                            <Pill className="h-3 w-3 text-primary" />
+                            <span className="font-medium">{m.name}</span>
+                            <span className="text-muted-foreground">{m.dosage} - {m.frequency} ({m.duration})</span>
+                          </div>
+                        ))}
                       </div>
+                      <p className="text-xs text-muted-foreground mt-2">Issued on: {new Date(prescription.issued_at).toLocaleDateString()}</p>
                     </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
           ))}
-        </div>
-      </TabsContent>
+        </TabsContent>
+      </Tabs>
 
-      <TabsContent value="prescriptions" className="space-y-4">
-        {prescriptions.map((prescription) => (
-          <Card key={prescription.id}>
-            <CardContent className="pt-6">
-              <div className="flex items-start justify-between">
-                <div className="flex gap-4 flex-1">
-                  <FileText className="h-5 w-5 text-gray-400 mt-1" />
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{prescription.profiles?.full_name}</h3>
-                    <div className="mt-2 space-y-2">
-                      {Array.isArray(prescription.medications) && prescription.medications.map((m: any, idx: number) => (
-                        <div key={idx} className="flex items-center gap-2 text-sm bg-primary/5 p-2 rounded-lg">
-                          <Pill className="h-3 w-3 text-primary" />
-                          <span className="font-medium">{m.name}</span>
-                          <span className="text-muted-foreground">{m.dosage} - {m.frequency} ({m.duration})</span>
+      {/* Patient Details Sidebar/Card */}
+      {
+        selectedPatient && (
+          <Card className="border-l-4 border-l-primary shadow-xl">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <User className="h-5 w-5" />
+                Patient Focus: {selectedPatient.full_name}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex gap-2">
+                <Button className="flex-1 gap-2" onClick={() => setShowTool('prescription')}>
+                  <Pill className="h-4 w-4" /> Prescribe
+                </Button>
+                <Button variant="outline" className="flex-1 gap-2" onClick={() => setShowTool('chat')}>
+                  <MessageSquare className="h-4 w-4" /> Chat
+                </Button>
+                <Button variant="outline" className="flex-1 gap-2" onClick={() => setShowTool('summary')}>
+                  <Brain className="h-4 w-4" /> AI Note
+                </Button>
+              </div>
+              <div className="space-y-2 text-sm border-t pt-4">
+                <p><span className="font-semibold">Email:</span> {selectedPatient.email}</p>
+                <p><span className="font-semibold">Gender:</span> {selectedPatient.gender || "Unspecified"}</p>
+                <p><span className="font-semibold">Blood Type:</span> {selectedPatient.blood_type || "Unknown"}</p>
+              </div>
+
+              {patientChecks.length > 0 && (
+                <div className="space-y-2 border-t pt-4">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Recent Symptom Checks</h4>
+                  <div className="space-y-2">
+                    {patientChecks.map((check: any) => (
+                      <div key={check.id} className="p-2 rounded-lg bg-orange-50 border border-orange-100 text-xs">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="font-semibold text-orange-900">{check.symptoms?.[0] || "Checkup"}</span>
+                          <span className="text-[10px] opacity-70">{new Date(check.created_at).toLocaleDateString()}</span>
                         </div>
-                      ))}
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-2">Issued on: {new Date(prescription.issued_at).toLocaleDateString()}</p>
+                        <p className="text-orange-800 line-clamp-2">{check.recommendation || "Observation required."}</p>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              </div>
+              )}
             </CardContent>
           </Card>
-        ))}
-      </TabsContent>
-    </Tabs>
-
-      {/* Patient Details Sidebar/Card */ }
-  {
-    selectedPatient && (
-      <Card className="border-l-4 border-l-primary shadow-xl">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <User className="h-5 w-5" />
-            Patient Focus: {selectedPatient.full_name}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex gap-2">
-            <Button className="flex-1 gap-2" onClick={() => setShowTool('prescription')}>
-              <Pill className="h-4 w-4" /> Prescribe
-            </Button>
-            <Button variant="outline" className="flex-1 gap-2" onClick={() => setShowTool('chat')}>
-              <MessageSquare className="h-4 w-4" /> Chat
-            </Button>
-            <Button variant="outline" className="flex-1 gap-2" onClick={() => setShowTool('summary')}>
-              <Brain className="h-4 w-4" /> AI Note
-            </Button>
-          </div>
-          <div className="space-y-2 text-sm border-t pt-4">
-            <p><span className="font-semibold">Email:</span> {selectedPatient.email}</p>
-            <p><span className="font-semibold">Gender:</span> {selectedPatient.gender || "Unspecified"}</p>
-            <p><span className="font-semibold">Blood Type:</span> {selectedPatient.blood_type || "Unknown"}</p>
-          </div>
-
-          {patientChecks.length > 0 && (
-            <div className="space-y-2 border-t pt-4">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Recent Symptom Checks</h4>
-              <div className="space-y-2">
-                {patientChecks.map((check: any) => (
-                  <div key={check.id} className="p-2 rounded-lg bg-orange-50 border border-orange-100 text-xs">
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="font-semibold text-orange-900">{check.symptoms?.[0] || "Checkup"}</span>
-                      <span className="text-[10px] opacity-70">{new Date(check.created_at).toLocaleDateString()}</span>
-                    </div>
-                    <p className="text-orange-800 line-clamp-2">{check.recommendation || "Observation required."}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    )
-  }
+        )
+      }
     </div >
   );
 }

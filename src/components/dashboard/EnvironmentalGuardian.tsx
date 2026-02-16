@@ -106,22 +106,21 @@ export function EnvironmentalGuardian() {
                         <p className="text-sm font-black">{envData.temp}°C</p>
                     </div>
                 </div>
-            </div>
 
-            <div className="space-y-2 pt-2">
-                <div className="flex justify-between items-center text-xs font-bold">
-                    <span className="text-muted-foreground uppercase tracking-wider">Asthma Trigger Risk</span>
-                    <span className="text-emerald-500">LOW (24%)</span>
+                <div className="space-y-2 pt-2">
+                    <div className="flex justify-between items-center text-xs font-bold">
+                        <span className="text-muted-foreground uppercase tracking-wider">Asthma Trigger Risk</span>
+                        <span className="text-emerald-500">LOW (24%)</span>
+                    </div>
+                    <Progress value={24} className="h-1.5 bg-muted" />
+                    <div className="flex items-center gap-2 mt-2">
+                        <Info className="w-3 h-3 text-primary" />
+                        <p className="text-[10px] text-muted-foreground leading-tight">
+                            Risk score calculated using real-time AQI, humidity, and your medical profile.
+                        </p>
+                    </div>
                 </div>
-                <Progress value={24} className="h-1.5 bg-muted" />
-                <div className="flex items-center gap-2 mt-2">
-                    <Info className="w-3 h-3 text-primary" />
-                    <p className="text-[10px] text-muted-foreground leading-tight">
-                        Risk score calculated using real-time AQI, humidity, and your medical profile.
-                    </p>
-                </div>
-            </div>
-        </CardContent>
+            </CardContent>
         </Card >
     );
 }
