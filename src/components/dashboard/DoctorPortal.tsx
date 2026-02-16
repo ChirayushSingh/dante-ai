@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -355,14 +356,20 @@ export function DoctorPortal() {
         <TabsContent value="intelligence" className="space-y-8 focus-visible:outline-none">
           <div className="grid gap-6 lg:grid-cols-2">
             <div className="space-y-6">
-              <AILiveScribe />
+              <ErrorBoundary name="AI Live Scribe">
+                <AILiveScribe />
+              </ErrorBoundary>
             </div>
             <div className="space-y-6">
-              <PredictiveTriage />
+              <ErrorBoundary name="Predictive Triage">
+                <PredictiveTriage />
+              </ErrorBoundary>
             </div>
           </div>
           <div className="w-full">
-            <WarRoom />
+            <ErrorBoundary name="Clinical War Room (3D)">
+              <WarRoom />
+            </ErrorBoundary>
           </div>
         </TabsContent>
 
