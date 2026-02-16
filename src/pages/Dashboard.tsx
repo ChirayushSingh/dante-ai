@@ -191,10 +191,10 @@ const Dashboard = () => {
               </div>
             </TabsContent>
 
-            <TabsContent value="guardian" className="space-y-8 focus-visible:outline-none">
-              <div className="grid gap-8 lg:grid-cols-2">
+            <TabsContent value="guardian" className="space-y-4 focus-visible:outline-none">
+              <div className="grid gap-4 lg:grid-cols-2">
                 <CameraVitals />
-                <div className="space-y-8">
+                <div className="space-y-4">
                   <GuardianVoiceAI />
                   <EnvironmentalGuardian />
                 </div>

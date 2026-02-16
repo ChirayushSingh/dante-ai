@@ -98,8 +98,8 @@ export function CameraVitals() {
                 </div>
             </CardHeader>
 
-            <CardContent className="space-y-6">
-                <div className="relative aspect-[4/3] bg-muted rounded-3xl overflow-hidden border-2 border-primary/10 group-hover:border-primary/30 transition-all duration-500">
+            <CardContent className="space-y-4">
+                <div className="relative aspect-video bg-muted rounded-2xl overflow-hidden border-2 border-primary/10 group-hover:border-primary/30 transition-all duration-500">
                     {!isActive ? (
                         <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4 px-6 text-center">
                             <div className="p-4 rounded-full bg-primary/10 text-primary">
@@ -142,13 +142,13 @@ export function CameraVitals() {
                             </div>
 
                             {isScanning && (
-                                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
-                                    <div className="space-y-3">
-                                        <div className="flex justify-between text-xs text-white font-bold uppercase tracking-widest">
+                                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between text-[10px] text-white font-bold uppercase tracking-widest">
                                             <span>Analyzing Micro-fluctuations</span>
                                             <span>{Math.round(progress)}%</span>
                                         </div>
-                                        <Progress value={progress} className="h-2 bg-white/20" />
+                                        <Progress value={progress} className="h-1.5 bg-white/20" />
                                     </div>
                                 </div>
                             )}
@@ -168,48 +168,48 @@ export function CameraVitals() {
                 <AnimatePresence>
                     {scanResult && !isScanning && (
                         <motion.div
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="grid grid-cols-2 gap-4"
+                            className="grid grid-cols-2 gap-3"
                         >
-                            <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 space-y-1">
-                                <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase">
+                            <div className="p-3 rounded-xl bg-primary/5 border border-primary/10 space-y-0.5">
+                                <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase">
                                     <Heart className="w-3 h-3 text-red-500" />
                                     Heart Rate
                                 </div>
-                                <div className="text-2xl font-bold text-primary">{scanResult.heartRate} <span className="text-sm font-normal text-muted-foreground">bpm</span></div>
+                                <div className="text-xl font-bold text-primary">{scanResult.heartRate} <span className="text-xs font-normal text-muted-foreground">bpm</span></div>
                             </div>
 
-                            <div className="p-4 rounded-2xl bg-blue-500/5 border border-blue-500/10 space-y-1">
-                                <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase">
+                            <div className="p-3 rounded-xl bg-blue-500/5 border border-blue-500/10 space-y-0.5">
+                                <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase">
                                     <Activity className="w-3 h-3 text-blue-500" />
                                     SpO2
                                 </div>
-                                <div className="text-2xl font-bold text-blue-500">{scanResult.spO2}<span className="text-sm font-normal text-muted-foreground">%</span></div>
+                                <div className="text-xl font-bold text-blue-500">{scanResult.spO2}<span className="text-xs font-normal text-muted-foreground">%</span></div>
                             </div>
 
-                            <div className="p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 space-y-1">
-                                <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase">
+                            <div className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/10 space-y-0.5">
+                                <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase">
                                     <Activity className="w-3 h-3 text-emerald-500" />
                                     Resp. Rate
                                 </div>
-                                <div className="text-2xl font-bold text-emerald-600">{scanResult.respRate} <span className="text-sm font-normal text-muted-foreground">/min</span></div>
+                                <div className="text-xl font-bold text-emerald-600">{scanResult.respRate} <span className="text-xs font-normal text-muted-foreground">/min</span></div>
                             </div>
 
-                            <div className="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10 space-y-1">
-                                <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase">
+                            <div className="p-3 rounded-xl bg-amber-500/5 border border-amber-500/10 space-y-0.5">
+                                <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase">
                                     <Thermometer className="w-3 h-3 text-amber-500" />
                                     Body Temp
                                 </div>
-                                <div className="text-2xl font-bold text-amber-600">{scanResult.temperature}<span className="text-sm font-normal text-muted-foreground">°C</span></div>
+                                <div className="text-xl font-bold text-amber-600">{scanResult.temperature}<span className="text-xs font-normal text-muted-foreground">°C</span></div>
                             </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
 
-                <div className="flex items-start gap-3 p-4 rounded-2xl bg-muted/30 border border-border/50">
-                    <Info className="w-5 h-5 text-primary mt-0.5" />
-                    <p className="text-xs text-muted-foreground leading-relaxed">
+                <div className="flex items-start gap-2 p-3 rounded-xl bg-muted/30 border border-border/50">
+                    <Info className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                    <p className="text-[10px] text-muted-foreground leading-relaxed">
                         Our AI vision model analyzes subtle changes in facial skin tone caused by blood volume pulses to calculate your vitals with medical-grade precision.
                     </p>
                 </div>

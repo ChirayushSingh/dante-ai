@@ -97,8 +97,8 @@ export function GuardianVoiceAI() {
                 </div>
             </CardHeader>
 
-            <CardContent className="space-y-6">
-                <div className="relative p-8 rounded-3xl bg-muted/30 border-2 border-dashed border-primary/20 flex flex-col items-center justify-center min-h-[240px] transition-all">
+            <CardContent className="space-y-4">
+                <div className="relative p-6 rounded-2xl bg-muted/30 border-2 border-dashed border-primary/20 flex flex-col items-center justify-center min-h-[200px] transition-all">
                     <AnimatePresence mode="wait">
                         {!isListening && !transcript && !analysis && (
                             <motion.div
@@ -153,20 +153,20 @@ export function GuardianVoiceAI() {
                                 className="w-full space-y-4"
                             >
                                 <div className={`p-4 rounded-2xl border ${analysis.sentiment === 'concerning' ? 'bg-red-50 border-red-100' :
-                                        analysis.sentiment === 'positive' ? 'bg-emerald-50 border-emerald-100' :
-                                            'bg-blue-50 border-blue-100'
+                                    analysis.sentiment === 'positive' ? 'bg-emerald-50 border-emerald-100' :
+                                        'bg-blue-50 border-blue-100'
                                     }`}>
                                     <div className="flex items-start gap-3">
                                         <div className={`p-2 rounded-xl ${analysis.sentiment === 'concerning' ? 'bg-red-500 text-white' :
-                                                analysis.sentiment === 'positive' ? 'bg-emerald-500 text-white' :
-                                                    'bg-blue-500 text-white'
+                                            analysis.sentiment === 'positive' ? 'bg-emerald-500 text-white' :
+                                                'bg-blue-500 text-white'
                                             }`}>
                                             {analysis.sentiment === 'concerning' ? <AlertTriangle className="w-5 h-5" /> : <Shield className="w-5 h-5" />}
                                         </div>
                                         <div>
                                             <p className={`font-bold text-sm ${analysis.sentiment === 'concerning' ? 'text-red-700' :
-                                                    analysis.sentiment === 'positive' ? 'text-emerald-700' :
-                                                        'text-blue-700'
+                                                analysis.sentiment === 'positive' ? 'text-emerald-700' :
+                                                    'text-blue-700'
                                                 }`}>
                                                 AI SENTIMENT: {analysis.sentiment.toUpperCase()}
                                             </p>

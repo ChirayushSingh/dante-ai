@@ -50,77 +50,78 @@ export function EnvironmentalGuardian() {
                 </div>
             </CardHeader>
 
-            <CardContent className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 rounded-3xl bg-muted/30 border border-border/50 flex flex-col items-center text-center space-y-2">
-                        <div className="p-3 rounded-2xl bg-white shadow-sm text-primary">
-                            <Wind className="w-6 h-6" />
+            <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                    <div className="p-3 rounded-2xl bg-muted/30 border border-border/50 flex flex-col items-center text-center space-y-1.5">
+                        <div className="p-2.5 rounded-xl bg-white shadow-sm text-primary">
+                            <Wind className="w-5 h-5" />
                         </div>
                         <div>
-                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Air Quality</p>
-                            <p className={`text-2xl font-black ${getAqiColor(envData.aqi)}`}>{envData.aqi}</p>
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase">Excellent</p>
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Air Quality</p>
+                            <p className={`text-xl font-black ${getAqiColor(envData.aqi)}`}>{envData.aqi}</p>
+                            <p className="text-[9px] font-bold text-muted-foreground uppercase">Excellent</p>
                         </div>
                     </div>
 
-                    <div className="p-4 rounded-3xl bg-muted/30 border border-border/50 flex flex-col items-center text-center space-y-2">
-                        <div className="p-3 rounded-2xl bg-white shadow-sm text-amber-500">
-                            <TreePine className="w-6 h-6" />
+                    <div className="p-3 rounded-2xl bg-muted/30 border border-border/50 flex flex-col items-center text-center space-y-1.5">
+                        <div className="p-2.5 rounded-xl bg-white shadow-sm text-amber-500">
+                            <TreePine className="w-5 h-5" />
                         </div>
                         <div>
-                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Pollen (Tree)</p>
-                            <p className="text-2xl font-black text-amber-600">{envData.pollenTree}</p>
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase">Rising Trends</p>
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Pollen (Tree)</p>
+                            <p className="text-xl font-black text-amber-600">{envData.pollenTree}</p>
+                            <p className="text-[9px] font-bold text-muted-foreground uppercase">Rising Trends</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="space-y-4">
-                    <div className="p-4 rounded-3xl bg-emerald-500/5 border border-emerald-500/10 flex items-start gap-4">
-                        <div className="p-2 rounded-xl bg-emerald-500 text-white mt-1">
-                            <ShieldCheck className="w-5 h-5" />
+                <div className="space-y-3">
+                    <div className="p-3 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 flex items-start gap-3">
+                        <div className="p-2 rounded-xl bg-emerald-500 text-white mt-0.5 shrink-0">
+                            <ShieldCheck className="w-4 h-4" />
                         </div>
                         <div>
-                            <p className="text-sm font-bold text-emerald-900">Personalized Health Alert</p>
-                            <p className="text-sm text-emerald-700/80 leading-relaxed mt-1">
-                                "Hi Chirayush, I see the pollen count in your area is <span className="font-bold underline">moderate</span>. Based on your history of seasonal allergies, I suggest keeping windows closed this afternoon."
+                            <p className="text-xs font-bold text-emerald-900">Personalized Health Alert</p>
+                            <p className="text-[11px] text-emerald-700/80 leading-relaxed mt-0.5">
+                                "Hi Chirayush, I see the pollen count in your area is <span className="font-bold underline">moderate</span>. Based on your history, please limit outdoor activity."
                             </p>
                         </div>
                     </div>
-
-                    <div className="grid grid-cols-3 gap-3">
-                        <div className="p-3 rounded-2xl bg-white border border-border/50 text-center">
-                            <Sun className="w-4 h-4 mx-auto mb-1 text-amber-500" />
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase">UV Index</p>
-                            <p className="text-sm font-black">{envData.uvIndex}</p>
-                        </div>
-                        <div className="p-3 rounded-2xl bg-white border border-border/50 text-center">
-                            <Droplets className="w-4 h-4 mx-auto mb-1 text-blue-500" />
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase">Humidity</p>
-                            <p className="text-sm font-black">{envData.humidity}%</p>
-                        </div>
-                        <div className="p-3 rounded-2xl bg-white border border-border/50 text-center">
-                            <Thermometer className="w-4 h-4 mx-auto mb-1 text-red-500" />
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase">Outdoor</p>
-                            <p className="text-sm font-black">{envData.temp}°C</p>
-                        </div>
-                    </div>
                 </div>
 
-                <div className="space-y-2 pt-2">
-                    <div className="flex justify-between items-center text-xs font-bold">
-                        <span className="text-muted-foreground uppercase tracking-wider">Asthma Trigger Risk</span>
-                        <span className="text-emerald-500">LOW (24%)</span>
+                <div className="grid grid-cols-3 gap-3">
+                    <div className="p-3 rounded-2xl bg-white border border-border/50 text-center">
+                        <Sun className="w-4 h-4 mx-auto mb-1 text-amber-500" />
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase">UV Index</p>
+                        <p className="text-sm font-black">{envData.uvIndex}</p>
                     </div>
-                    <Progress value={24} className="h-1.5 bg-muted" />
-                    <div className="flex items-center gap-2 mt-2">
-                        <Info className="w-3 h-3 text-primary" />
-                        <p className="text-[10px] text-muted-foreground leading-tight">
-                            Risk score calculated using real-time AQI, humidity, and your medical profile.
-                        </p>
+                    <div className="p-3 rounded-2xl bg-white border border-border/50 text-center">
+                        <Droplets className="w-4 h-4 mx-auto mb-1 text-blue-500" />
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase">Humidity</p>
+                        <p className="text-sm font-black">{envData.humidity}%</p>
+                    </div>
+                    <div className="p-3 rounded-2xl bg-white border border-border/50 text-center">
+                        <Thermometer className="w-4 h-4 mx-auto mb-1 text-red-500" />
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase">Outdoor</p>
+                        <p className="text-sm font-black">{envData.temp}°C</p>
                     </div>
                 </div>
-            </CardContent>
-        </Card>
+            </div>
+
+            <div className="space-y-2 pt-2">
+                <div className="flex justify-between items-center text-xs font-bold">
+                    <span className="text-muted-foreground uppercase tracking-wider">Asthma Trigger Risk</span>
+                    <span className="text-emerald-500">LOW (24%)</span>
+                </div>
+                <Progress value={24} className="h-1.5 bg-muted" />
+                <div className="flex items-center gap-2 mt-2">
+                    <Info className="w-3 h-3 text-primary" />
+                    <p className="text-[10px] text-muted-foreground leading-tight">
+                        Risk score calculated using real-time AQI, humidity, and your medical profile.
+                    </p>
+                </div>
+            </div>
+        </CardContent>
+        </Card >
     );
 }
