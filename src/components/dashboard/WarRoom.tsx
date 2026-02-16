@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Users, MousePointer2, Share2, Play, Activity, Thermometer, ShieldCheck, Layers, Boxes, Tablet } from "lucide-react";
+import { Users, MousePointer2, Share2, Play, Activity, Thermometer, ShieldCheck, Layers, Boxes, Tablet, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
