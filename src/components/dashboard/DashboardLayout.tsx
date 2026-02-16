@@ -84,7 +84,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 left-0 h-full bg-background border-r border-border z-50 transition-all duration-300",
+          "fixed top-0 left-0 h-full bg-background border-r border-border z-50 transition-all duration-300 flex flex-col",
           collapsed ? "w-20" : "w-64",
           mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
@@ -116,7 +116,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         </div>
 
         {/* Navigation */}
-        <nav className="p-4 space-y-1.5">
+        <nav className="p-4 space-y-1.5 flex-1 overflow-y-auto custom-scrollbar">
           {currentNavItems.map((item) => {
             const isActive = location.pathname === item.href;
             return (
@@ -140,7 +140,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         </nav>
 
         {/* User section */}
-        <div className={cn("absolute bottom-0 left-0 right-0 p-4 border-t border-border", collapsed && "p-2")}>
+        <div className={cn("p-4 border-t border-border mt-auto bg-background/80 backdrop-blur-sm", collapsed && "p-2")}>
           <div className={cn("flex items-center gap-3 mb-3", collapsed && "flex-col")}>
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
               <User className="h-5 w-5 text-primary" />
