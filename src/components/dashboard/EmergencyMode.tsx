@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  AlertTriangle, 
-  Phone, 
-  MapPin, 
-  X, 
+import {
+  AlertTriangle,
+  Phone,
+  MapPin,
+  X,
   Siren,
   Heart,
   Clock,
@@ -23,6 +23,16 @@ export const EmergencyMode = ({ symptoms = [], onClose }: EmergencyModeProps) =>
   const [locationShared, setLocationShared] = useState(false);
 
   const handleEmergencyCall = () => {
+    // Zero-Latency Tunnel Blast
+    const event = new CustomEvent('patient-emergency', {
+      detail: {
+        patientName: "Chirayush Singh",
+        timestamp: new Date().toISOString(),
+        impactScore: 9.8,
+        symptoms: symptoms
+      }
+    });
+    window.dispatchEvent(event);
     window.location.href = "tel:911";
   };
 

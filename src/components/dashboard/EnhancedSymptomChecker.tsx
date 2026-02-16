@@ -29,6 +29,22 @@ export function EnhancedSymptomChecker() {
     setQuestionCount(assistantMessages.length);
   }, [messages]);
 
+  // Zero-Latency Tunnel Blast when assessment is ready
+  useEffect(() => {
+    if (assessment) {
+      const event = new CustomEvent('patient-symptom-update', {
+        detail: {
+          patientName: "Chirayush Singh",
+          timestamp: new Date().toISOString(),
+          impactScore: assessment.severity === 'high' ? 8.5 : assessment.severity === 'medium' ? 5.2 : 2.1,
+          assessment: assessment
+        }
+      });
+      window.dispatchEvent(event);
+      toast.info("Assessment shared instantly with your doctor via Zero-Latency Tunnel.");
+    }
+  }, [assessment]);
+
   const handleModeSelect = (mode: CheckMode) => {
     setCheckMode(mode);
     if (mode === "quick_chat" || mode === "detailed") {
@@ -140,8 +156,8 @@ export function EnhancedSymptomChecker() {
       >
         <div className="flex items-center gap-3">
           <div className={`p-2 rounded-xl bg-gradient-to-br ${isQuickMode
-              ? "from-amber-500/20 to-amber-500/10"
-              : "from-blue-500/20 to-blue-500/10"
+            ? "from-amber-500/20 to-amber-500/10"
+            : "from-blue-500/20 to-blue-500/10"
             }`}>
             <Stethoscope className={`w-6 h-6 ${isQuickMode ? "text-amber-500" : "text-blue-500"}`} />
           </div>

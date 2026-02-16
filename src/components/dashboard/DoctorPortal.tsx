@@ -15,9 +15,9 @@ import {
   AlertCircle,
   Download,
   Loader2,
-  Brain,
-  Pill,
   Sparkles,
+  Siren,
+  ShieldPulse,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -43,6 +43,7 @@ export function DoctorPortal() {
   const [patientChecks, setPatientChecks] = useState<any[]>([]);
   const [fetchingChecks, setFetchingChecks] = useState(false);
   const [showTool, setShowTool] = useState<'prescription' | 'summary' | 'chat' | 'diagnosis' | null>(null);
+  const [liveAlerts, setLiveAlerts] = useState<any[]>([]);
 
   useEffect(() => {
     if (!user) return;
@@ -132,6 +133,34 @@ export function DoctorPortal() {
       fetchPatientHistory();
     }
   }, [selectedPatient]);
+
+  // Zero-Latency Tunnel Listener
+  useEffect(() => {
+    const handleEmergency = (e: any) => {
+      const newAlert = { id: Date.now(), type: 'emergency', ...e.detail };
+      setLiveAlerts(prev => [newAlert, ...prev].slice(0, 5));
+      toast.error(`CRITICAL: Emergency signal from ${e.detail.patientName}!`, {
+        duration: 10000,
+        description: `Impact Score: ${e.detail.impactScore}`
+      });
+    };
+
+    const handleSymptomUpdate = (e: any) => {
+      const newAlert = { id: Date.now(), type: 'symptom_update', ...e.detail };
+      setLiveAlerts(prev => [newAlert, ...prev].slice(0, 5));
+      toast.warning(`NEW ASSESSMENT: ${e.detail.patientName}`, {
+        description: `Impact Score: ${e.detail.impactScore}`
+      });
+    };
+
+    window.addEventListener('patient-emergency', handleEmergency);
+    window.addEventListener('patient-symptom-update', handleSymptomUpdate);
+
+    return () => {
+      window.removeEventListener('patient-emergency', handleEmergency);
+      window.removeEventListener('patient-symptom-update', handleSymptomUpdate);
+    };
+  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -257,6 +286,51 @@ export function DoctorPortal() {
           </CardContent>
         </Card>
       </div>
+
+      <AnimatePresence>
+        {liveAlerts.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="space-y-3"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <Siren className="w-5 h-5 text-red-500 animate-pulse" />
+              <h3 className="text-sm font-black text-red-600 uppercase tracking-tighter">Zero-Latency Tunnel: Live Alerts</h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {liveAlerts.map(alert => (
+                <motion.div
+                  key={alert.id}
+                  layout
+                  className={`p-4 rounded-2xl border-2 flex items-start gap-4 shadow-xl ${alert.type === 'emergency' ? 'bg-red-50 border-red-200 shadow-red-100' : 'bg-orange-50 border-orange-200 shadow-orange-100'
+                    }`}
+                >
+                  <div className={`p-2 rounded-xl mt-1 ${alert.type === 'emergency' ? 'bg-red-500' : 'bg-orange-500'} text-white`}>
+                    <AlertCircle className="w-5 h-5" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex justify-between items-start">
+                      <h4 className="font-bold text-foreground text-sm">{alert.patientName}</h4>
+                      <Badge variant="outline" className={`font-mono text-[9px] ${alert.type === 'emergency' ? 'border-red-500 text-red-600' : 'border-orange-500 text-orange-600'}`}>
+                        IMPACT: {alert.impactScore}
+                      </Badge>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2">
+                      {alert.type === 'emergency' ? 'Emergency protocol activated. Location shared.' : `Assessment: ${alert.assessment?.summary || 'Pending'}`}
+                    </p>
+                    <div className="flex justify-between items-center mt-3">
+                      <p className="text-[9px] font-bold text-muted-foreground uppercase">{new Date(alert.timestamp).toLocaleTimeString()}</p>
+                      <Button size="sm" variant="ghost" className="h-6 text-[9px] font-bold">INTERVENE NOW</Button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <TabsList className="grid w-full grid-cols-4">
         <TabsTrigger value="intelligence" className="font-bold text-primary">

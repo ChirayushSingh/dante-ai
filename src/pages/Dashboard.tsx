@@ -11,6 +11,7 @@ import { DigitalTwinCard } from "@/components/dashboard/DigitalTwinCard";
 import { CameraVitals } from "@/components/dashboard/CameraVitals";
 import { GuardianVoiceAI } from "@/components/dashboard/GuardianVoiceAI";
 import { EnvironmentalGuardian } from "@/components/dashboard/EnvironmentalGuardian";
+import { MedicationVerification } from "@/components/dashboard/MedicationVerification";
 import { useProfile } from "@/hooks/useProfile";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -202,7 +203,10 @@ const Dashboard = () => {
             </TabsContent>
 
             <TabsContent value="monitoring" className="space-y-8 focus-visible:outline-none">
-              <SmartVitalsDashboard />
+              <div className="grid gap-8 lg:grid-cols-2">
+                <SmartVitalsDashboard />
+                <MedicationVerification />
+              </div>
             </TabsContent>
 
             <TabsContent value="care" className="space-y-8 focus-visible:outline-none">
