@@ -17,13 +17,13 @@ export function useOnboarding() {
 
   const checkOnboardingStatus = async () => {
     if (!user) return;
-    
+
     try {
       const { data, error } = await supabase
         .from("profiles")
         .select("date_of_birth, gender")
         .eq("user_id", user.id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error("Error checking onboarding status:", error);
