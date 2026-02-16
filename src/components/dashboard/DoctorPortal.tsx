@@ -17,7 +17,7 @@ import {
   Loader2,
   Sparkles,
   Siren,
-  ShieldPulse,
+  ShieldCheck,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -78,8 +78,11 @@ export function DoctorPortal() {
           .eq('doctor_id', doc.id)
           .order('scheduled_at', { ascending: true });
 
+        // Safely handle null data
+        const safeApps = apps || [];
+        setAppointments(safeApps);
+
         if (appsError) throw appsError;
-        setAppointments(apps);
 
         // 3. Get Prescriptions
         const { data: pres, error: presError } = await (supabase
@@ -88,12 +91,15 @@ export function DoctorPortal() {
           .eq('doctor_id', doc.id)
           .order('issued_at', { ascending: false });
 
+        // Safely handle null data
+        const safePres = pres || [];
+        setPrescriptions(safePres);
+
         if (presError) throw presError;
-        setPrescriptions(pres);
 
         // 4. Extract unique patients
         const patientMap = new Map();
-        apps.forEach((a: any) => {
+        safeApps.forEach((a: any) => {
           if (a.profiles) {
             patientMap.set(a.profiles.id, a.profiles);
           }
