@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { Loader2, Calendar, ChevronRight, Activity, Brain, LineChart, ShieldAlert } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";

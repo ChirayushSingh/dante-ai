@@ -43,51 +43,26 @@ const Auth = () => {
       return;
     }
 
-    const { error } = isSignup
+    const result = isSignup
       ? await signUp(formData.email, formData.password, formData.name, formData.role)
       : await signIn(formData.email, formData.password);
 
-    if (error) {
-      toast.error(error.message);
+    if (result.error) {
+      toast.error(result.error.message);
       setIsLoading(false);
       return;
     }
 
     toast.success(isSignup ? "Account created successfully!" : "Welcome back!");
 
-    // For sign-up, redirect based on role
+    // Basic redirect for signup
     if (isSignup && (formData.role === 'doctor' || formData.role === 'clinic_admin')) {
       setIsLoading(false);
       navigate("/dashboard/onboarding");
       return;
     }
 
-    // For sign-in, fetch profile to determine correct redirect
-    if (!isSignup) {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { data: profile } = await (supabase
-            .from("profiles")
-            .select("role")
-            .eq("user_id", user.id)
-            .single() as unknown as { data: { role: string } | null; error: unknown });
-
-          setIsLoading(false);
-
-          // Redirect based on actual role from database
-          if (profile?.role === 'doctor' || profile?.role === 'clinic_admin') {
-            navigate("/dashboard");
-          } else {
-            navigate("/dashboard");
-          }
-          return;
-        }
-      } catch (err) {
-        console.error("Error fetching profile:", err);
-      }
-    }
-
+    // For sign-in or other cases, redirect to dashboard
     setIsLoading(false);
     navigate("/dashboard");
   };
